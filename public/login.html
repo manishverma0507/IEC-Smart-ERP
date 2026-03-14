@@ -685,7 +685,8 @@
 
   <script>
     // Backend API URL
-    const API_ENDPOINT = 'http://localhost:5000/api/auth/login';
+    // Backend API URL (works for both local and production)
+    const API_ENDPOINT = window.location.origin + '/api/auth/login';
 
     const passwordInput = document.getElementById('password');
     const passwordToggle = document.getElementById('passwordToggle');
