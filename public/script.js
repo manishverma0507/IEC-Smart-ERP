@@ -10,10 +10,7 @@ Handles: role selection, login form (API), mobile menu, password toggle
 /* ===============================
 API BASE URL (AUTO DETECT)
 =============================== */
-const API_BASE =
-window.location.hostname === "localhost"
-? "http://localhost:5000/api"
-: "/api";
+const API_BASE = window.location.origin + '/api';
 
 /* ===============================
 ROLE SELECTION
