@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MY IEC Smart ERP - Faculty Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      overflow-x: hidden;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-hover {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-hover:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .tab-btn {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: #8b5cf6;
+      border-bottom: 2px solid #8b5cf6;
+    }
+
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.5);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="glass mb-6">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div
+          class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+          <i class="fas fa-graduation-cap text-white text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white">IEC Smart ERP</h1>
+          <p class="text-sm text-blue-200">Faculty Portal</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="relative">
+          <i class="fas fa-bell text-white text-xl cursor-pointer"></i>
+          <span id="notif-count"
+            class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white">5</span>
+        </div>
+        <button id="btnAI" class="glass-hover px-4 py-2 rounded-lg text-white flex items-center gap-2">
+          <i class="fas fa-robot"></i>
+          <span class="hidden md:inline">AI Assistant</span>
+        </button>
+        <div class="flex items-center gap-3">
+          <img id="profileImg" src="https://ui-avatars.com/api/?name=Dr+B+sharan&background=8b5cf6&color=fff"
+            alt="Profile" class="w-10 h-10 rounded-full">
+          <div class="text-right">
+            <p id="profileName" class="font-semibold text-white">Dr.B sharan</p>
+            <p class="text-xs text-blue-200">Professor, CSE Dept.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-6">
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div class="glass-hover glass rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Total Classes</p>
+            <p id="stat-classes" class="text-3xl font-bold text-white">24</p>
+          </div>
+          <i class="fas fa-book-open text-4xl text-blue-400"></i>
+        </div>
+      </div>
+      <div class="glass-hover glass rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Total Students</p>
+            <p id="stat-students" class="text-3xl font-bold text-white">156</p>
+          </div>
+          <i class="fas fa-users text-4xl text-green-400"></i>
+        </div>
+      </div>
+      <div class="glass-hover glass rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Pending Tasks</p>
+            <p id="stat-tasks" class="text-3xl font-bold text-white">8</p>
+          </div>
+          <i class="fas fa-tasks text-4xl text-orange-400"></i>
+        </div>
+      </div>
+      <div class="glass-hover glass rounded-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Attendance Rate</p>
+            <p id="stat-att-rate" class="text-3xl font-bold text-white">92%</p>
+          </div>
+          <i class="fas fa-chart-line text-4xl text-purple-400"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="glass rounded-2xl mb-6 overflow-x-auto">
+      <div id="tab-list" class="flex">
+        <button class="tab-btn px-6 py-4 font-medium text-white active" data-tab="overview"
+          onclick="switchTab('overview')">
+          <i class="fas fa-home mr-2"></i>Overview
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="attendance"
+          onclick="switchTab('attendance')">
+          <i class="fas fa-clipboard-check mr-2"></i>Attendance
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="timetable"
+          onclick="switchTab('timetable')">
+          <i class="fas fa-calendar mr-2"></i>Timetable
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="assignments"
+          onclick="switchTab('assignments')">
+          <i class="fas fa-file-alt mr-2"></i>Assignments
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="exams" onclick="switchTab('exams')">
+          <i class="fas fa-pen-square mr-2"></i>Exams
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="students" onclick="switchTab('students')">
+          <i class="fas fa-user-graduate mr-2"></i>Students
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="resources"
+          onclick="switchTab('resources')">
+          <i class="fas fa-folder-open mr-2"></i>Resources
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab content -->
+    <div id="tab-content">
+      <!-- Overview -->
+      <section id="overview" class="tab-section">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 glass rounded-2xl p-6">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <i class="fas fa-clock text-blue-400"></i> Today's Schedule
+            </h3>
+            <div id="today-schedule" class="space-y-4"></div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="glass rounded-2xl p-6">
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-bolt text-yellow-400"></i> Quick Actions
+              </h3>
+              <div class="grid gap-3">
+                <button onclick="openMarkAttendance()"
+                  class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
+                  <i class="fas fa-clipboard-check"></i> Mark Attendance
+                </button>
+                <button onclick="openCreateAssignment()"
+                  class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">
+                  <i class="fas fa-plus"></i> Create Assignment
+                </button>
+                <button onclick="openUploadMaterial()"
+                  class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2">
+                  <i class="fas fa-upload"></i> Upload Material
+                </button>
+                <button onclick="openGradeModal()"
+                  class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 flex items-center justify-center gap-2">
+                  <i class="fas fa-file-signature"></i> Grade Submissions
+                </button>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6">
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-bell text-red-400"></i> Notifications
+              </h3>
+              <div id="notifications" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-6 mt-6">
+          <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fas fa-tasks text-orange-400"></i> Pending Tasks
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Task</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Due Date</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Priority</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tasks-list" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Attendance -->
+      <section id="attendance" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <h3 class="text-xl font-bold text-white mb-4">Mark Attendance</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-semibold text-gray-400 mb-2">Select Course</label>
+              <select id="att-course" class="w-full glass rounded-lg px-4 py-2 text-white"></select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-400 mb-2">Date</label>
+              <input id="att-date" type="date" class="w-full glass rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-400 mb-2">Session</label>
+              <select id="att-session" class="w-full glass rounded-lg px-4 py-2 text-white">
+                <option>Morning (10:00 AM)</option>
+                <option>Afternoon (02:00 PM)</option>
+                <option>Evening (04:30 PM)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Roll No</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Name</th>
+                  <th class="px-4 py-3 text-center text-gray-400">Present</th>
+                  <th class="px-4 py-3 text-center text-gray-400">Absent</th>
+                  <th class="px-4 py-3 text-center text-gray-400">Late</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-list" class="text-white"></tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 flex justify-end gap-3">
+            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              onclick="resetAttendance()">Reset</button>
+            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              onclick="submitAttendance()">Submit Attendance</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timetable -->
+      <section id="timetable" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <h3 class="text-xl font-bold text-white mb-4">Weekly Timetable</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Time</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Monday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Tuesday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Wednesday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Thursday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400">Friday</th>
+                </tr>
+              </thead>
+              <tbody id="timetable-body" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Assignments -->
+      <section id="assignments" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Assignments</h3>
+            <div class="flex items-center gap-3">
+              <button onclick="openCreateAssignment()"
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                <i class="fas fa-plus mr-2"></i>New Assignment
+              </button>
+              <button onclick="exportAssignmentsCSV()" class="glass-hover px-4 py-2 rounded-lg text-white">
+                <i class="fas fa-file-csv mr-2"></i>Export CSV
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Title</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Due Date</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Submissions</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="assignments-list" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exams -->
+      <section id="exams" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Exams & Assessments</h3>
+            <button onclick="createExam()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+              <i class="fas fa-plus mr-2"></i>Create Exam
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Exam</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Date</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Duration</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="exams-list" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Students -->
+      <section id="students" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Students</h3>
+            <div class="flex items-center gap-2">
+              <input id="student-search" oninput="filterStudents()" type="text" placeholder="Search by name or roll no"
+                class="glass rounded-lg px-4 py-2 text-sm text-white">
+              <select id="student-filter-course" onchange="filterStudents()"
+                class="glass rounded-lg px-3 py-2 text-sm text-white">
+                <option value="">All Courses</option>
+              </select>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Roll No</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Name</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Email</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Phone</th>
+                </tr>
+              </thead>
+              <tbody id="students-list" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resources -->
+      <section id="resources" class="tab-section hidden">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Resources & Materials</h3>
+            <button onclick="openUploadMaterial()"
+              class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+              <i class="fas fa-upload mr-2"></i>Upload Material
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="px-4 py-3 text-left text-gray-400">Title</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Type</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Uploaded</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="resources-list" class="text-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- AI Assistant Panel -->
+  <div id="aiPanel"
+    class="fixed top-0 right-0 h-full w-full md:w-96 glass z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-6 border-b border-white/10">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <span class="text-2xl">🤖</span>
+          AI Assistant
+        </h3>
+        <button id="btnCloseAI"
+          class="glass-hover w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex gap-2">
+        <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs">Online</span>
+        <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-xs">Ready to help</span>
+      </div>
+    </div>
+
+    <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+      <div class="chat-message">
+        <div class="flex items-start gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-sm">🤖</span>
+          </div>
+          <div class="flex-1">
+            <div class="glass rounded-2xl rounded-tl-none p-4">
+              <p class="text-white text-sm">Hello! I'm your AI assistant. I can help you with:</p>
+              <ul class="mt-2 space-y-1 text-gray-300 text-sm">
+                <li>• Class schedules & timetable</li>
+                <li>• Student attendance reports</li>
+                <li>• Assignment management</li>
+                <li>• Grading assistance</li>
+                <li>• Resource organization</li>
+              </ul>
+              <p class="text-gray-300 text-sm mt-3">What can I help you with?</p>
+            </div>
+            <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 border-t border-white/10">
+      <div class="flex gap-3">
+        <input id="aiInput" type="text" placeholder="Ask me anything..."
+          class="flex-1 glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <button id="aiSend"
+          class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex gap-2 mt-3 flex-wrap">
+        <button onclick="quickQuery('Student attendance summary')"
+          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
+          Attendance
+        </button>
+        <button onclick="quickQuery('Pending grading tasks')"
+          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
+          Grading
+        </button>
+        <button onclick="quickQuery('Today schedule')"
+          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
+          Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="create-assignment-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0" onclick="closeCreateAssignment()"></div>
+    <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
+      <div class="flex justify-between items-center mb-4">
+        <h4 class="font-bold text-lg text-white">Create Assignment</h4>
+        <button onclick="closeCreateAssignment()" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="create-assignment-form" onsubmit="handleCreateAssignment(event)">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
+            <input id="assign-title" required class="w-full glass rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
+            <select id="assign-course" required class="w-full glass rounded-lg px-3 py-2 text-white"></select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Due Date</label>
+            <input id="assign-due" type="date" required class="w-full glass rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Description</label>
+            <input id="assign-desc" class="w-full glass rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end gap-3">
+          <button type="button" onclick="closeCreateAssignment()"
+            class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="upload-material-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0" onclick="closeUploadMaterial()"></div>
+    <div class="relative glass rounded-2xl w-full max-w-xl p-6 z-10 m-4">
+      <div class="flex justify-between items-center mb-4">
+        <h4 class="font-bold text-lg text-white">Upload Material</h4>
+        <button onclick="closeUploadMaterial()" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="upload-material-form" onsubmit="handleUploadMaterial(event)">
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
+            <input id="material-title" required class="w-full glass rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
+            <select id="material-course" required class="w-full glass rounded-lg px-3 py-2 text-white"></select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Type</label>
+            <select id="material-type" required class="w-full glass rounded-lg px-3 py-2 text-white">
+              <option>Lecture Notes</option>
+              <option>Presentation</option>
+              <option>Assignment</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">File (simulated)</label>
+            <input id="material-file" type="file" class="w-full text-white">
+            <p class="text-xs text-gray-400 mt-1">Demo stores metadata only</p>
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end gap-3">
+          <button type="button" onclick="closeUploadMaterial()"
+            class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="grade-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0" onclick="closeGradeModal()"></div>
+    <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
+      <div class="flex justify-between items-center mb-4">
+        <h4 id="grade-modal-title" class="font-bold text-lg text-white">Grade Submissions</h4>
+        <button onclick="closeGradeModal()" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/10">
+              <th class="px-4 py-2 text-left text-gray-400">Roll No</th>
+              <th class="px-4 py-2 text-left text-gray-400">Name</th>
+              <th class="px-4 py-2 text-left text-gray-400">Submission</th>
+              <th class="px-4 py-2 text-left text-gray-400">Marks</th>
+              <th class="px-4 py-2 text-left text-gray-400">Action</th>
+            </tr>
+          </thead>
+          <tbody id="grade-list" class="text-white"></tbody>
+        </table>
+      </div>
+      <div class="mt-4 flex justify-end gap-3">
+        <button class="px-4 py-2 rounded-lg glass-hover text-white" onclick="closeGradeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 right-6 hidden glass text-white px-4 py-2 rounded-lg shadow"></div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+    const state = {
+      profile: { name: 'Faculty', dept: '' },
+      courses: [],
+      students: [],
+      timetable: [],
+      assignments: [],
+      exams: [],
+      tasks: [],
+      resources: [],
+      notifications: []
+    };
+
+    async function loadState(token) {
+      try {
+        const headers = { 'Authorization': 'Bearer ' + token };
+        const [subjRes, studentsRes, ttRes, noticesRes] = await Promise.all([
+          fetch(API_BASE + '/faculty/subjects', { headers }),
+          fetch(API_BASE + '/faculty/students', { headers }),
+          fetch(API_BASE + '/faculty/timetable', { headers }),
+          fetch(API_BASE + '/notices?limit=10', { headers })
+        ]);
+        const subjData = subjRes.ok ? (await subjRes.json()).data : [];
+        const studentsData = studentsRes.ok ? (await studentsRes.json()).data : [];
+        const ttData = ttRes.ok ? (await ttRes.json()).data : [];
+        const noticesData = noticesRes.ok ? (await noticesRes.json()).data : [];
+        state.courses = (subjData || []).map(function(c) {
+          return { id: (c._id || c.id).toString(), name: (c.code || '') + ' - ' + (c.name || '') };
+        });
+        state.students = (studentsData || []).map(function(s) {
+          return { id: (s._id || s.id || '').toString(), roll: s.rollNo || s.roll || '', name: s.name || '', course: (s.department || ''), email: s.email || '', phone: s.phone || '' };
+        });
+        var slotMap = {};
+        (ttData || []).forEach(function(tt) {
+          (tt.slots || []).forEach(function(slot) {
+            var key = (slot.startTime || '') + '-' + (slot.endTime || '');
+            if (!slotMap[key]) slotMap[key] = { time: key, Mon: '', Tue: '', Wed: '', Thu: '', Fri: '' };
+            var subjName = (slot.subject && (slot.subject.name || slot.subject.code)) || '';
+            var room = slot.room ? ' (' + slot.room + ')' : '';
+            if (slot.day) slotMap[key][slot.day] = subjName + room;
+          });
+        });
+        state.timetable = Object.values(slotMap);
+        state.notifications = (noticesData || []).slice(0, 5).map(function(n) {
+          return { title: n.title || '', desc: (n.body || n.summary || '').slice(0, 60), time: n.publishedAt ? new Date(n.publishedAt).toLocaleDateString() : '', color: 'blue' };
+        });
+      } catch (e) {
+        console.error('loadState error', e);
+      }
+    }
+
+    function showToast(msg, timeout = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), timeout);
+    }
+
+    function formatDateForInput(dateStr) {
+      if (!dateStr) {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
+      return dateStr;
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+        btn.classList.toggle('text-white', btn.dataset.tab === tab);
+        btn.classList.toggle('text-gray-400', btn.dataset.tab !== tab);
+      });
+      document.querySelectorAll('.tab-section').forEach(sec => {
+        sec.classList.toggle('hidden', sec.id !== tab);
+      });
+      if (tab === 'attendance') populateAttendance();
+      if (tab === 'assignments') renderAssignments();
+      if (tab === 'overview') renderOverview();
+      if (tab === 'timetable') renderTimetable();
+      if (tab === 'students') renderStudents();
+      if (tab === 'resources') renderResources();
+      if (tab === 'exams') renderExams();
+    }
+
+    function renderOverview() {
+      const container = document.getElementById('today-schedule');
+      container.innerHTML = '';
+      var dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
+      var items = (state.timetable || []).filter(function(row) { return row[dayName]; }).map(function(row) {
+        var titleRoom = row[dayName];
+        var match = titleRoom.match(/\(([^)]+)\)/);
+        return {
+          time: (row.time && row.time.split('-')[0]) || '—',
+          duration: '60 min',
+          title: titleRoom.replace(/\s*\([^)]*\)\s*$/, '').trim() || 'Class',
+          location: match ? match[1] : '—',
+          batch: ''
+        };
+      });
+      if (!items.length) items = [{ time: '—', duration: '—', title: 'No classes today', location: '—', batch: '' }];
+      items.forEach(it => {
+        const el = document.createElement('div');
+        el.className = 'flex items-start gap-4 p-4 rounded-lg glass-hover border-l-4 border-blue-400';
+        el.innerHTML = `
+          <div class="text-center min-w-[64px]">
+            <p class="text-sm text-gray-400">${it.time}</p>
+            <p class="text-xs text-gray-500">${it.duration}</p>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-semibold text-white">${it.title}</h4>
+            <p class="text-sm text-gray-400">Room: ${it.location} | Batch: ${it.batch}</p>
+          </div>
+          <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            <i class="fas fa-video mr-1"></i>Join
+          </button>`;
+        container.appendChild(el);
+      });
+
+      const notifEl = document.getElementById('notifications');
+      notifEl.innerHTML = '';
+      state.notifications.forEach(n => {
+        const el = document.createElement('div');
+        el.className = `p-3 rounded-lg ${n.color === 'red' ? 'bg-red-500/20' : 'bg-blue-500/20'}`;
+        el.innerHTML = `<p class="text-sm font-semibold text-white">${n.title}</p>
+          <p class="text-xs text-gray-300">${n.desc}</p>
+          <p class="text-xs text-gray-400 mt-1">${n.time}</p>`;
+        notifEl.appendChild(el);
+      });
+
+      const tasksBody = document.getElementById('tasks-list');
+      tasksBody.innerHTML = '';
+      state.tasks.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3">${t.task}</td>
+          <td class="px-4 py-3">${t.course}</td>
+          <td class="px-4 py-3">${t.due}</td>
+          <td class="px-4 py-3"><span class="${t.priority === 'High' ? 'bg-red-500/20 text-red-300' : 'bg-yellow-500/20 text-yellow-300'} px-2 py-1 rounded-full text-xs">${t.priority}</span></td>
+          <td class="px-4 py-3"><button class="text-purple-400 hover:underline">View</button></td>`;
+        tasksBody.appendChild(tr);
+      });
+    }
+
+    function populateAttendance() {
+      const courseSelect = document.getElementById('att-course');
+      courseSelect.innerHTML = '';
+      (state.courses || []).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        courseSelect.appendChild(opt);
+      });
+      document.getElementById('att-date').value = formatDateForInput();
+      if (state.courses && state.courses.length) renderAttendanceForCourse(state.courses[0].id);
+    }
+
+    function renderAttendanceForCourse(courseId) {
+      const tbody = document.getElementById('attendance-list');
+      tbody.innerHTML = '';
+      const students = (state.students || []).length ? state.students : [];
+      students.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.dataset.studentId = s.id || '';
+        tr.innerHTML = `
+          <td class="px-4 py-3">${s.roll}</td>
+          <td class="px-4 py-3">${s.name}</td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="present" checked></td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="absent"></td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="late"></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('att-course').onchange = (e) => renderAttendanceForCourse(e.target.value);
+    }
+
+    function resetAttendance() {
+      populateAttendance();
+      showToast('Attendance reset');
+    }
+
+    async function submitAttendance() {
+      const token = localStorage.getItem('token');
+      const subjectId = document.getElementById('att-course').value;
+      const date = document.getElementById('att-date').value;
+      if (!subjectId || !date) { showToast('Select course and date'); return; }
+      const rows = document.querySelectorAll('#attendance-list tr[data-student-id]');
+      const entries = [];
+      rows.forEach(tr => {
+        const studentId = tr.dataset.studentId;
+        if (!studentId) return;
+        const checked = tr.querySelector('input[type="radio"]:checked');
+        entries.push({ studentId, status: (checked && checked.value) || 'present' });
+      });
+      if (!entries.length) { showToast('No students to mark'); return; }
+      try {
+        const resp = await fetch(API_BASE + '/faculty/attendance/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ subjectId, date, entries })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { showToast(data.message || 'Failed'); return; }
+        showToast('Attendance submitted');
+      } catch (e) {
+        showToast('Error: ' + e.message);
+      }
+    }
+
+    function renderAssignments() {
+      const tbody = document.getElementById('assignments-list');
+      tbody.innerHTML = '';
+      state.assignments.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3 font-medium">${a.title}</td>
+          <td class="px-4 py-3">${a.course}</td>
+          <td class="px-4 py-3">${a.due}</td>
+          <td class="px-4 py-3">${a.submissions}</td>
+          <td class="px-4 py-3">
+            <button class="text-purple-400 hover:underline mr-3" onclick="openGradeModal('${a.id}','${a.title}')">Grade</button>
+            <button class="text-gray-400 hover:underline" onclick="deleteAssignment('${a.id}')">Delete</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openCreateAssignment() {
+      document.getElementById('assign-title').value = '';
+      document.getElementById('assign-desc').value = '';
+      document.getElementById('assign-due').value = formatDateForInput();
+      const courseSelect = document.getElementById('assign-course');
+      courseSelect.innerHTML = '';
+      state.courses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        courseSelect.appendChild(opt);
+      });
+      document.getElementById('create-assignment-modal').classList.remove('hidden');
+      document.getElementById('create-assignment-modal').classList.add('flex');
+    }
+
+    function closeCreateAssignment() {
+      document.getElementById('create-assignment-modal').classList.add('hidden');
+      document.getElementById('create-assignment-modal').classList.remove('flex');
+    }
+
+    function handleCreateAssignment(e) {
+      e.preventDefault();
+      const title = document.getElementById('assign-title').value.trim();
+      const course = document.getElementById('assign-course').value;
+      const due = document.getElementById('assign-due').value;
+      const desc = document.getElementById('assign-desc').value;
+      state.assignments.push({ id: 'A' + (state.assignments.length + 1), title, course, due, desc, submissions: 0 });
+      closeCreateAssignment();
+      renderAssignments();
+      showToast('Assignment created: ' + title);
+    }
+
+    function deleteAssignment(id) {
+      state.assignments = state.assignments.filter(a => a.id !== id);
+      renderAssignments();
+      showToast('Assignment deleted');
+    }
+
+    function exportAssignmentsCSV() {
+      showToast('Assignments exported');
+    }
+
+    function renderExams() {
+      const tbody = document.getElementById('exams-list');
+      tbody.innerHTML = '';
+      state.exams.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3">${e.title}</td>
+          <td class="px-4 py-3">${e.course}</td>
+          <td class="px-4 py-3">${e.date}</td>
+          <td class="px-4 py-3">${e.duration}</td>
+          <td class="px-4 py-3"><button class="text-purple-400 hover:underline">View</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function createExam() {
+      state.exams.push({ id: 'E' + (state.exams.length + 1), title: 'New Exam', course: state.courses[0].id, date: formatDateForInput(), duration: '2 hrs' });
+      renderExams();
+      showToast('Exam created');
+    }
+
+    function renderStudents() {
+      const tbody = document.getElementById('students-list');
+      tbody.innerHTML = '';
+      state.students.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3">${s.roll}</td>
+          <td class="px-4 py-3">${s.name}</td>
+          <td class="px-4 py-3">${s.course}</td>
+          <td class="px-4 py-3">${s.email}</td>
+          <td class="px-4 py-3">${s.phone}</td>`;
+        tbody.appendChild(tr);
+      });
+      const filter = document.getElementById('student-filter-course');
+      filter.innerHTML = '<option value="">All Courses</option>';
+      state.courses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        filter.appendChild(opt);
+      });
+    }
+
+    function filterStudents() {
+      const q = document.getElementById('student-search').value.toLowerCase().trim();
+      const course = document.getElementById('student-filter-course').value;
+      const tbody = document.getElementById('students-list');
+      tbody.innerHTML = '';
+      state.students.filter(s => {
+        const matchesQ = !q || s.name.toLowerCase().includes(q) || s.roll.toLowerCase().includes(q);
+        const matchesCourse = !course || s.course === course;
+        return matchesQ && matchesCourse;
+      }).forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3">${s.roll}</td>
+          <td class="px-4 py-3">${s.name}</td>
+          <td class="px-4 py-3">${s.course}</td>
+          <td class="px-4 py-3">${s.email}</td>
+          <td class="px-4 py-3">${s.phone}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderResources() {
+      const tbody = document.getElementById('resources-list');
+      tbody.innerHTML = '';
+      state.resources.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-3">${r.title}</td>
+          <td class="px-4 py-3">${r.course}</td>
+          <td class="px-4 py-3">${r.type}</td>
+          <td class="px-4 py-3">${r.uploaded}</td>
+          <td class="px-4 py-3">
+            <button class="text-purple-400 hover:underline mr-3">Download</button>
+            <button class="text-gray-400 hover:underline">Delete</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openUploadMaterial() {
+      const courseSelect = document.getElementById('material-course');
+      courseSelect.innerHTML = '';
+      state.courses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        courseSelect.appendChild(opt);
+      });
+      document.getElementById('upload-material-modal').classList.remove('hidden');
+      document.getElementById('upload-material-modal').classList.add('flex');
+    }
+
+    function closeUploadMaterial() {
+      document.getElementById('upload-material-modal').classList.add('hidden');
+      document.getElementById('upload-material-modal').classList.remove('flex');
+    }
+
+    function handleUploadMaterial(e) {
+      e.preventDefault();
+      const title = document.getElementById('material-title').value.trim();
+      const course = document.getElementById('material-course').value;
+      const type = document.getElementById('material-type').value;
+      state.resources.push({ id: 'R' + (state.resources.length + 1), title, course, type, uploaded: new Date().toLocaleDateString() });
+      closeUploadMaterial();
+      renderResources();
+      showToast('Material uploaded');
+    }
+
+    function openGradeModal(assignmentId, assignmentTitle) {
+      document.getElementById('grade-modal-title').textContent = assignmentTitle ? `Grade — ${assignmentTitle}` : 'Grade Submissions';
+      const tbody = document.getElementById('grade-list');
+      tbody.innerHTML = '';
+      state.students.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5 hover:bg-white/5';
+        tr.innerHTML = `<td class="px-4 py-2">${s.roll}</td>
+          <td class="px-4 py-2">${s.name}</td>
+          <td class="px-4 py-2">Submitted</td>
+          <td class="px-4 py-2"><input type="number" class="w-20 glass rounded px-2 py-1 text-white" min="0" max="100" placeholder="--"></td>
+          <td class="px-4 py-2"><button class="text-purple-400 hover:underline">Save</button></td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('grade-modal').classList.remove('hidden');
+      document.getElementById('grade-modal').classList.add('flex');
+    }
+
+    function closeGradeModal() {
+      document.getElementById('grade-modal').classList.add('hidden');
+      document.getElementById('grade-modal').classList.remove('flex');
+    }
+
+    function renderTimetable() {
+      const tbody = document.getElementById('timetable-body');
+      tbody.innerHTML = '';
+      state.timetable.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="border border-white/10 px-4 py-3 font-semibold">${row.time}</td>
+          <td class="border border-white/10 px-4 py-3">${row.Mon || ''}</td>
+          <td class="border border-white/10 px-4 py-3">${row.Tue || ''}</td>
+          <td class="border border-white/10 px-4 py-3">${row.Wed || ''}</td>
+          <td class="border border-white/10 px-4 py-3">${row.Thu || ''}</td>
+          <td class="border border-white/10 px-4 py-3">${row.Fri || ''}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function init() {
+      document.getElementById('profileName').textContent = state.profile.name;
+      document.getElementById('stat-students').textContent = state.students.length;
+      document.getElementById('stat-classes').textContent = state.timetable.length;
+      document.getElementById('stat-tasks').textContent = state.tasks.length;
+      document.getElementById('notif-count').textContent = state.notifications.length;
+      renderOverview();
+      populateAttendance();
+      renderAssignments();
+      renderTimetable();
+      renderStudents();
+      renderResources();
+      renderExams();
+    }
+
+    function openMarkAttendance() { switchTab('attendance'); }
+
+    // AI Assistant Functions
+    function toggleAIPanel() {
+      const panel = document.getElementById('aiPanel');
+      panel.classList.toggle('translate-x-full');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('aiInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatMessages = document.getElementById('chatMessages');
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message flex justify-end';
+      userMsg.innerHTML = `
+        <div class="max-w-[80%]">
+          <div class="bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl rounded-tr-none p-4">
+            <p class="text-white text-sm">${escapeHtml(message)}</p>
+          </div>
+          <p class="text-gray-500 text-xs mt-1 mr-1 text-right">Just now</p>
+        </div>
+      `;
+      chatMessages.appendChild(userMsg);
+
+      input.value = '';
+      input.focus();
+
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'chat-message';
+      typingIndicator.id = 'typingIndicator';
+      typingIndicator.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-sm">🤖</span>
+          </div>
+          <div class="flex-1">
+            <div class="glass rounded-2xl rounded-tl-none p-4">
+              <div class="flex space-x-2">
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const API_BASE = 'http://localhost:5000/api';
+        const resp = await fetch(`${API_BASE}/ai/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+        });
+        const data = await resp.json();
+        const reply = data.reply || 'No reply.';
+
+        typingIndicator.remove();
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message';
+        aiMsg.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-sm">🤖</span>
+            </div>
+            <div class="flex-1">
+              <div class="glass rounded-2xl rounded-tl-none p-4">
+                <p class="text-white text-sm">${escapeHtml(reply)}</p>
+              </div>
+              <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
+            </div>
+          </div>
+        `;
+        chatMessages.appendChild(aiMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (e) {
+        typingIndicator.remove();
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'chat-message';
+        errorMsg.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-sm">⚠️</span>
+            </div>
+            <div class="flex-1">
+              <div class="glass rounded-2xl rounded-tl-none p-4">
+                <p class="text-red-300 text-sm">Error: ${escapeHtml(e.message)}</p>
+              </div>
+              <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
+            </div>
+          </div>
+        `;
+        chatMessages.appendChild(errorMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+
+    function quickQuery(query) {
+      document.getElementById('aiInput').value = query;
+      sendMessage();
+    }
+
+    document.getElementById('btnAI').addEventListener('click', toggleAIPanel);
+    document.getElementById('btnCloseAI').addEventListener('click', toggleAIPanel);
+    document.getElementById('aiSend').addEventListener('click', sendMessage);
+    document.getElementById('aiInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Boot: fetch authenticated user profile and then initialize UI
+    (async function boot() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          alert('Please login first');
+          return window.location.href = 'login.html';
+        }
+        console.log('👤 Fetching profile for faculty dashboard');
+        const resp = await fetch('http://localhost:5000/api/auth/me', {
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+        });
+        if (!resp.ok) {
+          console.warn('Profile fetch failed, status:', resp.status);
+          // proceed with local state
+          init();
+          return;
+        }
+        const result = await resp.json();
+        const u = result.data || result;
+        // ensure role is faculty
+        if (u.role !== 'faculty') {
+          alert('Access denied. This dashboard is for faculty only.');
+          return window.location.href = 'login.html';
+        }
+        // update state.profile
+        state.profile.name = u.name || state.profile.name;
+        state.profile.dept = (u.department || state.profile.dept) + (u.department ? ' Dept.' : '');
+        // update UI immediate elements
+        document.getElementById('profileName').textContent = state.profile.name;
+        document.getElementById('profileImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(state.profile.name)}&background=8b5cf6&color=fff`;
+        // load courses, students, timetable, notices from API then init
+        await loadState(token);
+        init();
+      } catch (err) {
+        console.error('Error booting faculty dashboard', err);
+        init();
+      }
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fee Risk - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="admin-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Fee Risk & Management</h1>
+    <div class="bg-white rounded-xl shadow p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="riskCards">
+      <div><p class="text-slate-500 text-sm">Overdue Count</p><p id="overdueCount" class="text-xl font-bold text-amber-600">—</p></div>
+      <div><p class="text-slate-500 text-sm">Pending Count</p><p id="pendingCount" class="text-xl font-bold text-slate-700">—</p></div>
+      <div><p class="text-slate-500 text-sm">Students at Risk</p><p id="studentsAtRisk" class="text-xl font-bold text-red-600">—</p></div>
+      <div><p class="text-slate-500 text-sm">Risk Level</p><p id="riskLevel" class="text-xl font-bold text-cyan-600">—</p></div>
+    </div>
+    <p class="text-slate-600 text-sm">Fee records: use Fees API to list/create/update. Risk data is from /api/fees/risk.</p>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/fees/risk');
+        var d = r.data;
+        document.getElementById('overdueCount').textContent = d.overdueCount != null ? d.overdueCount : '—';
+        document.getElementById('pendingCount').textContent = d.pendingCount != null ? d.pendingCount : '—';
+        document.getElementById('studentsAtRisk').textContent = d.studentsAtRisk != null ? d.studentsAtRisk : '—';
+        document.getElementById('riskLevel').textContent = d.riskLevel || '—';
+      } catch (e) {
+        document.getElementById('riskCards').innerHTML = '<p class="text-red-600 col-span-full">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

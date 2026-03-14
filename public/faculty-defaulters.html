@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Attendance Defaulters - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="faculty-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="faculty-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Attendance Defaulters</h1>
+    <p class="text-slate-600 text-sm mb-4">Students below 75% attendance (configurable).</p>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Name</th><th class="p-3">Roll No</th><th class="p-3">Branch</th><th class="p-3">Semester</th></tr>
+        </thead>
+        <tbody id="defList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">No defaulters.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'faculty') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/attendance/defaulters?threshold=75');
+        var list = r.data || [];
+        var tbody = document.getElementById('defList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { empty.classList.remove('hidden'); return; }
+        tbody.innerHTML = list.map(function(u) { return '<tr class="border-t border-slate-100"><td class="p-3">' + (u.name || '') + '</td><td class="p-3">' + (u.rollNo || '') + '</td><td class="p-3">' + (u.branch || '') + '</td><td class="p-3">' + (u.semester || '') + '</td></tr>'; }).join('');
+      } catch (e) {
+        document.getElementById('defList').innerHTML = '<tr><td class="p-4 text-red-600" colspan="4">' + e.message + '</td></tr>';
+      }
+    })();
+  </script>
+</body>
+</html>

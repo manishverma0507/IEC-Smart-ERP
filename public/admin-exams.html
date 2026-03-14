@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Exam & Result Control - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="admin-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Exam & Result Control</h1>
+    <p class="text-slate-600 text-sm mb-4">Exam schedule and results are managed via APIs. Faculty/Admin can add results (POST /api/exams/results). Admin can add exam schedule (POST /api/exams/schedule).</p>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <h3 class="p-3 font-semibold text-slate-800 border-b border-slate-200">Exam Schedule</h3>
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Subject</th><th class="p-3">Type</th><th class="p-3">Date</th><th class="p-3">Session</th><th class="p-3">Max Marks</th></tr>
+        </thead>
+        <tbody id="examList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">No exam schedule.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/exams/schedule');
+        var list = r.data || [];
+        var tbody = document.getElementById('examList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { empty.classList.remove('hidden'); return; }
+        tbody.innerHTML = list.map(function(e) {
+          return '<tr class="border-t border-slate-100"><td class="p-3">' + (e.subject && e.subject.code ? e.subject.code : e.subject) + '</td><td class="p-3">' + (e.examType || '') + '</td><td class="p-3">' + (e.examDate ? new Date(e.examDate).toLocaleDateString() : '') + '</td><td class="p-3">' + (e.examSession || '') + '</td><td class="p-3">' + (e.maxMarks || '') + '</td></tr>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('examList').innerHTML = '<tr><td class="p-4 text-red-600" colspan="5">' + e.message + '</td></tr>';
+      }
+    })();
+  </script>
+</body>
+</html>

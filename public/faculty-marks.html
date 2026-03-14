@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Upload Marks - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="faculty-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="faculty-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Upload / Update Marks</h1>
+    <div class="bg-white rounded-xl shadow p-4 max-w-md mb-6">
+      <label class="block text-slate-700 font-medium mb-2">Student ID</label>
+      <input type="text" id="studentId" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" placeholder="MongoDB _id">
+      <label class="block text-slate-700 font-medium mb-2">Subject ID</label>
+      <input type="text" id="subjectId" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" placeholder="MongoDB _id">
+      <label class="block text-slate-700 font-medium mb-2">Exam Type</label>
+      <select id="examType" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3">
+        <option value="internal">Internal</option>
+        <option value="mid">Mid</option>
+        <option value="end">End</option>
+        <option value="practical">Practical</option>
+      </select>
+      <label class="block text-slate-700 font-medium mb-2">Session</label>
+      <input type="text" id="examSession" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" value="2024-25 Odd" placeholder="e.g. 2024-25 Odd">
+      <label class="block text-slate-700 font-medium mb-2">Marks Obtained / Max</label>
+      <div class="flex gap-2 mb-3">
+        <input type="number" id="marksObtained" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg" placeholder="Obtained">
+        <input type="number" id="maxMarks" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg" value="100" placeholder="Max">
+      </div>
+      <label class="block text-slate-700 font-medium mb-2">Grade (A/B/C/D/F)</label>
+      <input type="text" id="grade" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" placeholder="A">
+      <label class="block text-slate-700 font-medium mb-2">Grade Point</label>
+      <input type="number" id="gradePoint" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" placeholder="10" step="0.01">
+      <button type="button" id="btnSave" class="w-full py-2 bg-cyan-600 text-white rounded-lg font-medium hover:bg-cyan-700">Save Result</button>
+      <p id="msg" class="mt-2 text-sm hidden"></p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'faculty') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    document.getElementById('btnSave').addEventListener('click', async function() {
+      var studentId = document.getElementById('studentId').value.trim();
+      var subjectId = document.getElementById('subjectId').value.trim();
+      var examType = document.getElementById('examType').value;
+      var examSession = document.getElementById('examSession').value.trim();
+      var marksObtained = parseInt(document.getElementById('marksObtained').value, 10);
+      var maxMarks = parseInt(document.getElementById('maxMarks').value, 10) || 100;
+      var grade = document.getElementById('grade').value.trim();
+      var gradePoint = parseFloat(document.getElementById('gradePoint').value) || 0;
+      var msgEl = document.getElementById('msg');
+      if (!studentId || !subjectId || !examSession) { msgEl.textContent = 'Fill student ID, subject ID and session.'; msgEl.classList.remove('hidden'); msgEl.classList.add('text-amber-600'); return; }
+      try {
+        await MyIEC.api('/exams/results', { method: 'POST', body: { student: studentId, subject: subjectId, examType, examSession, marksObtained, maxMarks, grade, gradePoint } });
+        msgEl.textContent = 'Result saved.';
+        msgEl.classList.remove('hidden', 'text-amber-600'); msgEl.classList.add('text-emerald-600');
+      } catch (e) {
+        msgEl.textContent = e.message;
+        msgEl.classList.remove('hidden'); msgEl.classList.add('text-red-600');
+      }
+    });
+  </script>
+</body>
+</html>

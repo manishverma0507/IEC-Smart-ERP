@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Performance - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="faculty-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="faculty-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Student Performance</h1>
+    <p class="text-slate-600 text-sm mb-4">View results by student (enter student ID to see CGPA/SGPA).</p>
+    <div class="flex gap-2 mb-4 max-w-md">
+      <input type="text" id="studentId" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg" placeholder="Student ID (optional)">
+      <button type="button" id="btnLoad" class="px-4 py-2 bg-cyan-600 text-white rounded-lg font-medium hover:bg-cyan-700">Load</button>
+    </div>
+    <div id="cgpaBox" class="bg-white rounded-xl shadow p-4 mb-4 hidden"></div>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Session</th><th class="p-3">Subject</th><th class="p-3">Type</th><th class="p-3">Marks</th><th class="p-3">Grade</th></tr>
+        </thead>
+        <tbody id="resultList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">Enter student ID and click Load, or leave empty to see recent results.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'faculty') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    document.getElementById('btnLoad').addEventListener('click', async function() {
+      var studentId = document.getElementById('studentId').value.trim();
+      var q = studentId ? '?studentId=' + studentId : '?limit=30';
+      try {
+        if (studentId) {
+          var cgpaRes = await MyIEC.api('/exams/results/cgpa?studentId=' + studentId);
+          var box = document.getElementById('cgpaBox');
+          box.classList.remove('hidden');
+          box.innerHTML = '<strong>CGPA:</strong> ' + (cgpaRes.data && cgpaRes.data.cgpa != null ? cgpaRes.data.cgpa : '—');
+        }
+        var r = await MyIEC.api('/exams/results' + q);
+        var list = r.data || [];
+        var tbody = document.getElementById('resultList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { tbody.innerHTML = ''; empty.classList.remove('hidden'); return; }
+        empty.classList.add('hidden');
+        tbody.innerHTML = list.map(function(res) {
+          return '<tr class="border-t border-slate-100"><td class="p-3">' + (res.examSession || '') + '</td><td class="p-3">' + (res.subject && res.subject.code ? res.subject.code : res.subject) + '</td><td class="p-3">' + (res.examType || '') + '</td><td class="p-3">' + (res.marksObtained + '/' + res.maxMarks) + '</td><td class="p-3">' + (res.grade || '') + '</td></tr>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('resultList').innerHTML = '<tr><td class="p-4 text-red-600" colspan="5">' + e.message + '</td></tr>';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MY IEC Smart ERP - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      overflow-x: hidden;
+    }
+
+    /* Glass morphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-hover {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-hover:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .slide-in {
+      animation: slideIn 0.6s ease-out forwards;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Sidebar active state */
+    .sidebar-item {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 0;
+      background: linear-gradient(180deg, #8b5cf6, #3b82f6);
+      border-radius: 0 4px 4px 0;
+      transition: height 0.3s ease;
+    }
+
+    .sidebar-item.active::before,
+    .sidebar-item:hover::before {
+      height: 70%;
+    }
+
+    .sidebar-item.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-left: 3px solid #8b5cf6;
+    }
+
+    /* AI Chat messages */
+    .chat-message {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Stat card gradient border */
+    .stat-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 2px;
+      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Chart container */
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.5);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.7);
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    /* Loading skeleton */
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    /* Custom Utilities */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      min-width: 200px;
+      z-index: 1000;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 10px;
+      height: 10px;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: rgba(30, 41, 59, 0.95);
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="mobile-menu lg:translate-x-0 fixed left-0 top-0 h-full w-72 glass z-50 p-6 overflow-y-auto">
+    <!-- Logo -->
+    <div class="slide-in mb-8 flex items-center gap-3">
+      <div
+        class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+        <span class="text-white font-bold text-xl">IEC</span>
+      </div>
+      <div>
+        <h1 class="text-white font-bold text-lg">MY IEC</h1>
+        <p class="text-gray-400 text-xs">Smart ERP</p>
+      </div>
+    </div>
+
+    <!-- Admin Profile -->
+    <div class="glass-hover rounded-xl p-4 mb-6 fade-in" style="animation-delay: 0.1s;">
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
+          <span class="text-white font-bold text-lg">A</span>
+        </div>
+        <div class="flex-1">
+          <h3 id="navName" class="text-white font-semibold text-sm">Admin User</h3>
+          <p class="text-gray-400 text-xs">Administrator</p>
+        </div>
+        <div class="w-2 h-2 bg-green-400 rounded-full pulse"></div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="space-y-2">
+      <a href="#"
+        class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.2s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span class="font-medium">Dashboard</span>
+      </a>
+
+      <a href="admin-register.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.3s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg>
+        <span class="font-medium">Register User</span>
+      </a>
+
+      <a href="admin-users.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.35s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <span class="font-medium">Manage Users</span>
+      </a>
+
+      <a href="admin-users.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.4s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span class="font-medium">Faculty</span>
+      </a>
+
+      <a href="admin-settings.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.45s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span class="font-medium">Courses</span>
+      </a>
+
+      <a href="#"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.5s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <span class="font-medium">Attendance</span>
+      </a>
+
+      <a href="admin-fees.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.55s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span class="font-medium">Finance</span>
+      </a>
+
+      <a href="admin-analytics.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.6s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <span class="font-medium">Reports</span>
+      </a>
+
+      <a href="admin-settings.html"
+        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
+        style="animation-delay: 0.65s;">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span class="font-medium">Settings</span>
+      </a>
+    </nav>
+
+    <!-- System Status -->
+    <div class="mt-8 p-4 glass rounded-xl fade-in" style="animation-delay: 1s;">
+      <h4 class="text-white text-sm font-semibold mb-2">System Status</h4>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-400 text-xs">Database</span>
+          <div class="flex items-center">
+            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+            <span class="text-green-400 text-xs">Online</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-400 text-xs">Server Load</span>
+          <span class="text-yellow-400 text-xs">42%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-400 text-xs">Storage</span>
+          <span class="text-blue-400 text-xs">78%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Assistant Button -->
+    <button onclick="toggleAI()"
+      class="w-full mt-6 glass-hover rounded-xl p-4 text-white font-semibold flex items-center gap-3 fade-in"
+      style="animation-delay: 1.1s;">
+      <div
+        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 flex items-center justify-center float">
+        <span class="text-lg">🤖</span>
+      </div>
+      <div class="flex-1 text-left">
+        <div class="text-sm">AI Assistant</div>
+        <div class="text-xs text-gray-400">Ask me anything</div>
+      </div>
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="lg:ml-72 p-4 lg:p-8">
+    <!-- Header -->
+    <header class="glass rounded-2xl p-6 mb-8 fade-in">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-bold text-white mb-2">Welcome back, Admin! 👋</h2>
+          <p class="text-gray-400">Here's what's happening with your institution today.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <button onclick="toggleSidebar()" class="lg:hidden glass-hover p-3 rounded-xl text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <!-- Search Bar -->
+          <div class="relative hidden md:block">
+            <input type="text" placeholder="Search..."
+              class="glass rounded-xl pl-10 pr-4 py-3 w-64 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <!-- Notifications -->
+          <div class="relative">
+            <button onclick="toggleNotifications()" class="glass-hover p-3 rounded-xl text-white relative">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span class="notification-dot pulse"></span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div id="notificationsDropdown" class="dropdown-menu right-0 mt-2 w-80">
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold">Notifications</h4>
+                  <button class="text-xs text-purple-400 hover:text-purple-300">Mark all as read</button>
+                </div>
+                <div class="space-y-3 max-h-96 overflow-y-auto">
+                  <div class="p-3 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer">
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-plus text-blue-400 text-xs"></i>
+                      </div>
+                      <div>
+                        <p class="text-white text-sm">New student enrolled in Computer Science</p>
+                        <p class="text-gray-400 text-xs mt-1">2 minutes ago</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Dropdown -->
+          <div class="relative">
+            <button onclick="toggleProfileDropdown()" class="glass-hover flex items-center gap-3 p-2 rounded-xl">
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <span class="text-white text-sm">A</span>
+              </div>
+              <div class="hidden md:block text-left">
+                <p id="navNameHeader" class="text-white text-sm font-medium">Admin User</p>
+                <p class="text-gray-400 text-xs">Administrator</p>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Profile Dropdown Menu -->
+            <div id="profileDropdown" class="dropdown-menu right-0 mt-2">
+              <div class="py-2">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10">
+                  <i class="fas fa-user text-gray-400 w-5"></i>
+                  <span>My Profile</span>
+                </a>
+                <a href="admin-settings.html" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10">
+                  <i class="fas fa-cog text-gray-400 w-5"></i>
+                  <span>Settings</span>
+                </a>
+                <div class="border-t border-white/10 my-2"></div>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-white/10" id="btnLogout">
+                  <i class="fas fa-sign-out-alt w-5"></i>
+                  <span>Logout</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.1s;">
+        <div class="flex items-center justify-between mb-4">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+        </div>
+        <h3 id="statStudents" class="text-2xl font-bold text-white mb-1">—</h3>
+        <p class="text-gray-400 text-sm">Total Students</p>
+      </div>
+
+      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.2s;">
+        <div class="flex items-center justify-between mb-4">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+        <h3 id="statFaculty" class="text-2xl font-bold text-white mb-1">—</h3>
+        <p class="text-gray-400 text-sm">Faculty Members</p>
+      </div>
+
+      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.3s;">
+        <div class="flex items-center justify-between mb-4">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 01118 0z" />
+            </svg>
+          </div>
+        </div>
+        <h3 id="statDefaulters" class="text-2xl font-bold text-white mb-1">—</h3>
+        <p class="text-gray-400 text-sm">Att. Defaulters</p>
+      </div>
+
+      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.4s;">
+        <div class="flex items-center justify-between mb-4">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <h3 id="statFeeOverdue" class="text-2xl font-bold text-white mb-1">—</h3>
+        <p class="text-gray-400 text-sm">Fee Overdue</p>
+      </div>
+    </div>
+
+    <!-- Charts and Tables Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Attendance Chart -->
+      <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.5s;">
+        <h3 class="text-xl font-bold text-white mb-6">Attendance Overview</h3>
+        <div class="chart-container">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.6s;">
+        <h3 class="text-xl font-bold text-white mb-6">Recent Activities</h3>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-sm">👤</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-white font-medium text-sm">New student enrolled</p>
+              <p class="text-gray-400 text-xs mt-1">Recently joined the system</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="glass rounded-2xl p-6 mb-8 fade-in" style="animation-delay: 0.7s;">
+      <h3 class="text-xl font-bold text-white mb-6">Quick Actions</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="admin-users.html" class="glass-hover rounded-xl p-6 text-center group">
+          <div
+            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fas fa-user-plus text-white"></i>
+          </div>
+          <p class="text-white text-sm font-medium">Add Student</p>
+        </a>
+        <a href="admin-users.html" class="glass-hover rounded-xl p-6 text-center group">
+          <div
+            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fas fa-chalkboard-teacher text-white"></i>
+          </div>
+          <p class="text-white text-sm font-medium">Add Faculty</p>
+        </a>
+        <a href="admin-fees.html" class="glass-hover rounded-xl p-6 text-center group">
+          <div
+            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fas fa-rupee-sign text-white"></i>
+          </div>
+          <p class="text-white text-sm font-medium">Finance</p>
+        </a>
+        <a href="admin-settings.html" class="glass-hover rounded-xl p-6 text-center group">
+          <div
+            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fas fa-cog text-white"></i>
+          </div>
+          <p class="text-white text-sm font-medium">Settings</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- AI Assistant Panel -->
+  <div id="aiPanel"
+    class="fixed right-0 top-0 h-full w-full lg:w-96 glass z-50 transform translate-x-full transition-transform duration-300">
+    <div class="flex flex-col h-full">
+      <div class="p-6 border-b border-white/10">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 flex items-center justify-center float">
+              <span class="text-2xl">🤖</span>
+            </div>
+            <div>
+              <h3 class="text-white font-bold text-lg">AI Assistant</h3>
+              <p class="text-gray-400 text-xs">Powered by Smart ERP</p>
+            </div>
+          </div>
+          <button onclick="toggleAI()" class="text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <!-- Messages here -->
+      </div>
+
+      <div class="p-6 border-t border-white/10">
+        <div class="flex gap-3">
+          <input id="aiInput" type="text" placeholder="Ask me anything..."
+            class="flex-1 glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <button id="aiSend"
+            class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Modal -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div id="logoutModal" class="modal-content p-6 text-center">
+      <h3 class="text-xl font-bold text-white mb-4">Confirm Logout</h3>
+      <p class="text-gray-400 mb-6">Are you sure you want to logout?</p>
+      <div class="flex gap-3">
+        <button onclick="hideModal()" class="flex-1 px-6 py-3 rounded-xl text-white hover:bg-white/10">Cancel</button>
+        <button onclick="performLogout()"
+          class="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // State
+    let notificationsVisible = false;
+    let profileDropdownVisible = false;
+
+    // Init
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+      const user = MyIEC.getUser();
+      if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+
+      initCharts();
+      setupEventListeners();
+
+      // Load Data
+      try {
+        const profile = await MyIEC.api('/auth/me');
+        document.getElementById('navName').textContent = profile.data.name || profile.data.email;
+        document.getElementById('navNameHeader').textContent = profile.data.name || profile.data.email;
+
+        const analytics = await MyIEC.api('/analytics/dashboard');
+        const d = analytics.data;
+        document.getElementById('statStudents').textContent = d.studentsCount || 0;
+        document.getElementById('statFaculty').textContent = d.facultyCount || 0;
+        document.getElementById('statDefaulters').textContent = d.attendanceDefaultersCount || 0;
+        document.getElementById('statFeeOverdue').textContent = d.feeOverdueCount || 0;
+      } catch (e) {
+        console.error('Data load error:', e.message);
+      }
+    });
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    function toggleAI() { document.getElementById('aiPanel').classList.toggle('translate-x-full'); }
+    function toggleNotifications() { document.getElementById('notificationsDropdown').classList.toggle('show'); }
+    function toggleProfileDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
+    function hideModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+    function showModal(id) { document.getElementById('modalOverlay').classList.add('active'); }
+    function performLogout() { MyIEC.logout(); }
+
+    function initCharts() {
+      const ctx = document.getElementById('attendanceChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            datasets: [{
+              label: 'Attendance %',
+              data: [92, 95, 93, 96, 94],
+              borderColor: '#8b5cf6',
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { min: 80, max: 100, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }
+          }
+        });
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('aiInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const chat = document.getElementById('chatMessages');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-message flex justify-end';
+      userDiv.innerHTML = `<div class="bg-purple-600 rounded-xl p-3 text-white text-sm">${msg}</div>`;
+      chat.appendChild(userDiv);
+      input.value = '';
+
+      try {
+        const res = await MyIEC.api('/ai/chat', { method: 'POST', body: { message: msg } });
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'chat-message';
+        aiDiv.innerHTML = `<div class="glass rounded-xl p-3 text-white text-sm">${res.data.reply}</div>`;
+        chat.appendChild(aiDiv);
+      } catch (e) {
+        console.error('AI Error:', e.message);
+      }
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function setupEventListeners() {
+      document.getElementById('aiSend').onclick = sendMessage;
+      document.getElementById('aiInput').onkeypress = (e) => e.key === 'Enter' && sendMessage();
+      document.getElementById('btnLogout').onclick = (e) => { e.preventDefault(); showModal('logout'); };
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fee Status - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="student-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="student-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Fee Status</h1>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Type</th><th class="p-3">Amount</th><th class="p-3">Due Date</th><th class="p-3">Status</th></tr>
+        </thead>
+        <tbody id="feeList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">No fee records.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'student') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/fees?studentId=' + user.id);
+        var list = r.data || [];
+        var tbody = document.getElementById('feeList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { empty.classList.remove('hidden'); return; }
+        tbody.innerHTML = list.map(function(f) {
+          var statusClass = f.status === 'overdue' ? 'text-red-600' : f.status === 'pending' ? 'text-amber-600' : 'text-emerald-600';
+          return '<tr class="border-t border-slate-100"><td class="p-3">' + (f.type || '') + '</td><td class="p-3">₹' + (f.amount || 0) + '</td><td class="p-3">' + (f.dueDate ? new Date(f.dueDate).toLocaleDateString() : '') + '</td><td class="p-3 ' + statusClass + '">' + (f.status || '') + '</td></tr>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('feeList').innerHTML = '<tr><td class="p-4 text-red-600" colspan="4">' + e.message + '</td></tr>';
+      }
+    })();
+  </script>
+</body>
+</html>

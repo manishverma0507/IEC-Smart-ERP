@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Analytics - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="admin-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">System Analytics</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="analyticsCards">
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Total Users</p>
+        <p id="statUsers" class="text-2xl font-bold text-cyan-600">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Students</p>
+        <p id="statStudents" class="text-2xl font-bold text-emerald-600">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Faculty</p>
+        <p id="statFaculty" class="text-2xl font-bold text-violet-600">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Fee Overdue</p>
+        <p id="statFeeOverdue" class="text-2xl font-bold text-amber-600">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Att. Defaulters</p>
+        <p id="statDefaulters" class="text-2xl font-bold text-red-600">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 border border-slate-200">
+        <p class="text-slate-500 text-sm">Notices</p>
+        <p id="statNotices" class="text-2xl font-bold text-slate-700">—</p>
+      </div>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/analytics/dashboard');
+        var d = r.data;
+        document.getElementById('statUsers').textContent = d.usersCount != null ? d.usersCount : '—';
+        document.getElementById('statStudents').textContent = d.studentsCount != null ? d.studentsCount : '—';
+        document.getElementById('statFaculty').textContent = d.facultyCount != null ? d.facultyCount : '—';
+        document.getElementById('statFeeOverdue').textContent = d.feeOverdueCount != null ? d.feeOverdueCount : '—';
+        document.getElementById('statDefaulters').textContent = d.attendanceDefaultersCount != null ? d.attendanceDefaultersCount : '—';
+        document.getElementById('statNotices').textContent = d.noticesCount != null ? d.noticesCount : '—';
+      } catch (e) {
+        document.getElementById('analyticsCards').innerHTML = '<p class="text-red-600 col-span-full">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

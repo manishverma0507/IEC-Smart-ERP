@@ -1,0 +1,36 @@
+{
+  "name": "myiec-erp",
+  "version": "1.0.0",
+  "description": "MyIEC ERP - IEC College of Engineering & Technology - Scalable Web ERP with AI Assistant",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "seed": "node server/seed-fresh.js",
+    "test-login": "node server/test-login.js",
+    "test": "jest --coverage"
+  },
+  "keywords": ["erp", "education", "iec", "mongodb", "express", "jwt"],
+  "author": "IEC College",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "mongoose-encryption": "^2.0.2",
+    "morgan": "^1.10.0",
+    "openai": "^4.24.1",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

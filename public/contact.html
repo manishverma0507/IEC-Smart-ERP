@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact & Support — IEC Smart ERP</title>
+
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{
+      --bg-1:#081029;
+      --bg-2:#062244;
+      --accent1:#0B67D0;
+      --accent2:#2A9DF4;
+      --muted:#6B7280;
+      --card-bg: rgba(255,255,255,0.96);
+      --glass: rgba(255,255,255,0.04);
+      --radius-lg:14px;
+      --max-width:1200px;
+    }
+
+    /* Page background / frame */
+    .page-bg{
+      background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color: #0B2A66;
+      min-height: 100vh;
+    }
+
+    /* Card base */
+    .glass-card{
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid rgba(11,34,66,0.06);
+      box-shadow: 0 8px 28px rgba(2,6,23,0.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .glass-card:hover{ transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.12); }
+
+    /* Accent gradient button */
+    .accent-gradient{
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      color: white;
+    }
+
+    /* Focus visible */
+    :focus{ outline: 3px solid rgba(11,103,208,0.14); outline-offset: 2px }
+
+    /* Keep page fixed, allow internal scroll */
+    body, html { height: 100%; }
+    .no-page-scroll { overflow: hidden; }
+
+    /* subtle custom scrollbar (inner panels) */
+    .custom-scroll::-webkit-scrollbar{ width:10px; height:10px; }
+    .custom-scroll::-webkit-scrollbar-track{ background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb{ background: rgba(11,34,66,0.12); border-radius: 8px; }
+    .custom-scroll{ scrollbar-width: thin; scrollbar-color: rgba(11,34,66,0.12) transparent; }
+
+    /* small responsive tweaks for hero icon */
+    .brand-badge{ background: linear-gradient(135deg,var(--accent1),var(--accent2)); }
+  </style>
+</head>
+<body class="page-bg antialiased min-h-screen flex flex-col no-page-scroll">
+
+  <!-- HEADER -->
+  <header class="bg-[rgba(8,12,30,0.4)] backdrop-blur-sm border-b border-[rgba(255,255,255,0.03)] flex-shrink-0">
+    <div class="max-w-[var(--max-width)] mx-auto w-full px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-lg flex items-center justify-center text-white font-bold brand-badge">IEC</div>
+        <div class="leading-tight">
+          <div class="text-white text-base md:text-lg font-semibold">IEC Group of Institutions</div>
+          <div class="text-white/80 text-xs md:text-sm">My IEC — Smart ERP</div>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-3 text-white/90">
+        <a class="px-3 py-2 rounded-md hover:bg-white/5 text-sm font-medium" href="index.html">Home</a>
+        <a class="px-3 py-2 rounded-md hover:bg-white/5 text-sm font-medium" href="#contact">Contact</a>
+        <a class="px-3 py-2 rounded-md hover:bg-white/5 text-sm font-medium" href="#support-form">Support</a>
+        <a class="px-3 py-2 rounded-md hover:bg-white/5 text-sm font-medium" href="#locations">Locations</a>
+      </nav>
+
+      <div class="md:hidden text-white/90 text-xl">☰</div>
+    </div>
+  </header>
+
+  <!-- MAIN: fixed viewport — inner panels scroll individually -->
+  <main class="max-w-[var(--max-width)] w-full mx-auto px-4 md:px-6 py-4 md:py-6 flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 items-stretch overflow-hidden">
+
+    <!-- LEFT: main content (2 cols on lg) -->
+    <section id="contact" class="lg:col-span-2 h-full flex flex-col overflow-hidden">
+      <div class="glass-card p-4 md:p-6 flex flex-col gap-4 h-full custom-scroll overflow-y-auto">
+
+        <!-- Header / CTA -->
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <!-- icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[var(--accent2)]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M21 12.5A8.5 8.5 0 1 0 3 12.5a8.5 8.5 0 0 0 18 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v4l2 2"/>
+              </svg>
+              <h2 class="text-xl md:text-2xl font-extrabold text-[var(--accent1)]">Contact & Support</h2>
+            </div>
+            <p class="mt-2 text-sm md:text-base text-[var(--muted)] max-w-2xl">
+              Reach the right office quickly — Director, Admissions, Registrar, Training & Placement and Grievance Redressal.
+              Use the support form (right) or the contact details below.
+            </p>
+          </div>
+
+          <div class="flex gap-2 md:gap-3 items-center">
+            <a href="mailto:enquiry@ieccollege.com" class="px-3 md:px-4 py-2 rounded-md accent-gradient font-semibold text-sm shadow">Email Us</a>
+            <a href="tel:+918588898412" class="px-3 md:px-4 py-2 rounded-md border border-white/8 text-[var(--accent1)] font-semibold text-sm">Call</a>
+          </div>
+        </div>
+
+        <!-- Campus & Key emails -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          <article class="p-3 md:p-4 rounded-md border border-[rgba(11,34,66,0.04)] bg-white/60">
+            <h3 class="font-semibold text-[var(--accent1)] flex items-center gap-2 text-sm md:text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M3 7l9-4 9 4v10a2 2 0 0 1-2 2h-2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M9 21V9" />
+              </svg>
+              Campus
+            </h3>
+            <address class="mt-2 text-xs md:text-sm not-italic text-[var(--muted)] leading-relaxed">
+              Plot No.:-4, Knowledge Park-1,<br>
+              Institutional Area, Surajpur Kasna Road,<br>
+              Greater Noida, Gautam Budh Nagar,<br>
+              Uttar Pradesh-201310 (India)
+            </address>
+            <div class="mt-3 text-xs md:text-sm text-[var(--muted)]">
+              <div><strong>Website:</strong> <a class="text-[var(--accent1)] font-medium" href="https://www.iec.edu.in" target="_blank" rel="noopener">www.iec.edu.in</a></div>
+              <div class="mt-1"><strong>Toll Free:</strong> <a href="tel:180030008301" class="text-[var(--accent1)] font-medium">1800-3000-8301</a></div>
+            </div>
+          </article>
+
+          <article class="p-3 md:p-4 rounded-md border border-[rgba(11,34,66,0.04)] bg-white/60">
+            <h3 class="font-semibold text-[var(--accent1)] flex items-center gap-2 text-sm md:text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M21 12.5V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5.5" />
+              </svg>
+              Key Emails
+            </h3>
+            <ul class="mt-2 text-xs md:text-sm text-[var(--muted)] space-y-1">
+              <li><strong>General:</strong> <a href="mailto:enquiry@ieccollege.com" class="text-[var(--accent1)] font-medium">enquiry@ieccollege.com</a></li>
+              <li><strong>Director:</strong> <a href="mailto:director@ieccollege.com" class="text-[var(--accent1)] font-medium">director@ieccollege.com</a></li>
+              <li><strong>Admissions:</strong> <a href="mailto:admissions@ieccollege.com" class="text-[var(--accent1)] font-medium">admissions@ieccollege.com</a></li>
+              <li><strong>T&P:</strong> <a href="mailto:tpo@ieccollege.com" class="text-[var(--accent1)] font-medium">tpo@ieccollege.com</a></li>
+              <li><strong>Registrar:</strong> <a href="mailto:registrar@ieccollege.com" class="text-[var(--accent1)] font-medium">registrar@ieccollege.com</a></li>
+              <li><strong>Grievance:</strong> <a href="mailto:complaints@ieccollege.com" class="text-[var(--accent1)] font-medium">complaints@ieccollege.com</a></li>
+            </ul>
+          </article>
+        </div>
+
+        <!-- Staff contacts grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-2">
+          <div class="p-3 md:p-4 glass-card">
+            <h4 class="font-semibold text-[var(--accent1)] text-sm">Admissions Cell</h4>
+            <p class="mt-1 text-xs md:text-sm text-[var(--muted)]">Email: <a href="mailto:admissions@ieccollege.com" class="text-[var(--accent1)] font-medium">admissions@ieccollege.com</a></p>
+            <p class="text-xs md:text-sm text-[var(--muted)] mt-1">Mobile: <a href="tel:+918588898412" class="text-[var(--accent1)] font-medium">+91-8588898412</a></p>
+          </div>
+
+          <div class="p-3 md:p-4 glass-card">
+            <h4 class="font-semibold text-[var(--accent1)] text-sm">Training & Placement</h4>
+            <p class="mt-1 text-xs md:text-sm text-[var(--muted)]">Email: <a href="mailto:tpo@ieccollege.com" class="text-[var(--accent1)] font-medium">tpo@ieccollege.com</a></p>
+            <p class="text-xs md:text-sm text-[var(--muted)] mt-1">Mobile: <a href="tel:+918700323481" class="text-[var(--accent1)] font-medium">+91-8700323481</a></p>
+          </div>
+
+          <div class="p-3 md:p-4 glass-card">
+            <h4 class="font-semibold text-[var(--accent1)] text-sm">Registrar Office</h4>
+            <p class="mt-1 text-xs md:text-sm text-[var(--muted)]">Email: <a href="mailto:registrar@ieccollege.com" class="text-[var(--accent1)] font-medium">registrar@ieccollege.com</a></p>
+            <div class="text-xs md:text-sm text-[var(--muted)] mt-1 space-y-1">
+              <div>Mobile: <a href="tel:+918700322437" class="text-[var(--accent1)]">+91-8700322437</a></div>
+              <div>Alt: <a href="tel:+918588898426" class="text-[var(--accent1)]">+91-8588898426</a></div>
+            </div>
+          </div>
+
+          <div class="p-3 md:p-4 glass-card">
+            <h4 class="font-semibold text-[var(--accent1)] text-sm">Grievance Redressal</h4>
+            <p class="mt-1 text-xs md:text-sm text-[var(--muted)]">Email: <a href="mailto:complaints@ieccollege.com" class="text-[var(--accent1)] font-medium">complaints@ieccollege.com</a></p>
+            <p class="text-xs md:text-sm text-[var(--muted)] mt-1">We aim to respond within 3 working days.</p>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div id="locations" class="glass-card p-3 md:p-4 mt-2">
+          <h4 class="font-semibold text-[var(--accent1)] text-sm md:text-base">Campus Location</h4>
+          <p class="mt-1 text-xs md:text-sm text-[var(--muted)]">Click map to open in Google Maps.</p>
+          <div class="mt-2 w-full h-40 md:h-48 bg-gray-100 rounded-md overflow-hidden">
+            <iframe class="w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.123456789012!2d77.5000000!3d28.4000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIEC%20Group%20of%20Institutions!5e0!3m2!1sen!2sin!4v1699999999999"
+              aria-hidden="false" tabindex="0"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT: quick support + message form -->
+    <aside class="h-full flex flex-col gap-3 md:gap-4 overflow-hidden">
+      <!-- top quick card -->
+      <div class="glass-card p-3 md:p-4">
+        <h4 class="font-semibold text-[var(--accent1)] text-sm md:text-base">Quick Support</h4>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-2">
+          Toll Free: <a href="tel:180030008301" class="text-[var(--accent1)] font-medium">1800-3000-8301</a>
+        </p>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-1">E-Mail: <a href="mailto:enquiry@ieccollege.com" class="text-[var(--accent1)] font-medium">enquiry@ieccollege.com</a></p>
+
+        <div class="mt-3 flex flex-wrap gap-2">
+          <a href="mailto:admissions@ieccollege.com" class="text-xs md:text-sm px-3 py-1.5 rounded-md border border-gray-200">Admissions</a>
+          <a href="mailto:tpo@ieccollege.com" class="text-xs md:text-sm px-3 py-1.5 rounded-md border border-gray-200">T&P</a>
+        </div>
+      </div>
+
+      <!-- Send message (primary action) -->
+      <div id="support-form" class="glass-card p-3 md:p-4 flex-1 overflow-y-auto custom-scroll">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm md:text-base font-semibold text-[var(--accent1)]">Send us a message</h3>
+          <span class="text-[10px] md:text-xs text-[var(--muted)]">Response within 3 business days</span>
+        </div>
+
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-2">Describe your query and we will forward it to the right department.</p>
+
+        <form id="contactForm" class="mt-3 grid grid-cols-1 gap-3" novalidate>
+          <div>
+            <label class="block text-xs md:text-sm font-medium text-[var(--muted)]">Full name</label>
+            <input id="fullName" name="name" type="text" required
+              class="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-0 focus:border-[var(--accent1)]" placeholder="Your full name">
+          </div>
+
+          <div>
+            <label class="block text-xs md:text-sm font-medium text-[var(--muted)]">Email</label>
+            <input id="email" name="email" type="email" required
+              class="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-0 focus:border-[var(--accent1)]" placeholder="you@example.com">
+          </div>
+
+          <div>
+            <label class="block text-xs md:text-sm font-medium text-[var(--muted)]">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel"
+              class="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-0 focus:border-[var(--accent1)]" placeholder="+91...">
+          </div>
+
+          <div>
+            <label class="block text-xs md:text-sm font-medium text-[var(--muted)]">Department</label>
+            <select id="department" name="department"
+              class="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-0 focus:border-[var(--accent1)]">
+              <option value="general">General Enquiry</option>
+              <option value="admissions">Admissions</option>
+              <option value="tpo">Training & Placement</option>
+              <option value="registrar">Registrar</option>
+              <option value="grievance">Grievance</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs md:text-sm font-medium text-[var(--muted)]">Message</label>
+            <textarea id="message" name="message" rows="4" required
+              class="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-0 focus:border-[var(--accent1)]" placeholder="Tell us about your issue or question"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between gap-2">
+            <div id="contactStatus" class="text-xs text-[var(--muted)]"></div>
+            <div class="flex gap-2">
+              <button id="submitContact" type="submit" class="px-3 py-1.5 rounded-md accent-gradient font-semibold text-sm">Send</button>
+              <button id="resetContact" type="button" class="px-3 py-1.5 rounded-md border border-gray-200 text-[var(--muted)] text-sm">Reset</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Office hours -->
+      <div class="glass-card p-3 md:p-4">
+        <h4 class="font-semibold text-[var(--accent1)] text-sm md:text-base">Office Hours</h4>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-2">Mon — Fri: 09:30 — 17:30</p>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-1">Sat: 10:00 — 14:00</p>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-1">Sun: Closed</p>
+      </div>
+
+      <!-- Emergency / final -->
+      <div class="glass-card p-3 md:p-4 text-center mt-auto">
+        <h4 class="font-semibold text-[var(--accent1)] text-sm md:text-base">Emergency</h4>
+        <p class="text-xs md:text-sm text-[var(--muted)] mt-2">
+          For urgent campus issues call admissions or email <a href="mailto:enquiry@ieccollege.com" class="text-[var(--accent1)]">enquiry@ieccollege.com</a>
+        </p>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-[var(--max-width)] w-full mx-auto px-4 md:px-6 py-3 md:py-4 text-[12px] text-white/90 flex-shrink-0">
+    <div class="flex flex-col md:flex-row md:justify-between gap-2 items-center">
+      <div>© 2025 IEC Group of Institutions — All rights reserved.</div>
+      <div class="flex gap-3 md:gap-4 text-xs md:text-sm">
+        <a class="hover:underline" href="#">Privacy</a>
+        <a class="hover:underline" href="#">Terms</a>
+        <a class="hover:underline" href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const contactForm = document.getElementById('contactForm');
+      const submitContact = document.getElementById('submitContact');
+      const resetContact = document.getElementById('resetContact');
+      const contactStatus = document.getElementById('contactStatus');
+
+      function setStatus(msg, type='neutral'){
+        contactStatus.textContent = msg;
+        contactStatus.className = type === 'error' ? 'text-xs text-red-600' : type === 'success' ? 'text-xs text-green-700' : 'text-xs text-[var(--muted)]';
+      }
+
+      function fetchWithTimeout(url, options={}, timeout=7000){
+        return new Promise((resolve, reject) => {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), timeout);
+          fetch(url, Object.assign({}, options, { signal: controller.signal }))
+            .then(res => { clearTimeout(id); resolve(res); })
+            .catch(err => { clearTimeout(id); reject(err); });
+        });
+      }
+
+      contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setStatus('', 'neutral');
+
+        const name = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const dept = document.getElementById('department').value;
+        const message = document.getElementById('message').value.trim();
+
+        if (!name || !email || !message){
+          setStatus('Please fill name, email and message.', 'error');
+          return;
+        }
+        const re = /^\S+@\S+\.\S+$/;
+        if (!re.test(email)){
+          setStatus('Please enter a valid email address.', 'error');
+          return;
+        }
+
+        submitContact.disabled = true;
+        submitContact.textContent = 'Sending...';
+
+        const payload = { name, email, phone, dept, message, source: 'IEC Smart ERP — Contact page' };
+
+        try{
+          // Replace /api/contact with your server endpoint
+          await fetchWithTimeout('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }, 7000);
+
+          setStatus('Message sent. We will respond within 3 working days.', 'success');
+          contactForm.reset();
+        }catch(err){
+          console.warn('Contact submit failed (demo).', err);
+          // Fallback: open mail client
+          const subject = encodeURIComponent('IEC Portal Support - ' + dept);
+          const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + '\n\nMessage:\n' + message);
+          const mailto = `mailto:enquiry@ieccollege.com?subject=${subject}&body=${body}`;
+          setStatus('Unable to send via server. Opening your email client as fallback.', 'error');
+          window.location.href = mailto;
+        }finally{
+          submitContact.disabled = false;
+          submitContact.textContent = 'Send';
+        }
+      });
+
+      resetContact.addEventListener('click', () => {
+        contactForm.reset();
+        setStatus('', 'neutral');
+      });
+    })();
+  </script>
+</body>
+</html>

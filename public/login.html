@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Version: 2.0 - Updated: 2026-01-31 - Cache Buster -->
+  <title>My IEC - Smart ERP Login</title>
+  <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #062244;
+      --accent1: #0B67D0;
+      --accent2: #2A9DF4;
+      --muted: #6B7280;
+      --card: #FFFFFF;
+      --glass: rgba(255, 255, 255, 0.06);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --max-width: 1400px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      color: #0B2A66;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 0;
+      overflow-x: hidden;
+      line-height: 1.35;
+    }
+
+    .bg-decoration {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.06;
+      pointer-events: none;
+      filter: blur(18px)
+    }
+
+    .bg-decoration.g1 {
+      width: 560px;
+      height: 560px;
+      background: radial-gradient(circle, var(--accent1), transparent);
+      left: -220px;
+      top: -220px
+    }
+
+    .bg-decoration.g2 {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, var(--accent2), transparent);
+      right: -180px;
+      bottom: -160px
+    }
+
+    .bg-decoration.g3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #1e40af, transparent);
+      left: 50%;
+      top: 40%;
+      transform: translate(-30%, -10%)
+    }
+
+    header.header {
+      position: relative;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .header-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center
+    }
+
+    .brand .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #fff;
+      font-size: 20px
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: -0.2px
+    }
+
+    .brand p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 4px
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 10px
+    }
+
+    .header-nav a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600
+    }
+
+    .header-nav a:hover {
+      background: rgba(255, 255, 255, 0.04)
+    }
+
+    .main-container {
+      max-width: var(--max-width);
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 36px;
+      padding: 0 24px;
+      align-items: start;
+      z-index: 10;
+      position: relative
+    }
+
+    @media (max-width:1100px) {
+      .main-container {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.5);
+      border: 1px solid rgba(11, 34, 66, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-top {
+      text-align: center;
+      margin-bottom: 18px
+    }
+
+    .login-top h2 {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent1);
+      margin-bottom: 6px
+    }
+
+    .login-top p {
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    form#loginForm {
+      margin-top: 8px
+    }
+
+    .role-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px
+    }
+
+    .role {
+      flex: 1;
+      display: flex
+    }
+
+    .role input {
+      display: none
+    }
+
+    .role label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #F6FBFF;
+      border: 1px solid #E6F0FF;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      flex: 1;
+      text-align: center
+    }
+
+    .role input:checked+label {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 8px 20px rgba(11, 103, 208, 0.12)
+    }
+
+    .form-group {
+      margin-bottom: 14px
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      color: var(--accent1);
+      margin-bottom: 8px;
+      font-size: 13px
+    }
+
+    .input-wrapper {
+      position: relative
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.8;
+      font-size: 14px
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border-radius: 10px;
+      border: 1.5px solid #E6F0FF;
+      background: #F6FBFF;
+      font-weight: 600
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent1);
+      box-shadow: 0 8px 20px rgba(11, 103, 208, 0.06)
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .password-toggle:hover {
+      background: rgba(11, 103, 208, 0.06);
+      color: var(--accent1)
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 12px 0 18px;
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .submit-row {
+      margin-top: 6px
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(11, 103, 208, 0.18)
+    }
+
+    .submit-btn[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed
+    }
+
+    .form-message {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 700;
+      display: none
+    }
+
+    .form-message.show {
+      display: block
+    }
+
+    .form-message.error {
+      background: #FEE2E2;
+      color: #9b1d1d;
+      border: 1px solid #fca5a5
+    }
+
+    .form-message.success {
+      background: #D1FAE5;
+      color: #065f46;
+      border: 1px solid #6ee7b7
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E6F0FF
+    }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px
+    }
+
+    .quick-link {
+      padding: 10px;
+      border-radius: 10px;
+      background: #F6FBFF;
+      border: 1px solid #E6F0FF;
+      text-align: center;
+      font-weight: 800;
+      color: var(--accent1);
+      text-decoration: none
+    }
+
+    .quick-link:hover {
+      background: rgba(11, 103, 208, 0.08);
+      color: #0B67D0
+    }
+
+    .info-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08)
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px
+    }
+
+    .hero h1 {
+      font-size: 26px;
+      margin-bottom: 6px;
+      color: #0B2A66
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px
+    }
+
+    .stat-item {
+      background: linear-gradient(135deg, #F6FBFF, #E6F0FF);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center
+    }
+
+    .stat-item strong {
+      display: block;
+      font-size: 18px;
+      color: var(--accent1);
+      font-weight: 900
+    }
+
+    .stat-item small {
+      display: block;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    .announcement-item {
+      background: #FFF9E6;
+      border-left: 4px solid #F59E0B;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px
+    }
+
+    .announcement-item strong {
+      display: block;
+      color: var(--accent1);
+      font-weight: 800
+    }
+
+    .announcement-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px
+    }
+
+    footer.footer {
+      margin-top: 30px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 18px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.85)
+    }
+
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px
+    }
+
+    .footer-inner a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 700
+    }
+
+    @media (max-width:1100px) {
+      .header-nav {
+        display: none
+      }
+
+      .bg-decoration.g3 {
+        display: none
+      }
+    }
+
+    @media (max-width:640px) {
+      .main-container {
+        padding: 0 14px
+      }
+
+      .role-selector {
+        flex-direction: column
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr
+      }
+
+      .quick-links {
+        grid-template-columns: 1fr
+      }
+
+      .hero h1 {
+        font-size: 20px
+      }
+    }
+
+    input:focus,
+    button:focus,
+    a:focus {
+      outline: 3px solid rgba(11, 103, 208, 0.12);
+      outline-offset: 2px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-decoration g1" aria-hidden="true"></div>
+  <div class="bg-decoration g2" aria-hidden="true"></div>
+  <div class="bg-decoration g3" aria-hidden="true"></div>
+
+  <header class="header" role="banner">
+    <div class="header-content">
+      <a href="index.html" class="brand" style="text-decoration:none;color:inherit">
+        <div class="logo">IEC</div>
+        <div>
+          <h1>IEC GROUP OF INSTITUTIONS</h1>
+          <p>MY IEC - SMART ERP</p>
+        </div>
+      </a>
+
+      <nav class="header-nav" aria-label="Header navigation">
+        <a href="index.html" title="Home">Home</a>
+        <a href="about.html" title="About">About</a>
+        <a href="contact.html" title="Contact">Contact</a>
+        <a href="help.html" title="Help">Help</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-container" role="main" aria-labelledby="mainHeading">
+    <section class="login-card" aria-labelledby="loginTitle">
+      <div class="login-top">
+        <h2 id="loginTitle">Sign in to your portal</h2>
+        <p>Students, faculty and admins — secure access to all services.</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="role-selector" role="radiogroup" aria-label="Select role">
+          <div class="role">
+            <input type="radio" id="role-student" name="role" value="student" checked>
+            <label for="role-student">👨‍🎓 Student</label>
+          </div>
+          <div class="role">
+            <input type="radio" id="role-faculty" name="role" value="faculty">
+            <label for="role-faculty">👩‍🏫 Faculty</label>
+          </div>
+          <div class="role">
+            <input type="radio" id="role-admin" name="role" value="admin">
+            <label for="role-admin">⚙️ Admin</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="username">Email / College ID / Roll Number</label>
+          <div class="input-wrapper">
+            <span class="input-icon" aria-hidden="true">🏷️</span>
+            <input id="username" name="username" type="text" autocomplete="username"
+              placeholder="Enter your email or Roll Number" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon" aria-hidden="true">🔒</span>
+            <input id="password" name="password" type="password" autocomplete="current-password"
+              placeholder="Enter your password" required aria-describedby="pwHelp">
+            <button type="button" class="password-toggle" id="passwordToggle" aria-pressed="false"
+              aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="remember"><input id="remember" type="checkbox"> Remember me</label>
+          <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="submit-btn" id="submitBtn" aria-live="polite">
+            <span id="btnText">LOGIN TO PORTAL</span>
+          </button>
+        </div>
+
+        <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="divider" aria-hidden="true">Need Help?</div>
+
+      <div class="quick-links">
+        <a href="mailto:support@iec.edu.in?subject=Portal%20Support" class="quick-link" id="supportLink">📞 Support</a>
+        <a href="#" class="quick-link">📝 Register</a>
+        <a href="#" class="quick-link">📚 Guide</a>
+        <a href="index.html" class="quick-link">🏠 Home</a>
+      </div>
+    </section>
+
+    <aside class="info-column" aria-labelledby="portalInfo">
+      <div class="card hero" id="portalInfo">
+        <div>
+          <h1>Welcome to IEC Smart ERP</h1>
+          <p>Your unified student portal for attendance, exams, fees and library services.</p>
+          <p style="font-size:13px;color:var(--muted);margin-top:8px">Single sign-on, role-based dashboards and secure
+            transactions.</p>
+        </div>
+        <div style="text-align:right">
+          <small style="color:var(--muted);font-weight:700">Updated: Dec 09, 2025</small>
+        </div>
+      </div>
+
+      <div class="card" aria-labelledby="statsHeading">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 id="statsHeading" style="margin:0;font-size:16px;color:#0B2A66">Campus at a glance</h3>
+          <a href="#" id="viewReportsLink" style="font-weight:700;color:var(--accent1);text-decoration:none">View
+            reports</a>
+        </div>
+        <div class="stats-grid" role="list">
+          <div class="stat-item" role="listitem"><strong>15K+</strong><small>Students</small></div>
+          <div class="stat-item" role="listitem"><strong>500+</strong><small>Faculty</small></div>
+          <div class="stat-item" role="listitem"><strong>5+</strong><small>Programs</small></div>
+        </div>
+      </div>
+
+      <div class="card" aria-labelledby="announceHeading">
+        <h3 id="announceHeading" style="margin:0 0 8px 0;font-size:16px;color:#0B2A66">📢 Latest Announcements</h3>
+        <div>
+          <div class="announcement-item">
+            <strong>Mid-Term Exam Schedule Released</strong>
+            <span>Exams start on December 15, 2025. Check the portal for details.</span>
+          </div>
+          <div class="announcement-item">
+            <strong>Fee Payment Deadline Extended</strong>
+            <span>Semester fee deadline extended to December 31, 2025.</span>
+          </div>
+          <div class="announcement-item">
+            <strong>Winter Break</strong>
+            <span>College closed from Dec 24 to Jan 05. Online services remain available.</span>
+          </div>
+          <div class="announcement-item">
+            <strong>Result Announcements</strong>
+            <span>Results for the semester will be published on January 10, 2026. Check the portal for updates.</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div style="color:rgba(255,255,255,0.9)">© 2025 IEC Group of Institutions — All rights reserved.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Backend API URL
+    const API_ENDPOINT = 'http://localhost:5000/api/auth/login';
+
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const formMessage = document.getElementById('formMessage');
+
+    console.log('🔑 Login page initialized');
+
+    passwordToggle.addEventListener('click', function () {
+      const wasHidden = passwordInput.type === 'password';
+      passwordInput.type = wasHidden ? 'text' : 'password';
+      passwordToggle.textContent = wasHidden ? 'Hide' : 'Show';
+      passwordToggle.setAttribute('aria-pressed', String(wasHidden));
+    });
+
+    function showMessage(message, type) {
+      formMessage.textContent = message;
+      formMessage.className = 'form-message ' + (type === 'success' ? 'success show' : 'error show');
+      console.log('💬 Message:', message, '(', type, ')');
+    }
+    function clearMessage() {
+      formMessage.className = 'form-message';
+      formMessage.textContent = '';
+    }
+
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      console.log('🔐 LOGIN FORM SUBMITTED');
+      clearMessage();
+
+      var username = (document.getElementById('username').value || '').trim();
+      var password = (document.getElementById('password').value || '').trim();
+
+      console.log('📊 Login attempt with:', { username, passwordLength: password.length });
+
+      if (!username) { 
+        showMessage('Please enter your Email / College ID / Roll Number'); 
+        document.getElementById('username').focus(); 
+        return; 
+      }
+      if (!password) { 
+        showMessage('Please enter your password'); 
+        passwordInput.focus(); 
+        return; 
+      }
+
+      submitBtn.disabled = true;
+      var origText = btnText.textContent;
+      btnText.textContent = 'LOGGING IN...';
+
+      try {
+        // Backend accepts email field but also supports roll number
+        // The backend will try email first, then roll number if not found by email
+        var payload = { email: username, password: password };
+        console.log('🚀 Sending POST request to:', API_ENDPOINT);
+        console.log('📦 Payload:', { email: username, passwordLength: password.length });
+
+        var res = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        console.log('📨 Response status:', res.status);
+        var data = await res.json();
+        console.log('📦 Response data:', data);
+
+        if (!res.ok || !data.success) {
+          console.log('❌ Login failed');
+          showMessage(data.message || 'Login failed. Check your credentials.');
+          submitBtn.disabled = false;
+          btnText.textContent = origText;
+          return;
+        }
+
+        console.log('✅ Login successful!');
+        console.log('👤 User:', data.data.user);
+
+        // Store authentication data
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('userRole', data.data.user.role);
+        localStorage.setItem('userName', data.data.user.name);
+        localStorage.setItem('userEmail', data.data.user.email);
+        localStorage.setItem('userId', data.data.user.id);
+        
+        // Store additional user data for dashboard
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+
+        console.log('💾 User data stored in localStorage');
+        console.log('📍 Dashboard URL:', data.data.dashboardUrl);
+
+        showMessage('Login successful! Redirecting...', 'success');
+
+        // Redirect based on role
+        var dashboardUrl = 'student-dashboard.html'; // default
+        if (data.data.user.role === 'faculty') {
+          dashboardUrl = 'faculty-dashboard.html';
+        } else if (data.data.user.role === 'admin') {
+          dashboardUrl = 'admin-dashboard.html';
+        }
+
+        console.log('🔀 Redirecting to:', dashboardUrl);
+
+        setTimeout(function () {
+          window.location.href = dashboardUrl;
+        }, 800);
+      } catch (err) {
+        console.error('❌ LOGIN ERROR:', err);
+        showMessage('Network error. Make sure backend server is running on port 5000.');
+        submitBtn.disabled = false;
+        btnText.textContent = origText;
+      }
+    });
+
+    document.getElementById('username').addEventListener('input', clearMessage);
+    document.getElementById('password').addEventListener('input', clearMessage);
+
+    var supportLink = document.getElementById('supportLink');
+    if (supportLink) {
+      supportLink.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        window.location.href = 'mailto:support@iec.edu.in?subject=Portal%20Support%20Request';
+      });
+    }
+  </script>
+</body>
+
+</html>

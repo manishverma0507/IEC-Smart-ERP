@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marks & Results - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="student-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="student-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Marks & Results</h1>
+    <div class="bg-white rounded-xl shadow p-4 mb-4">
+      <p class="text-slate-600 text-sm">SGPA / CGPA (auto-calculated from results).</p>
+      <p id="cgpaText" class="font-semibold text-emerald-600 mt-1">Loading...</p>
+    </div>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Session</th><th class="p-3">Subject</th><th class="p-3">Type</th><th class="p-3">Marks</th><th class="p-3">Grade</th></tr>
+        </thead>
+        <tbody id="resultList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">No results.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'student') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var cgpaRes = await MyIEC.api('/exams/results/cgpa');
+        var cgpa = cgpaRes.data && cgpaRes.data.cgpa != null ? cgpaRes.data.cgpa : null;
+        document.getElementById('cgpaText').textContent = 'CGPA: ' + (cgpa != null ? cgpa : '—');
+        var listRes = await MyIEC.api('/exams/results?limit=50');
+        var list = listRes.data || [];
+        var tbody = document.getElementById('resultList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { empty.classList.remove('hidden'); return; }
+        tbody.innerHTML = list.map(function(r) {
+          return '<tr class="border-t border-slate-100"><td class="p-3">' + (r.examSession || '') + '</td><td class="p-3">' + (r.subject && r.subject.code ? r.subject.code : (r.subject || '')) + '</td><td class="p-3">' + (r.examType || '') + '</td><td class="p-3">' + (r.marksObtained + '/' + r.maxMarks) + '</td><td class="p-3">' + (r.grade || '') + '</td></tr>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('cgpaText').textContent = 'Error: ' + e.message;
+      }
+    })();
+  </script>
+</body>
+</html>

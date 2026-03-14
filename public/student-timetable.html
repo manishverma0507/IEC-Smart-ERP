@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Timetable - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="student-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="student-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Timetable</h1>
+    <div id="ttList" class="space-y-4">Loading...</div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'student') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/timetable?branch=' + encodeURIComponent(user.branch || '') + '&semester=' + (user.semester || ''));
+        var list = r.data || [];
+        var container = document.getElementById('ttList');
+        if (!list.length) { container.innerHTML = '<p class="text-slate-500">No timetables.</p>'; return; }
+        container.innerHTML = list.map(function(tt) {
+          var slots = (tt.slots || []).map(function(s) {
+            return '<tr class="border-t border-slate-100"><td class="p-2">' + (s.day || '') + '</td><td class="p-2">' + (s.startTime + '-' + s.endTime) + '</td><td class="p-2">' + (s.subject && s.subject.code ? s.subject.code : (s.subject || '')) + '</td><td class="p-2">' + (s.room || '') + '</td></tr>';
+          }).join('');
+          return '<div class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-slate-800 mb-2">' + (tt.name || '') + ' · ' + (tt.session || '') + '</h3><table class="w-full text-left"><thead class="bg-slate-100"><tr><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Subject</th><th class="p-2">Room</th></tr></thead><tbody>' + slots + '</tbody></table></div>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('ttList').innerHTML = '<p class="text-red-600">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notices - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 font-['Inter']">
+  <nav class="border-b border-slate-700 bg-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <button onclick="MyIEC.logout()" class="px-3 py-1.5 rounded bg-slate-700 text-slate-300 hover:bg-slate-600 text-sm">Logout</button>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">Notices & Announcements</h1>
+    <div id="noticeList" class="space-y-4">Loading...</div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    (async () => {
+      try {
+        const res = await MyIEC.api('/notices?limit=20');
+        const list = res.data || [];
+        document.getElementById('noticeList').innerHTML = list.length ? list.map(n => '<div class="bg-slate-800/60 border border-slate-700 rounded-xl p-4"><h3 class="font-semibold text-cyan-400">' + (n.title || '') + '</h3><p class="text-slate-400 text-sm mt-1">' + (n.summary || n.body?.slice(0, 200) || '') + '</p><p class="text-slate-500 text-xs mt-2">' + (n.category || '') + ' · ' + (n.publishedAt ? new Date(n.publishedAt).toLocaleDateString() : '') + '</p></div>').join('') : '<p class="text-slate-400">No notices.</p>';
+      } catch (e) {
+        document.getElementById('noticeList').innerHTML = '<p class="text-red-400">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

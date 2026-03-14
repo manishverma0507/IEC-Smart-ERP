@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IEC — Modern Smart ERP Portal</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,0.95);
+      --card-hover: rgba(255,255,255,1);
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --glass-border: rgba(255,255,255,0.3);
+    }
+
+    html,body { 
+      height:100%; 
+      scroll-behavior: smooth; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body{
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Original animated gradient background */
+    .bg-animated {
+      background: linear-gradient(180deg,#0f172a,#062244);
+      background-size: 300% 300%;
+      animation: bgShift 14s ease infinite;
+    }
+    
+    @keyframes bgShift{
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+
+    /* Premium glass cards with vibrant colors */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3), 0 0 80px rgba(59, 130, 246, 0.1);
+    }
+
+    .glass-card-hover {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card-hover:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25));
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    /* Text with perfect contrast - Modern white/light colors */
+    .text-contrast {
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(79, 99, 255, 0.3), 0 0 20px rgba(111, 178, 255, 0.2);
+      font-weight: 800;
+    }
+
+    .text-contrast-secondary {
+      color: #e0e7ff;
+      text-shadow: 0 1px 4px rgba(79, 99, 255, 0.2);
+      font-weight: 400;
+    }
+
+    /* Gradient text effect - Vibrant blue to cyan */
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+    
+    /* Subheading gradient */
+    .gradient-text-sub {
+      background: linear-gradient(135deg, #60a5fa 0%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+    }
+
+    /* Enhanced button with vibrant colors */
+    .btn-modern {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-modern::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .btn-modern:hover::before {
+      left: 100%;
+    }
+    
+    .btn-modern:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 60px rgba(139, 92, 246, 0.8), 0 0 100px rgba(59, 130, 246, 0.5);
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Badge with vibrant glow */
+    .badge-glow {
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+    
+    .badge-glow:hover {
+      box-shadow: 0 0 40px rgba(139, 92, 246, 1), 0 0 80px rgba(59, 130, 246, 0.6);
+      transform: scale(1.05);
+      border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: reveal 0.8s ease forwards;
+    }
+    
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .reveal:nth-child(1) { animation-delay: 0.1s; }
+    .reveal:nth-child(2) { animation-delay: 0.2s; }
+    .reveal:nth-child(3) { animation-delay: 0.3s; }
+    .reveal:nth-child(4) { animation-delay: 0.4s; }
+    .reveal:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Image hover effect */
+    .image-container {
+      overflow: hidden;
+      border-radius: 20px;
+      position: relative;
+    }
+    
+    .image-container img {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .image-container:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Info card with icon - Vibrant gradient */
+    .info-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Responsive heading */
+    .heading-large {
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .glass-card {
+        backdrop-filter: blur(15px);
+      }
+      
+      .heading-large {
+        font-size: clamp(1.75rem, 8vw, 3rem);
+      }
+    }
+
+    /* Pulse animation for badge */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-animated">
+
+  <div class="relative min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    
+    <!-- Floating Logo -->
+    <div class="fixed right-4 sm:right-8 top-4 sm:top-8 z-50 reveal">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 glass-card rounded-2xl p-2 sm:p-3 shadow-2xl">
+        <img src="logo.jpg" alt="IEC logo" class="w-full h-full object-contain rounded-xl" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <div class="max-w-7xl w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+
+        <!-- LEFT: Content Section -->
+        <div class="space-y-6 sm:space-y-8 px-4 sm:px-0">
+          
+          <!-- Badge -->
+         
+
+          <!-- Main Heading -->
+          <div class="reveal">
+            <h1 class="heading-large">
+              
+              <span class="block text-contrast tracking-tight">IEC GROUP OF INSTITUTIONS</span>
+            </h1>
+          </div>
+
+          <!-- Subheading -->
+          <div class="reveal">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl gradient-text-sub tracking-tight">
+              MY IEC — SMART ERP
+            </h2>
+          </div>
+
+          <!-- Description -->
+          <div class="reveal">
+            <p class="text-base sm:text-lg lg:text-xl text-contrast-secondary max-w-2xl leading-relaxed font-light">
+              Seamlessly manage academics, administration and campus life with an integrated ERP built for modern education - attendance, exams, finance, and intelligent AI assistant all in one place.
+            </p>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="reveal">
+            <a href="login.html" class="btn-modern text-white font-bold text-base sm:text-lg px-8 py-4 rounded-full inline-flex items-center gap-3 group">
+              <span>Visit Portal</span>
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Info Cards -->
+          <div class="reveal grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card glass-card-hover rounded-2xl p-5 sm:p-6">
+              <div class="info-card-icon">👨‍🎓</div>
+              <h3 class="text-white font-bold text-lg mb-2">For Students & Faculty</h3>
+              <p class="text-gray-200 text-sm leading-relaxed">
+                Attendance, assignments, timetable and one-click access to academic records.
+              </p>
+            </div>
+            
+            <div class="glass-card glass-card-hover rounded-2xl p-5 sm:p-6">
+              <div class="info-card-icon">🧑‍🏫</div>
+              <h3 class="text-white font-bold text-lg mb-2">For Admins</h3>
+              <p class="text-gray-200 text-sm leading-relaxed">
+                Simplify workflows for exams, fees, HR and campus operations.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bottom Info Section -->
+          <div class="reveal">
+            <div class="glass-card rounded-2xl p-5 sm:p-6 border-2 border-purple-400/50">
+              <h3 class="text-white font-bold text-lg flex items-center gap-2 mb-3">
+                <span class="w-2 h-2 bg-cyan-400 rounded-full pulse"></span>
+                Get More Information About MY IEC
+              </h3>
+              <p class="text-gray-200 text-sm mb-4">
+                Visit the official IEC website for details, updates, and campus information.
+              </p>
+              <a href="https://www.iec.edu.in/" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 text-cyan-300 font-semibold hover:text-cyan-100 transition group">
+                <span class="underline underline-offset-4">WWW.IEC.EDU.IN</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Visual Section -->
+        <div class="reveal px-4 sm:px-0 lg:px-8">
+          <div class="relative floating">
+            
+            <!-- Main Image Card -->
+            <div class="glass-card glass-card-hover rounded-3xl p-3 sm:p-4 shadow-2xl">
+              <div class="image-container">
+                <img src="iec_image.jpg" alt="IEC Campus" class="w-full h-64 sm:h-80 lg:h-96 rounded-2xl object-cover">
+              </div>
+            </div>
+
+            <!-- Floating AI Badge -->
+            <div class="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 glass-card badge-glow rounded-2xl p-4 shadow-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  AI
+                </div>
+                <div>
+                  <div class="text-white font-bold text-sm">AI Assistant</div>
+                  <div class="text-gray-200 text-xs">Smart Help 24/7</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

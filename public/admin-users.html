@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>User Management - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="admin-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">User Management</h1>
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-100 border-b border-slate-200">
+          <tr><th class="p-3">Name</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Branch / Dept</th><th class="p-3">Roll / Emp ID</th></tr>
+        </thead>
+        <tbody id="userList"></tbody>
+      </table>
+      <p id="emptyMsg" class="p-4 text-slate-500 hidden">No users.</p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function() {
+      try {
+        var r = await MyIEC.api('/users?limit=100');
+        var list = r.data || [];
+        var tbody = document.getElementById('userList');
+        var empty = document.getElementById('emptyMsg');
+        if (!list.length) { empty.classList.remove('hidden'); return; }
+        tbody.innerHTML = list.map(function(u) {
+          return '<tr class="border-t border-slate-100"><td class="p-3">' + (u.name || '') + '</td><td class="p-3">' + (u.email || '') + '</td><td class="p-3">' + (u.role || '') + '</td><td class="p-3">' + (u.branch || u.department || '—') + '</td><td class="p-3">' + (u.rollNo || u.employeeId || '—') + '</td></tr>';
+        }).join('');
+      } catch (e) {
+        document.getElementById('userList').innerHTML = '<tr><td class="p-4 text-red-600" colspan="5">' + e.message + '</td></tr>';
+      }
+    })();
+  </script>
+</body>
+</html>

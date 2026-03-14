@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Attendance & Fee Rules - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-slate-100 font-['Inter']">
+  <nav class="bg-slate-800 text-white shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <a href="admin-dashboard.html" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+    </div>
+  </nav>
+  <div class="max-w-xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">Attendance Rules & Fee Structure</h1>
+    <div class="bg-white rounded-xl shadow p-4 mb-4">
+      <label class="block text-slate-700 font-medium mb-2">Minimum Attendance %</label>
+      <input type="number" id="minAttendancePercent" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" min="0" max="100" placeholder="75">
+      <label class="block text-slate-700 font-medium mb-2">Late Fee %</label>
+      <input type="number" id="lateFeePercent" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3" min="0" max="100" placeholder="5">
+      <button type="button" id="btnSave" class="w-full py-2 bg-cyan-600 text-white rounded-lg font-medium hover:bg-cyan-700">Save Settings</button>
+      <p id="msg" class="mt-2 text-sm hidden"></p>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    var user = MyIEC.getUser();
+    if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+    (async function load() {
+      try {
+        var r = await MyIEC.api('/settings');
+        var d = r.data;
+        document.getElementById('minAttendancePercent').value = d.minAttendancePercent != null ? d.minAttendancePercent : 75;
+        document.getElementById('lateFeePercent').value = d.lateFeePercent != null ? d.lateFeePercent : 5;
+      } catch (e) {}
+    })();
+    document.getElementById('btnSave').addEventListener('click', async function() {
+      var minAtt = document.getElementById('minAttendancePercent').value;
+      var lateFee = document.getElementById('lateFeePercent').value;
+      var msgEl = document.getElementById('msg');
+      try {
+        await MyIEC.api('/settings', { method: 'PUT', body: { minAttendancePercent: minAtt ? Number(minAtt) : undefined, lateFeePercent: lateFee ? Number(lateFee) : undefined } });
+        msgEl.textContent = 'Settings saved.';
+        msgEl.classList.remove('hidden'); msgEl.classList.add('text-emerald-600');
+      } catch (e) {
+        msgEl.textContent = e.message;
+        msgEl.classList.remove('hidden'); msgEl.classList.add('text-red-600');
+      }
+    });
+  </script>
+</body>
+</html>

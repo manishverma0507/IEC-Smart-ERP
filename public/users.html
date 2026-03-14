@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 font-['Inter']">
+  <nav class="border-b border-slate-700 bg-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <button onclick="MyIEC.logout()" class="px-3 py-1.5 rounded bg-slate-700 text-slate-300 hover:bg-slate-600 text-sm">Logout</button>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">User Management</h1>
+    <div id="userList" class="bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden">Loading...</div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    if (!['admin', 'management'].includes(MyIEC.getUser().role)) { window.location.href = 'dashboard.html'; return; }
+    (async () => {
+      try {
+        const res = await MyIEC.api('/users?limit=50');
+        const list = res.data || [];
+        document.getElementById('userList').innerHTML = list.length ? '<table class="w-full text-left"><thead class="bg-slate-700/50"><tr><th class="p-3">Name</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Branch / Dept</th></tr></thead><tbody>' + list.map(u => '<tr class="border-t border-slate-700"><td class="p-3">' + (u.name || '') + '</td><td class="p-3">' + (u.email || '') + '</td><td class="p-3">' + (u.role || '') + '</td><td class="p-3">' + (u.branch || u.department || '—') + '</td></tr>').join('') + '</tbody></table>' : '<p class="p-4 text-slate-400">No users.</p>';
+      } catch (e) {
+        document.getElementById('userList').innerHTML = '<p class="p-4 text-red-400">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

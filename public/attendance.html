@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance - MyIEC ERP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 font-['Inter']">
+  <nav class="border-b border-slate-700 bg-slate-800/80">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="dashboard.html" class="text-xl font-bold text-cyan-400">MyIEC ERP</a>
+      <span class="text-slate-400 text-sm capitalize"><script>document.write(MyIEC?.getUser()?.role || '')</script></span>
+      <button onclick="MyIEC.logout()" class="px-3 py-1.5 rounded bg-slate-700 text-slate-300 hover:bg-slate-600 text-sm">Logout</button>
+    </div>
+  </nav>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-4">Attendance</h1>
+    <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-4 mb-4">
+      <p class="text-slate-400 text-sm mb-2">Your attendance stats (student) or mark/view defaulters (faculty).</p>
+      <div id="attStats" class="text-cyan-400 font-semibold">Loading...</div>
+    </div>
+    <div id="attList" class="bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden"></div>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
+    const user = MyIEC.getUser();
+    (async () => {
+      try {
+        const studentId = user.role === 'student' ? user.id : new URLSearchParams(location.search).get('studentId');
+        const q = studentId ? '?studentId=' + studentId + '&limit=20' : '?limit=20';
+        const [statsRes, listRes] = await Promise.all([
+          MyIEC.api('/attendance/stats' + (studentId ? '?studentId=' + studentId : '')),
+          MyIEC.api('/attendance' + q),
+        ]);
+        document.getElementById('attStats').textContent = 'Attendance: ' + (statsRes.data?.percentage ?? '—') + '% (Present: ' + (statsRes.data?.present ?? 0) + ' / ' + (statsRes.data?.total ?? 0) + ')';
+        const list = listRes.data || [];
+        document.getElementById('attList').innerHTML = list.length ? '<table class="w-full text-left"><thead class="bg-slate-700/50"><tr><th class="p-3">Date</th><th class="p-3">Subject</th><th class="p-3">Status</th></tr></thead><tbody>' + list.map(r => '<tr class="border-t border-slate-700"><td class="p-3">' + (r.date ? new Date(r.date).toLocaleDateString() : '') + '</td><td class="p-3">' + (r.subject?.code || r.subject) + '</td><td class="p-3">' + (r.status || '') + '</td></tr>').join('') + '</tbody></table>' : '<p class="p-4 text-slate-400">No records.</p>';
+      } catch (e) {
+        document.getElementById('attStats').textContent = e.message;
+        document.getElementById('attList').innerHTML = '<p class="p-4 text-red-400">' + e.message + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>
