@@ -727,18 +727,15 @@
   <script>
     // State
     let notificationsVisible = false;
-    let profileDropdownVisible = false;
-
     // Init
     document.addEventListener('DOMContentLoaded', async function () {
       if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
       const user = MyIEC.getUser();
       if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
 
-      initCharts();
       setupEventListeners();
 
-      // Load Data
+      // Load profile + analytics stats
       try {
         const profile = await MyIEC.api('/auth/me');
         document.getElementById('navName').textContent = profile.data.name || profile.data.email;
@@ -753,6 +750,9 @@
       } catch (e) {
         console.error('Data load error:', e.message);
       }
+
+      await initCharts();
+      await loadActivityLogs();
     });
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
@@ -763,26 +763,73 @@
     function showModal(id) { document.getElementById('modalOverlay').classList.add('active'); }
     function performLogout() { MyIEC.logout(); }
 
-    function initCharts() {
+    async function initCharts() {
       const ctx = document.getElementById('attendanceChart');
-      if (ctx) {
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            datasets: [{
-              label: 'Attendance %',
-              data: [92, 95, 93, 96, 94],
-              borderColor: '#8b5cf6',
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 80, max: 100, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }
+      if (!ctx) return;
+
+      let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Fri-1', 'Fri-2'];
+      let data = [85, 88, 83, 90, 87, 84, 89];   // safe fallback
+
+      try {
+        const res = await MyIEC.api('/analytics/trend');
+        if (res.success && res.data) {
+          labels = res.data.labels;
+          data = res.data.percentages;
+        }
+      } catch (e) {
+        console.warn('Trend API failed, using fallback:', e.message);
+      }
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Attendance %',
+            data,
+            borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139,92,246,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#8b5cf6',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af' } } },
+          scales: {
+            y: { min: 50, max: 100, ticks: { color: '#9ca3af', callback: (v) => v + '%' } },
+            x: { ticks: { color: '#9ca3af' } }
           }
-        });
+        }
+      });
+    }
+
+    async function loadActivityLogs() {
+      const container = document.querySelector('#tab-recent-activities, .space-y-4');
+      if (!container) return;
+
+      try {
+        const res = await MyIEC.api('/analytics/activity?limit=5');
+        if (!res.success || !res.data.length) return;
+
+        const colorMap = { user_registered: 'from-blue-500 to-cyan-400', api_call: 'from-purple-500 to-pink-400' };
+        const iconMap = { user_registered: '👤', api_call: '🔗' };
+
+        container.innerHTML = res.data.map(log => `
+          <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br ${colorMap[log.type] || 'from-gray-500 to-gray-400'} flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-sm">${iconMap[log.type] || '📋'}</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-white font-medium text-sm">${log.message}</p>
+              <p class="text-gray-400 text-xs mt-1">${new Date(log.timestamp).toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.warn('Activity logs failed:', e.message);
       }
     }
 
