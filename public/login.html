@@ -1,819 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Version: 2.0 - Updated: 2026-01-31 - Cache Buster -->
-  <title>My IEC - Smart ERP Login</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>My IEC – Smart ERP · Secure Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg-1: #0f172a;
-      --bg-2: #062244;
-      --accent1: #0B67D0;
-      --accent2: #2A9DF4;
-      --muted: #6B7280;
-      --card: #FFFFFF;
-      --glass: rgba(255, 255, 255, 0.06);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --max-width: 1400px;
+      --navy:      #071628;
+      --navy-1:    #0B1F3A;
+      --navy-2:    #0D2B52;
+      --blue:      #1155CC;
+      --blue-1:    #1A6AE8;
+      --blue-2:    #2A9DF4;
+      --blue-3:    #60BFFF;
+      --ice:       #E8F2FF;
+      --ice-1:     #F0F6FF;
+      --ice-2:     #F7FAFF;
+      --white:     #FFFFFF;
+      --slate:     #445566;
+      --mist:      #8899AA;
+      --border:    #D8E8FF;
+      --green:     #0EA56E;
+      --red:       #DC2626;
+      --amber:     #D97706;
+      --r-xl: 24px; --r-lg: 16px; --r-md: 12px; --r-sm: 8px; --r-xs: 6px;
+      --font-d: 'DM Serif Display', Georgia, serif;
+      --font-b: 'Sora', system-ui, sans-serif;
     }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; scroll-behavior: smooth; }
+    body { font-family: var(--font-b); background: var(--navy); color: var(--navy-1); -webkit-font-smoothing: antialiased; overflow-x: hidden; min-height: 100vh; line-height: 1.5; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    html,
-    body {
-      height: 100%
-    }
-
-    body {
-      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
-      color: #0B2A66;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      padding: 0;
-      overflow-x: hidden;
-      line-height: 1.35;
-    }
-
-    .bg-decoration {
-      position: fixed;
-      border-radius: 50%;
-      opacity: 0.06;
-      pointer-events: none;
-      filter: blur(18px)
-    }
-
-    .bg-decoration.g1 {
-      width: 560px;
-      height: 560px;
-      background: radial-gradient(circle, var(--accent1), transparent);
-      left: -220px;
-      top: -220px
-    }
-
-    .bg-decoration.g2 {
-      width: 420px;
-      height: 420px;
-      background: radial-gradient(circle, var(--accent2), transparent);
-      right: -180px;
-      bottom: -160px
-    }
-
-    .bg-decoration.g3 {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, #1e40af, transparent);
-      left: 50%;
-      top: 40%;
-      transform: translate(-30%, -10%)
-    }
-
-    header.header {
-      position: relative;
-      z-index: 20;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .header-content {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between
-    }
-
-    .brand {
-      display: flex;
-      gap: 16px;
-      align-items: center
-    }
-
-    .brand .logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      color: #fff;
-      font-size: 20px
-    }
-
-    .brand h1 {
-      font-size: 18px;
-      color: #fff;
-      letter-spacing: -0.2px
-    }
-
-    .brand p {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 4px
-    }
-
-    .header-nav {
-      display: flex;
-      gap: 10px
-    }
-
-    .header-nav a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: 600
-    }
-
-    .header-nav a:hover {
-      background: rgba(255, 255, 255, 0.04)
-    }
-
-    .main-container {
-      max-width: var(--max-width);
-      margin: 30px auto;
-      display: grid;
-      grid-template-columns: 480px 1fr;
-      gap: 36px;
-      padding: 0 24px;
-      align-items: start;
-      z-index: 10;
-      position: relative
-    }
-
-    @media (max-width:1100px) {
-      .main-container {
-        grid-template-columns: 1fr
-      }
-    }
-
-    .login-card {
-      background: rgba(255, 255, 255, 0.98);
-      border-radius: var(--radius-lg);
-      padding: 30px;
-      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.5);
-      border: 1px solid rgba(11, 34, 66, 0.06);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-top {
-      text-align: center;
-      margin-bottom: 18px
-    }
-
-    .login-top h2 {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--accent1);
-      margin-bottom: 6px
-    }
-
-    .login-top p {
-      color: var(--muted);
-      font-weight: 600
-    }
-
-    form#loginForm {
-      margin-top: 8px
-    }
-
-    .role-selector {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px
-    }
-
-    .role {
-      flex: 1;
-      display: flex
-    }
-
-    .role input {
-      display: none
-    }
-
-    .role label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      background: #F6FBFF;
-      border: 1px solid #E6F0FF;
-      cursor: pointer;
-      font-weight: 700;
-      color: var(--muted);
-      flex: 1;
-      text-align: center
-    }
-
-    .role input:checked+label {
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 8px 20px rgba(11, 103, 208, 0.12)
-    }
-
-    .form-group {
-      margin-bottom: 14px
-    }
-
-    label {
-      display: block;
-      font-weight: 700;
-      color: var(--accent1);
-      margin-bottom: 8px;
-      font-size: 13px
-    }
-
-    .input-wrapper {
-      position: relative
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.8;
-      font-size: 14px
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px 14px 12px 42px;
-      border-radius: 10px;
-      border: 1.5px solid #E6F0FF;
-      background: #F6FBFF;
-      font-weight: 600
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--accent1);
-      box-shadow: 0 8px 20px rgba(11, 103, 208, 0.06)
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      color: var(--muted);
-      font-size: 12px
-    }
-
-    .password-toggle:hover {
-      background: rgba(11, 103, 208, 0.06);
-      color: var(--accent1)
-    }
-
-    .form-options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 12px 0 18px;
-      font-size: 13px;
-      color: var(--muted)
-    }
-
-    .remember {
-      display: flex;
-      align-items: center;
-      gap: 8px
-    }
-
-    .submit-row {
-      margin-top: 6px
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      color: #fff;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(11, 103, 208, 0.18)
-    }
-
-    .submit-btn[disabled] {
-      opacity: 0.65;
-      cursor: not-allowed
-    }
-
-    .form-message {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 700;
-      display: none
-    }
-
-    .form-message.show {
-      display: block
-    }
-
-    .form-message.error {
-      background: #FEE2E2;
-      color: #9b1d1d;
-      border: 1px solid #fca5a5
-    }
-
-    .form-message.success {
-      background: #D1FAE5;
-      color: #065f46;
-      border: 1px solid #6ee7b7
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 18px 0;
-      color: var(--muted);
-      font-weight: 700
-    }
-
-    .divider::before,
-    .divider::after {
+    /* ── BACKGROUND ── */
+    .bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: linear-gradient(150deg, #071628 0%, #0a1d38 45%, #081520 100%); }
+    .bg-scene::before {
       content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 5% -5%, rgba(17,85,204,.28) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 98% 102%, rgba(42,157,244,.18) 0%, transparent 55%);
+    }
+    .grid-lines {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(42,157,244,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(42,157,244,.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 30%, transparent 100%);
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+    .orb-1 { width: 700px; height: 700px; left: -250px; top: -250px; background: radial-gradient(circle, rgba(17,85,204,.2), transparent 70%); animation: orb-move 22s ease-in-out infinite; }
+    .orb-2 { width: 500px; height: 500px; right: -180px; bottom: -180px; background: radial-gradient(circle, rgba(42,157,244,.15), transparent 70%); animation: orb-move 18s ease-in-out infinite reverse; animation-delay: -9s; }
+    .orb-3 { width: 300px; height: 300px; left: 50%; top: 40%; background: radial-gradient(circle, rgba(17,85,204,.12), transparent 70%); animation: orb-move 26s ease-in-out infinite; animation-delay: -13s; }
+    @keyframes orb-move { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-40px)} 66%{transform:translate(-20px,25px)} }
+    .scan { position: fixed; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(96,191,255,.4), transparent); animation: scan-down 9s cubic-bezier(.4,0,.6,1) infinite; z-index: 1; pointer-events: none; }
+    @keyframes scan-down { 0%{top:-2px;opacity:0} 5%{opacity:1} 90%{opacity:.4} 100%{top:100vh;opacity:0} }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,22,40,.8);
+      backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid rgba(42,157,244,.1);
+    }
+    .hdr {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 32px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand-mark {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-2) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-weight: 400; font-size: 16px; color: #fff; letter-spacing: 0.5px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 6px 20px rgba(17,85,204,.45);
+    }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-name { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: .2px; line-height: 1.2; }
+    .brand-tag  { font-size: 10px; font-weight: 600; color: var(--blue-2); letter-spacing: 1.8px; text-transform: uppercase; margin-top: 2px; }
+    .hdr-mid {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px; padding: 5px 14px;
+    }
+    .hdr-mid span { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,.45); letter-spacing: .3px; }
+    .status-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(14,165,110,.12); border: 1px solid rgba(14,165,110,.25);
+      border-radius: 14px; padding: 3px 10px;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2.4s ease-in-out infinite; }
+    .status-pill span { font-size: 11px; font-weight: 700; color: var(--green); letter-spacing: .4px; }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(14,165,110,.5)} 50%{opacity:.85;box-shadow:0 0 0 5px rgba(14,165,110,0)} }
+    .hdr-nav { display: flex; gap: 2px; }
+    .hdr-nav a { color: rgba(255,255,255,.55); text-decoration: none; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; transition: all .2s; }
+    .hdr-nav a:hover { color: #fff; background: rgba(255,255,255,.07); }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      position: relative; z-index: 10;
+      max-width: 1400px; margin: 0 auto;
+      padding: 48px 32px 0;
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    /* Full-width announcements row below the two-column grid */
+    .ann-section {
+      position: relative; z-index: 10;
+      max-width: 1400px; margin: 28px auto 56px;
+      padding: 0 32px;
+    }
+
+    /* ── LOGIN CARD ── */
+    .login-card {
+      background: var(--white);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(7,22,40,.6), 0 0 0 1px rgba(17,85,204,.08);
+      animation: card-rise .9s cubic-bezier(.16,1,.3,1) .1s both;
+      position: sticky; top: 88px;
+    }
+    @keyframes card-rise { from{transform:translateY(40px) scale(.985);opacity:0} to{transform:none;opacity:1} }
+    .shimmer-bar { height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue-2), var(--blue-3), var(--blue-2), var(--blue)); background-size: 300%; animation: shimmer 3.5s linear infinite; }
+    @keyframes shimmer { 0%{background-position:0 0} 100%{background-position:300% 0} }
+
+    /* Card header */
+    .card-top {
+      background: linear-gradient(140deg, var(--navy-1) 0%, var(--navy-2) 100%);
+      padding: 30px 32px 28px; position: relative; overflow: hidden;
+    }
+    .card-top::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 80% 20%, rgba(42,157,244,.08) 0%, transparent 50%),
+                        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231155CC' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: auto, 40px 40px;
+    }
+    .card-top::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(42,157,244,.35), transparent); }
+    .cap-icon {
+      width: 54px; height: 54px; border-radius: 16px; margin-bottom: 18px;
+      background: linear-gradient(140deg, var(--blue) 0%, var(--blue-2) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-weight: 400; font-size: 20px; color: #fff;
+      box-shadow: 0 8px 28px rgba(17,85,204,.55), 0 0 0 1px rgba(255,255,255,.1) inset;
+      position: relative; z-index: 1; animation: float 5s ease-in-out infinite;
+    }
+    .cap-icon::after { content: ''; position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.18), transparent); }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+    .cap-title { font-family: var(--font-d); font-size: 26px; color: #fff; line-height: 1.2; margin-bottom: 6px; position: relative; z-index: 1; }
+    .cap-sub { font-size: 13px; font-weight: 400; color: rgba(255,255,255,.5); line-height: 1.6; position: relative; z-index: 1; }
+
+    /* Card body */
+    .card-body { padding: 28px 32px 32px; }
+
+    /* Role selector */
+    .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 22px; }
+    .role input { display: none; }
+    .role label {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 13px 8px; border-radius: var(--r-lg);
+      background: var(--ice-2); border: 1.5px solid var(--border);
+      cursor: pointer; font-weight: 600; font-size: 12px; color: var(--slate);
+      transition: all .25s cubic-bezier(.16,1,.3,1); text-align: center;
+    }
+    .role label .ico { font-size: 20px; transition: transform .3s cubic-bezier(.16,1,.3,1); }
+    .role label:hover { border-color: var(--blue); background: #EBF3FF; color: var(--blue); }
+    .role label:hover .ico { transform: scale(1.2) rotate(-5deg); }
+    .role input:checked + label {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-1) 100%);
+      border-color: transparent; color: #fff;
+      box-shadow: 0 6px 20px rgba(17,85,204,.3); transform: translateY(-2px);
+    }
+    .role input:checked + label .ico { transform: scale(1.1); }
+
+    /* Demo creds */
+    .demo-box { border: 1.5px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 24px; }
+    .demo-hd {
+      background: linear-gradient(90deg, var(--ice-1), var(--ice-2));
+      padding: 9px 16px; display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-hd-icon { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--blue), var(--blue-2)); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .demo-hd strong { font-size: 11px; font-weight: 800; color: var(--blue); letter-spacing: 1.2px; text-transform: uppercase; flex: 1; }
+    .demo-hd small { font-size: 10.5px; color: var(--mist); font-weight: 500; }
+    .demo-row {
+      display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+      border-bottom: 1px solid #F0F6FF; cursor: pointer;
+      transition: background .18s;
+    }
+    .demo-row:last-child { border-bottom: none; }
+    .demo-row:hover { background: var(--ice-1); }
+    .demo-row:hover .use-btn { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .badge { font-size: 9.5px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; flex-shrink: 0; min-width: 52px; text-align: center; }
+    .b-admin  { background: rgba(220,38,38,.09); color: var(--red); }
+    .b-faculty{ background: rgba(217,119,6,.09); color: var(--amber); }
+    .b-student{ background: rgba(14,165,110,.09); color: var(--green); }
+    .demo-info { flex: 1; min-width: 0; }
+    .demo-em { font-size: 12.5px; font-weight: 700; color: var(--navy-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .demo-pw { font-size: 11px; font-weight: 500; color: var(--mist); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+    .use-btn { font-size: 11px; font-weight: 700; color: var(--blue); background: var(--ice); border: 1px solid var(--border); border-radius: var(--r-xs); padding: 4px 10px; cursor: pointer; transition: all .2s; flex-shrink: 0; }
+
+    /* Form fields */
+    .field { margin-bottom: 16px; }
+    .field-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+    .field-top label { font-size: 12.5px; font-weight: 700; color: #1E3A5F; }
+    .field-top a { font-size: 12px; font-weight: 600; color: var(--blue); text-decoration: none; opacity: .85; transition: opacity .2s; }
+    .field-top a:hover { opacity: 1; }
+    .inp-wrap { position: relative; display: flex; align-items: center; }
+    .inp-ico { position: absolute; left: 13px; font-size: 14px; pointer-events: none; opacity: .5; z-index: 1; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 13px 44px 13px 42px;
+      border-radius: var(--r-md); border: 1.5px solid var(--border);
+      background: var(--ice-2);
+      font-family: var(--font-b); font-size: 13.5px; font-weight: 500; color: var(--navy-1);
+      transition: all .22s; outline: none; -webkit-appearance: none;
+    }
+    input::placeholder { color: #AABCCC; font-weight: 400; }
+    input:focus { border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(17,85,204,.1); }
+    .eye-btn { position: absolute; right: 10px; background: transparent; border: none; cursor: pointer; padding: 6px 8px; border-radius: var(--r-xs); color: var(--mist); font-size: 11.5px; font-weight: 700; transition: all .2s; }
+    .eye-btn:hover { color: var(--blue); background: var(--ice); }
+    .strength { display: flex; gap: 4px; margin-top: 7px; }
+    .seg { height: 3px; flex: 1; border-radius: 99px; background: var(--border); transition: background .3s; }
+
+    /* Remember row */
+    .form-extras { display: flex; align-items: center; margin: 14px 0 20px; }
+    .chk-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12.5px; font-weight: 500; color: var(--slate); user-select: none; }
+    .chk-wrap input { width: 15px; height: 15px; accent-color: var(--blue); cursor: pointer; }
+
+    /* Submit */
+    .btn-login {
+      width: 100%; padding: 14px;
+      border: none; border-radius: var(--r-md);
+      background: linear-gradient(90deg, var(--blue) 0%, var(--blue-1) 50%, var(--blue-2) 100%);
+      background-size: 200%;
+      color: #fff; font-family: var(--font-b); font-size: 13.5px; font-weight: 800; letter-spacing: 1.2px;
+      cursor: pointer; position: relative; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(17,85,204,.35);
+      transition: all .3s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-login::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent); transition: left .55s; }
+    .btn-login:hover::after { left: 100%; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(17,85,204,.45); background-position: 100%; }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Message */
+    .msg { display: none; align-items: center; gap: 9px; margin-top: 12px; padding: 11px 14px; border-radius: var(--r-md); font-size: 13px; font-weight: 600; animation: msg-in .3s ease; }
+    @keyframes msg-in { from{transform:translateY(-4px);opacity:0} to{transform:none;opacity:1} }
+    .msg.show { display: flex; }
+    .msg.err { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+    .msg.ok  { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+
+    /* Quick links */
+    .divider { display: flex; align-items: center; gap: 10px; margin: 22px 0 14px; color: var(--mist); font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .qlink {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 11px 6px; border-radius: var(--r-md);
+      background: var(--ice-2); border: 1.5px solid var(--border);
+      font-size: 11.5px; font-weight: 700; color: var(--blue); text-decoration: none;
+      transition: all .22s;
+    }
+    .qlink .qi { font-size: 16px; }
+    .qlink:hover { background: #EBF3FF; border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(17,85,204,.1); }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+    /* Panels */
+    .panel {
+      background: rgba(255,255,255,.97);
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: 0 12px 40px rgba(7,22,40,.12), 0 0 0 1px rgba(17,85,204,.06);
+      animation: card-rise .9s cubic-bezier(.16,1,.3,1) both;
+    }
+    .panel:nth-child(1){animation-delay:.2s} .panel:nth-child(2){animation-delay:.32s} .panel:nth-child(3){animation-delay:.44s} .panel:nth-child(4){animation-delay:.56s}
+    .panel-hd { padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #EEF4FF; }
+    .ph-title { font-family: var(--font-d); font-size: 15px; color: var(--navy-1); display: flex; align-items: center; gap: 8px; }
+    .ph-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(17,85,204,.09); color: var(--blue); letter-spacing: .2px; }
+    .ph-link { font-size: 12.5px; font-weight: 700; color: var(--blue); text-decoration: none; transition: opacity .2s; }
+    .ph-link:hover { opacity: .7; }
+    .ph-status { display: flex; align-items: center; gap: 5px; background: rgba(14,165,110,.1); border: 1px solid rgba(14,165,110,.2); border-radius: 12px; padding: 3px 10px; }
+    .ph-status span { font-size: 11px; font-weight: 700; color: var(--green); }
+
+    /* Hero panel */
+    .hero-body { padding: 28px 24px; display: grid; grid-template-columns: 1fr 180px; gap: 24px; align-items: start; }
+    .hero-headline { font-family: var(--font-d); font-size: 38px; color: var(--navy-1); line-height: 1.1; margin-bottom: 12px; }
+    .hero-headline em { font-style: italic; color: var(--blue); }
+    .hero-desc { font-size: 13.5px; font-weight: 400; color: var(--slate); line-height: 1.7; max-width: 500px; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+    .htag { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: var(--ice); color: var(--blue); border: 1px solid #DDEAFF; }
+    .stat-cards { display: flex; flex-direction: column; gap: 10px; }
+    .sc {
+      border-radius: var(--r-lg); padding: 14px 16px; text-align: center;
+    }
+    .sc-green { background: rgba(14,165,110,.07); border: 1.5px solid rgba(14,165,110,.2); }
+    .sc-blue  { background: rgba(17,85,204,.06); border: 1.5px solid rgba(17,85,204,.18); }
+    .sc-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .sc-label.g { color: var(--green); } .sc-label.b { color: var(--blue); }
+    .sc-value { font-family: var(--font-d); font-size: 22px; color: var(--navy-1); }
+    .sc-value.b { color: var(--blue); }
+    .sc-sub { font-size: 10.5px; color: var(--mist); font-weight: 500; margin-top: 3px; }
+
+    /* Stats */
+    .stats-body { padding: 20px 24px; display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .stat-card {
+      background: linear-gradient(140deg, var(--ice-2), #EBF3FF);
+      border: 1.5px solid var(--border); border-radius: var(--r-lg);
+      padding: 18px; text-align: center; position: relative; overflow: hidden;
+      transition: transform .22s, box-shadow .22s;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(17,85,204,.12); }
+    .stat-card::before { content: ''; position: absolute; top: -24px; right: -24px; width: 80px; height: 80px; border-radius: 50%; background: rgba(17,85,204,.04); }
+    .stat-num { font-family: var(--font-d); font-size: 34px; color: var(--blue); line-height: 1; margin-bottom: 6px; }
+    .stat-lbl { font-size: 11px; font-weight: 700; color: var(--mist); letter-spacing: .5px; text-transform: uppercase; }
+
+    /* Modules */
+    .modules-body { padding: 18px 24px 24px; display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .module-card {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+      padding: 16px; border-radius: var(--r-lg);
+      background: var(--ice-2); border: 1.5px solid var(--border);
+      transition: all .22s;
+    }
+    .module-card:hover { background: #EBF3FF; border-color: #BFDBFF; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17,85,204,.1); }
+    .m-ico { font-size: 22px; line-height: 1; }
+    .m-name { font-size: 13px; font-weight: 700; color: var(--navy-1); }
+    .m-desc { font-size: 11px; font-weight: 400; color: var(--mist); line-height: 1.4; }
+
+    /* ── ANNOUNCEMENTS SECTION (full-width horizontal) ── */
+    .ann-panel {
+      background: rgba(255,255,255,.97);
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: 0 12px 40px rgba(7,22,40,.12), 0 0 0 1px rgba(17,85,204,.06);
+      animation: card-rise .9s cubic-bezier(.16,1,.3,1) .6s both;
+    }
+    .ann-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 20px 24px 24px;
+    }
+    .ann-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      padding: 20px 20px 18px;
+      border-radius: var(--r-lg);
+      background: var(--ice-2);
+      border: 1.5px solid var(--border);
+      margin: 6px;
+      overflow: hidden;
+      transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s;
+      cursor: default;
+    }
+    .ann-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      border-radius: var(--r-xs) var(--r-xs) 0 0;
+    }
+    .ann-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(17,85,204,.12); }
+    .ann-card.ac-red::before   { background: var(--red); }
+    .ann-card.ac-amber::before { background: var(--amber); }
+    .ann-card.ac-green::before { background: var(--green); }
+    .ann-card.ac-blue::before  { background: var(--blue); }
+    .ann-card.ac-red   { border-top-color: rgba(220,38,38,.25); }
+    .ann-card.ac-amber { border-top-color: rgba(217,119,6,.25); }
+    .ann-card.ac-green { border-top-color: rgba(14,165,110,.25); }
+    .ann-card.ac-blue  { border-top-color: rgba(17,85,204,.25); }
+    .ann-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .ann-tag { font-size: 9.5px; font-weight: 800; padding: 3px 9px; border-radius: 20px; letter-spacing: .6px; text-transform: uppercase; }
+    .t-red   { background: rgba(220,38,38,.1);  color: var(--red); }
+    .t-amber { background: rgba(217,119,6,.1);  color: var(--amber); }
+    .t-green { background: rgba(14,165,110,.1); color: var(--green); }
+    .t-blue  { background: rgba(17,85,204,.1);  color: var(--blue); }
+    .ann-date { font-size: 10.5px; font-weight: 500; color: var(--mist); }
+    .ann-ico { font-size: 26px; line-height: 1; margin-bottom: 10px; }
+    .ann-title {
+      font-size: 13.5px; font-weight: 700; color: var(--navy-1);
+      margin-bottom: 7px; line-height: 1.35;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+    }
+    .ann-desc {
+      font-size: 12px; font-weight: 400; color: var(--slate); line-height: 1.6;
       flex: 1;
-      height: 1px;
-      background: #E6F0FF
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
     }
-
-    .quick-links {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px
+    .ann-footer { display: flex; align-items: center; justify-content: flex-end; margin-top: 14px; }
+    .ann-more {
+      font-size: 11.5px; font-weight: 700; color: var(--blue); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+      opacity: .8; transition: opacity .2s;
     }
+    .ann-more:hover { opacity: 1; }
+    .ann-more svg { transition: transform .2s; }
+    .ann-more:hover svg { transform: translateX(3px); }
 
-    .quick-link {
-      padding: 10px;
-      border-radius: 10px;
-      background: #F6FBFF;
-      border: 1px solid #E6F0FF;
-      text-align: center;
-      font-weight: 800;
-      color: var(--accent1);
-      text-decoration: none
+    /* ── OVERLAY ── */
+    .overlay { position: fixed; inset: 0; z-index: 999; background: rgba(7,22,40,.88); backdrop-filter: blur(16px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .overlay.show { display: flex; }
+    .spinner { width: 52px; height: 52px; border: 2.5px solid rgba(42,157,244,.2); border-top-color: var(--blue-2); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .overlay-msg { font-family: var(--font-d); font-size: 17px; color: #fff; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 10;
+      background: rgba(7,22,40,.75); backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(42,157,244,.08);
+      padding: 18px 32px;
     }
+    .footer-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .footer-copy { font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,.35); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.45); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--blue-2); }
 
-    .quick-link:hover {
-      background: rgba(11, 103, 208, 0.08);
-      color: #0B67D0
+    /* ── RESPONSIVE ── */
+    @media(max-width:1100px){
+      .page { grid-template-columns: 400px 1fr; gap: 24px; }
+      .hero-body { grid-template-columns: 1fr; }
+      .stat-cards { flex-direction: row; }
+      .ann-grid { grid-template-columns: repeat(2,1fr); }
     }
-
-    .info-column {
-      display: flex;
-      flex-direction: column;
-      gap: 18px
+    @media(max-width:900px){
+      .page { grid-template-columns: 1fr; padding: 24px 20px 0; }
+      .ann-section { padding: 0 20px; margin-top: 20px; margin-bottom: 40px; }
+      .login-card { position: static; }
+      .modules-body { grid-template-columns: repeat(2,1fr); }
+      .hero-headline { font-size: 30px; }
+      .ann-grid { grid-template-columns: repeat(2,1fr); }
     }
-
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: var(--radius-md);
-      padding: 18px;
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08)
+    @media(max-width:640px){
+      .hdr { padding: 0 16px; }
+      .hdr-mid, .hdr-nav { display: none; }
+      .page { padding: 20px 14px 0; gap: 18px; }
+      .ann-section { padding: 0 14px; margin-top: 18px; margin-bottom: 32px; }
+      .card-top, .card-body { padding: 22px 20px; }
+      .quick-links { grid-template-columns: repeat(2,1fr); }
+      .stats-body { grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .modules-body { grid-template-columns: repeat(2,1fr); }
+      .stat-num { font-size: 26px; }
+      .hero-headline { font-size: 26px; }
+      .hero-body { padding: 20px; }
+      .panel-hd { padding: 14px 20px; }
+      .ann-grid { grid-template-columns: 1fr; padding: 14px 16px 18px; }
+      .ann-card { margin: 4px 0; }
+      footer { padding: 16px 14px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
-
-    .hero {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px
-    }
-
-    .hero h1 {
-      font-size: 26px;
-      margin-bottom: 6px;
-      color: #0B2A66
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-weight: 600
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 14px
-    }
-
-    .stat-item {
-      background: linear-gradient(135deg, #F6FBFF, #E6F0FF);
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center
-    }
-
-    .stat-item strong {
-      display: block;
-      font-size: 18px;
-      color: var(--accent1);
-      font-weight: 900
-    }
-
-    .stat-item small {
-      display: block;
-      color: var(--muted);
-      font-weight: 700
-    }
-
-    .announcement-item {
-      background: #FFF9E6;
-      border-left: 4px solid #F59E0B;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 8px
-    }
-
-    .announcement-item strong {
-      display: block;
-      color: var(--accent1);
-      font-weight: 800
-    }
-
-    .announcement-item span {
-      display: block;
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 6px
-    }
-
-    footer.footer {
-      margin-top: 30px;
-      background: rgba(15, 23, 42, 0.6);
-      padding: 18px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      color: rgba(255, 255, 255, 0.85)
-    }
-
-    .footer-inner {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px
-    }
-
-    .footer-inner a {
-      color: rgba(255, 255, 255, 0.9);
-      text-decoration: none;
-      font-weight: 700
-    }
-
-    @media (max-width:1100px) {
-      .header-nav {
-        display: none
-      }
-
-      .bg-decoration.g3 {
-        display: none
-      }
-    }
-
-    @media (max-width:640px) {
-      .main-container {
-        padding: 0 14px
-      }
-
-      .role-selector {
-        flex-direction: column
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr
-      }
-
-      .quick-links {
-        grid-template-columns: 1fr
-      }
-
-      .hero h1 {
-        font-size: 20px
-      }
-    }
-
-    input:focus,
-    button:focus,
-    a:focus {
-      outline: 3px solid rgba(11, 103, 208, 0.12);
-      outline-offset: 2px
+    @media(max-width:380px){
+      .roles { grid-template-columns: repeat(3,1fr); }
+      .stat-cards { flex-direction: column; }
+      .stats-body { grid-template-columns: repeat(3,1fr); }
     }
   </style>
 </head>
-
 <body>
-  <div class="bg-decoration g1" aria-hidden="true"></div>
-  <div class="bg-decoration g2" aria-hidden="true"></div>
-  <div class="bg-decoration g3" aria-hidden="true"></div>
 
-  <header class="header" role="banner">
-    <div class="header-content">
-      <a href="index.html" class="brand" style="text-decoration:none;color:inherit">
-        <div class="logo">IEC</div>
-        <div>
-          <h1>IEC GROUP OF INSTITUTIONS</h1>
-          <p>MY IEC - SMART ERP</p>
-        </div>
-      </a>
+<!-- Background -->
+<div class="bg-scene" aria-hidden="true">
+  <div class="grid-lines"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="scan" aria-hidden="true"></div>
 
-      <nav class="header-nav" aria-label="Header navigation">
-        <a href="index.html" title="Home">Home</a>
-        <a href="about.html" title="About">About</a>
-        <a href="contact.html" title="Contact">Contact</a>
-        <a href="help.html" title="Help">Help</a>
-      </nav>
+<!-- Loading overlay -->
+<div class="overlay" id="overlay" role="status" aria-live="polite">
+  <div class="spinner"></div>
+  <div class="overlay-msg" id="overlayMsg">Verifying credentials…</div>
+</div>
+
+<!-- Header -->
+<header role="banner">
+  <div class="hdr">
+    <a href="index.html" class="brand" aria-label="IEC Group of Institutions">
+      <div class="brand-mark">IEC</div>
+      <div class="brand-text">
+        <div class="brand-name">IEC Group of Institutions</div>
+        <div class="brand-tag">My IEC · Smart ERP</div>
+      </div>
+    </a>
+    <div class="hdr-mid" aria-label="System status">
+      <span>Academic Year 2025–26</span>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>All Systems Operational</span>
+      </div>
     </div>
-  </header>
+    <nav class="hdr-nav" aria-label="Site navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="help.html">Help</a>
+    </nav>
+  </div>
+</header>
 
-  <main class="main-container" role="main" aria-labelledby="mainHeading">
-    <section class="login-card" aria-labelledby="loginTitle">
-      <div class="login-top">
-        <h2 id="loginTitle">Sign in to your portal</h2>
-        <p>Students, faculty and admins — secure access to all services.</p>
+<!-- Main -->
+<main class="page" role="main">
+
+  <!-- LEFT: Login Card -->
+  <section aria-labelledby="loginTitle">
+    <div class="login-card">
+      <div class="shimmer-bar"></div>
+
+      <div class="card-top">
+        <div class="cap-icon" aria-hidden="true">IEC</div>
+        <h2 class="cap-title" id="loginTitle">Secure Portal Login</h2>
+        <p class="cap-sub">Access your personalised dashboard — attendance, exams, fees &amp; more.</p>
       </div>
 
-      <form id="loginForm" novalidate>
-        <div class="role-selector" role="radiogroup" aria-label="Select role">
-          <div class="role">
-            <input type="radio" id="role-student" name="role" value="student" checked>
-            <label for="role-student">👨‍🎓 Student</label>
+      <div class="card-body">
+
+        <!-- Role selector -->
+        <div class="roles" role="radiogroup" aria-label="Select your role">
+          <div class="role"><input type="radio" id="r-student" name="role" value="student" checked><label for="r-student"><span class="ico">👨‍🎓</span>Student</label></div>
+          <div class="role"><input type="radio" id="r-faculty" name="role" value="faculty"><label for="r-faculty"><span class="ico">👩‍🏫</span>Faculty</label></div>
+          <div class="role"><input type="radio" id="r-admin" name="role" value="admin"><label for="r-admin"><span class="ico">⚙️</span>Admin</label></div>
+        </div>
+
+        <!-- Demo credentials -->
+        <div class="demo-box" role="region" aria-label="Demo credentials">
+          <div class="demo-hd">
+            <div class="demo-hd-icon" aria-hidden="true">🔑</div>
+            <strong>Demo Credentials</strong>
+            <small>Click any row to auto-fill</small>
           </div>
-          <div class="role">
-            <input type="radio" id="role-faculty" name="role" value="faculty">
-            <label for="role-faculty">👩‍🏫 Faculty</label>
+          <div class="demo-row" onclick="fillCreds('admin@iec.ac.in','Admin@123','admin')" tabindex="0" role="button" aria-label="Use admin credentials">
+            <span class="badge b-admin">Admin</span>
+            <div class="demo-info">
+              <div class="demo-em">admin@iec.ac.in</div>
+              <div class="demo-pw">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Admin@123
+              </div>
+            </div>
+            <button class="use-btn" tabindex="-1" aria-hidden="true">Use ›</button>
           </div>
-          <div class="role">
-            <input type="radio" id="role-admin" name="role" value="admin">
-            <label for="role-admin">⚙️ Admin</label>
+          <div class="demo-row" onclick="fillCreds('faculty@iec.ac.in','Faculty@123','faculty')" tabindex="0" role="button" aria-label="Use faculty credentials">
+            <span class="badge b-faculty">Faculty</span>
+            <div class="demo-info">
+              <div class="demo-em">faculty@iec.ac.in</div>
+              <div class="demo-pw">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Faculty@123
+              </div>
+            </div>
+            <button class="use-btn" tabindex="-1" aria-hidden="true">Use ›</button>
+          </div>
+          <div class="demo-row" onclick="fillCreds('student@iec.ac.in','Student@123','student')" tabindex="0" role="button" aria-label="Use student credentials">
+            <span class="badge b-student">Student</span>
+            <div class="demo-info">
+              <div class="demo-em">student@iec.ac.in</div>
+              <div class="demo-pw">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Student@123
+              </div>
+            </div>
+            <button class="use-btn" tabindex="-1" aria-hidden="true">Use ›</button>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="username">Email / College ID / Roll Number</label>
-          <div class="input-wrapper">
-            <span class="input-icon" aria-hidden="true">🏷️</span>
-            <input id="username" name="username" type="text" autocomplete="username"
-              placeholder="Enter your email or Roll Number" required>
+        <!-- Login form -->
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <div class="field-top">
+              <label for="username">Email / College ID / Roll Number</label>
+            </div>
+            <div class="inp-wrap">
+              <span class="inp-ico" aria-hidden="true">🏷️</span>
+              <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter email or Roll Number" required/>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="input-wrapper">
-            <span class="input-icon" aria-hidden="true">🔒</span>
-            <input id="password" name="password" type="password" autocomplete="current-password"
-              placeholder="Enter your password" required aria-describedby="pwHelp">
-            <button type="button" class="password-toggle" id="passwordToggle" aria-pressed="false"
-              aria-label="Show password">Show</button>
+          <div class="field">
+            <div class="field-top">
+              <label for="password">Password</label>
+              <a href="#">Forgot password?</a>
+            </div>
+            <div class="inp-wrap">
+              <span class="inp-ico" aria-hidden="true">🔒</span>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required/>
+              <button type="button" class="eye-btn" id="eyeBtn" aria-label="Toggle password visibility" aria-pressed="false">Show</button>
+            </div>
+            <div class="strength" aria-hidden="true">
+              <div class="seg" id="s1"></div><div class="seg" id="s2"></div>
+              <div class="seg" id="s3"></div><div class="seg" id="s4"></div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-options">
-          <label class="remember"><input id="remember" type="checkbox"> Remember me</label>
-          <a href="#" class="forgot-link">Forgot Password?</a>
-        </div>
+          <div class="form-extras">
+            <label class="chk-wrap"><input type="checkbox" id="remember"> Remember me on this device</label>
+          </div>
 
-        <div class="submit-row">
-          <button type="submit" class="submit-btn" id="submitBtn" aria-live="polite">
-            <span id="btnText">LOGIN TO PORTAL</span>
+          <button type="submit" class="btn-login" id="submitBtn">
+            <span id="btnTxt">LOGIN TO PORTAL</span>
           </button>
-        </div>
 
-        <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
-      </form>
-
-      <div class="divider" aria-hidden="true">Need Help?</div>
-
-      <div class="quick-links">
-        <a href="mailto:support@iec.edu.in?subject=Portal%20Support" class="quick-link" id="supportLink">📞 Support</a>
-        <a href="#" class="quick-link">📝 Register</a>
-        <a href="#" class="quick-link">📚 Guide</a>
-        <a href="index.html" class="quick-link">🏠 Home</a>
-      </div>
-    </section>
-
-    <aside class="info-column" aria-labelledby="portalInfo">
-      <div class="card hero" id="portalInfo">
-        <div>
-          <h1>Welcome to IEC Smart ERP</h1>
-          <p>Your unified student portal for attendance, exams, fees and library services.</p>
-          <p style="font-size:13px;color:var(--muted);margin-top:8px">Single sign-on, role-based dashboards and secure
-            transactions.</p>
-        </div>
-        <div style="text-align:right">
-          <small style="color:var(--muted);font-weight:700">Updated: Dec 09, 2025</small>
-        </div>
-      </div>
-
-      <div class="card" aria-labelledby="statsHeading">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3 id="statsHeading" style="margin:0;font-size:16px;color:#0B2A66">Campus at a glance</h3>
-          <a href="#" id="viewReportsLink" style="font-weight:700;color:var(--accent1);text-decoration:none">View
-            reports</a>
-        </div>
-        <div class="stats-grid" role="list">
-          <div class="stat-item" role="listitem"><strong>15K+</strong><small>Students</small></div>
-          <div class="stat-item" role="listitem"><strong>500+</strong><small>Faculty</small></div>
-          <div class="stat-item" role="listitem"><strong>5+</strong><small>Programs</small></div>
-        </div>
-      </div>
-
-      <div class="card" aria-labelledby="announceHeading">
-        <h3 id="announceHeading" style="margin:0 0 8px 0;font-size:16px;color:#0B2A66">📢 Latest Announcements</h3>
-        <div>
-          <div class="announcement-item">
-            <strong>Mid-Term Exam Schedule Released</strong>
-            <span>Exams start on December 15, 2025. Check the portal for details.</span>
+          <div class="msg" id="formMsg" role="status" aria-live="polite">
+            <span id="msgIcon"></span><span id="msgTxt"></span>
           </div>
-          <div class="announcement-item">
-            <strong>Fee Payment Deadline Extended</strong>
-            <span>Semester fee deadline extended to December 31, 2025.</span>
-          </div>
-          <div class="announcement-item">
-            <strong>Winter Break</strong>
-            <span>College closed from Dec 24 to Jan 05. Online services remain available.</span>
-          </div>
-          <div class="announcement-item">
-            <strong>Result Announcements</strong>
-            <span>Results for the semester will be published on January 10, 2026. Check the portal for updates.</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-  </main>
+        </form>
 
-  <footer class="footer" role="contentinfo">
-    <div class="footer-inner">
-      <div style="color:rgba(255,255,255,0.9)">© 2025 IEC Group of Institutions — All rights reserved.</div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Support</a>
+        <div class="divider">Quick Access</div>
+        <div class="quick-links">
+          <a href="mailto:support@iec.edu.in" class="qlink"><span class="qi">📞</span>Support</a>
+          <a href="#" class="qlink"><span class="qi">📝</span>Register</a>
+          <a href="#" class="qlink"><span class="qi">📚</span>Guide</a>
+          <a href="index.html" class="qlink"><span class="qi">🏠</span>Home</a>
+        </div>
+
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    // Backend API URL
-    // Backend API URL (works for both local and production)
-    const API_ENDPOINT = window.location.origin + '/api/auth/login';
+  <!-- RIGHT: Info column -->
+  <aside class="right-col" aria-label="Portal overview">
 
-    const passwordInput = document.getElementById('password');
-    const passwordToggle = document.getElementById('passwordToggle');
-    const loginForm = document.getElementById('loginForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const btnText = document.getElementById('btnText');
-    const formMessage = document.getElementById('formMessage');
+    <!-- Hero panel -->
+    <div class="panel">
+      <div class="panel-hd">
+        <div class="ph-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          IEC Smart ERP
+        </div>
+        <div class="ph-status"><div class="status-dot"></div><span>Live</span></div>
+      </div>
+      <div class="hero-body">
+        <div>
+          <h1 class="hero-headline">Your Campus,<br><em>One Login.</em></h1>
+          <p class="hero-desc">A unified platform for attendance, exams, fee payments, library, timetables and instant notifications — all in one secure, role-based environment.</p>
+          <div class="hero-tags">
+            <span class="htag">Single Sign-On</span>
+            <span class="htag">Role-Based Access</span>
+            <span class="htag">256-bit SSL</span>
+            <span class="htag">Real-Time Data</span>
+          </div>
+        </div>
+        <div class="stat-cards">
+          <div class="sc sc-green">
+            <div class="sc-label g"><div class="status-dot"></div> System</div>
+            <div class="sc-value">100%</div>
+            <div class="sc-sub">Uptime</div>
+          </div>
+          <div class="sc sc-blue">
+            <div class="sc-label b">
+              <svg width="6" height="6" viewBox="0 0 6 6" fill="var(--blue)" aria-hidden="true"><circle cx="3" cy="3" r="3"/></svg>
+              Session
+            </div>
+            <div class="sc-value b">2025–26</div>
+            <div class="sc-sub">Academic Year</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    console.log('🔑 Login page initialized');
+    <!-- Stats -->
+    <div class="panel">
+      <div class="panel-hd">
+        <div class="ph-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Campus at a Glance
+        </div>
+        <a href="#" class="ph-link">View Reports ›</a>
+      </div>
+      <div class="stats-body">
+        <div class="stat-card"><div class="stat-num">15K+</div><div class="stat-lbl">Students</div></div>
+        <div class="stat-card"><div class="stat-num">500+</div><div class="stat-lbl">Faculty</div></div>
+        <div class="stat-card"><div class="stat-num">5+</div><div class="stat-lbl">Programs</div></div>
+      </div>
+    </div>
 
-    passwordToggle.addEventListener('click', function () {
-      const wasHidden = passwordInput.type === 'password';
-      passwordInput.type = wasHidden ? 'text' : 'password';
-      passwordToggle.textContent = wasHidden ? 'Hide' : 'Show';
-      passwordToggle.setAttribute('aria-pressed', String(wasHidden));
+    <!-- Modules -->
+    <div class="panel">
+      <div class="panel-hd">
+        <div class="ph-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Portal Modules
+        </div>
+        <span class="ph-badge">6 Active</span>
+      </div>
+      <div class="modules-body">
+        <div class="module-card"><div class="m-ico">📊</div><div class="m-name">Attendance</div><div class="m-desc">Real-time tracking &amp; reports</div></div>
+        <div class="module-card"><div class="m-ico">📝</div><div class="m-name">Examinations</div><div class="m-desc">Schedule, hall ticket &amp; results</div></div>
+        <div class="module-card"><div class="m-ico">💳</div><div class="m-name">Fee Payment</div><div class="m-desc">Secure online transactions</div></div>
+        <div class="module-card"><div class="m-ico">📚</div><div class="m-name">Library</div><div class="m-desc">Book search &amp; issue history</div></div>
+        <div class="module-card"><div class="m-ico">📅</div><div class="m-name">Timetable</div><div class="m-desc">Live class schedules</div></div>
+        <div class="module-card"><div class="m-ico">📢</div><div class="m-name">Notices</div><div class="m-desc">Instant campus alerts</div></div>
+      </div>
+    </div>
+
+  </aside>
+</main>
+
+<!-- FULL-WIDTH ANNOUNCEMENTS STRIP -->
+<section class="ann-section" aria-labelledby="annTitle">
+  <div class="ann-panel">
+    <div class="panel-hd">
+      <div class="ph-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="annTitle">Latest Announcements</span>
+      </div>
+      <span class="ph-badge">4 New</span>
+    </div>
+    <div class="ann-grid">
+
+      <div class="ann-card ac-red">
+        <div class="ann-card-top">
+          <span class="ann-tag t-red">Exam</span>
+          <span class="ann-date">Dec 5, 2025</span>
+        </div>
+        <div class="ann-ico">📋</div>
+        <div class="ann-title">Mid-Term Exam Schedule Released</div>
+        <div class="ann-desc">Examinations commence December 15, 2025. Download your hall ticket and check seating arrangements via the Exams module.</div>
+        <div class="ann-footer">
+          <a href="#" class="ann-more">Read more <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+
+      <div class="ann-card ac-amber">
+        <div class="ann-card-top">
+          <span class="ann-tag t-amber">Finance</span>
+          <span class="ann-date">Dec 4, 2025</span>
+        </div>
+        <div class="ann-ico">💳</div>
+        <div class="ann-title">Fee Payment Deadline Extended</div>
+        <div class="ann-desc">Semester fee deadline extended to December 31, 2025. Pay conveniently through the secure online payment gateway.</div>
+        <div class="ann-footer">
+          <a href="#" class="ann-more">Read more <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+
+      <div class="ann-card ac-green">
+        <div class="ann-card-top">
+          <span class="ann-tag t-green">Holiday</span>
+          <span class="ann-date">Dec 3, 2025</span>
+        </div>
+        <div class="ann-ico">🎄</div>
+        <div class="ann-title">Winter Break — Dec 24 to Jan 05</div>
+        <div class="ann-desc">Campus offices will remain closed. All ERP online services continue to operate without interruption during the break.</div>
+        <div class="ann-footer">
+          <a href="#" class="ann-more">Read more <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+
+      <div class="ann-card ac-blue">
+        <div class="ann-card-top">
+          <span class="ann-tag t-blue">Result</span>
+          <span class="ann-date">Dec 1, 2025</span>
+        </div>
+        <div class="ann-ico">🎓</div>
+        <div class="ann-title">Semester Results — January 10, 2026</div>
+        <div class="ann-desc">Marksheets, SGPA &amp; CGPA will be published on January 10. Log in to the Results module for complete details.</div>
+        <div class="ann-footer">
+          <a href="#" class="ann-more">Read more <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-copy">© 2025 IEC Group of Institutions. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Support</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Password visibility toggle */
+  const pwInput = document.getElementById('password');
+  const eyeBtn  = document.getElementById('eyeBtn');
+  eyeBtn.addEventListener('click', () => {
+    const show = pwInput.type === 'password';
+    pwInput.type = show ? 'text' : 'password';
+    eyeBtn.textContent = show ? 'Hide' : 'Show';
+    eyeBtn.setAttribute('aria-pressed', String(show));
+  });
+
+  /* Password strength */
+  const segs   = [1,2,3,4].map(n => document.getElementById('s'+n));
+  const colors = ['#ef4444','#f59e0b','#3b82f6','#0EA56E'];
+  pwInput.addEventListener('input', function() {
+    const v = this.value; let s = 0;
+    if (v.length >= 6) s++;
+    if (v.length >= 10) s++;
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+    if (/[^A-Za-z0-9]/.test(v)) s++;
+    segs.forEach((el,i) => el.style.background = i < s ? colors[s-1] : 'var(--border)');
+  });
+
+  /* Demo credential fill */
+  function fillCreds(email, pass, role) {
+    document.getElementById('username').value = email;
+    pwInput.value = pass;
+    pwInput.dispatchEvent(new Event('input'));
+    const r = document.getElementById('r-' + role);
+    if (r) r.checked = true;
+    clearMsg();
+    document.getElementById('username').focus();
+  }
+  document.querySelectorAll('.demo-row').forEach(row => {
+    row.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
     });
+  });
 
-    function showMessage(message, type) {
-      formMessage.textContent = message;
-      formMessage.className = 'form-message ' + (type === 'success' ? 'success show' : 'error show');
-      console.log('💬 Message:', message, '(', type, ')');
-    }
-    function clearMessage() {
-      formMessage.className = 'form-message';
-      formMessage.textContent = '';
-    }
+  /* Messages */
+  const formMsg = document.getElementById('formMsg');
+  function showMsg(text, type) {
+    document.getElementById('msgIcon').textContent = type === 'ok' ? '✅' : '⚠️';
+    document.getElementById('msgTxt').textContent = text;
+    formMsg.className = 'msg show ' + (type || 'err');
+  }
+  function clearMsg() { formMsg.className = 'msg'; }
 
-    loginForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      console.log('🔐 LOGIN FORM SUBMITTED');
-      clearMessage();
+  /* Form submit */
+  const API  = 'http://localhost:5000/api/auth/login';
+  const form = document.getElementById('loginForm');
+  const btn  = document.getElementById('submitBtn');
+  const btnT = document.getElementById('btnTxt');
+  const ovl  = document.getElementById('overlay');
+  const ovlM = document.getElementById('overlayMsg');
 
-      var username = (document.getElementById('username').value || '').trim();
-      var password = (document.getElementById('password').value || '').trim();
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); clearMsg();
+    const user = (document.getElementById('username').value || '').trim();
+    const pass = (pwInput.value || '').trim();
+    if (!user) { showMsg('Please enter your Email / College ID / Roll Number'); document.getElementById('username').focus(); return; }
+    if (!pass) { showMsg('Please enter your password'); pwInput.focus(); return; }
 
-      console.log('📊 Login attempt with:', { username, passwordLength: password.length });
+    btn.disabled = true; btnT.textContent = 'AUTHENTICATING…';
+    ovl.classList.add('show'); ovlM.textContent = 'Verifying credentials…';
 
-      if (!username) { 
-        showMessage('Please enter your Email / College ID / Roll Number'); 
-        document.getElementById('username').focus(); 
-        return; 
+    try {
+      const res  = await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: user, password: pass}) });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        ovl.classList.remove('show');
+        showMsg(data.message || 'Invalid credentials. Please try again.');
+        btn.disabled = false; btnT.textContent = 'LOGIN TO PORTAL';
+        return;
       }
-      if (!password) { 
-        showMessage('Please enter your password'); 
-        passwordInput.focus(); 
-        return; 
-      }
 
-      submitBtn.disabled = true;
-      var origText = btnText.textContent;
-      btnText.textContent = 'LOGGING IN...';
+      ovlM.textContent = 'Loading your dashboard…';
+      localStorage.setItem('token',     data.data.token);
+      localStorage.setItem('userRole',  data.data.user.role);
+      localStorage.setItem('userName',  data.data.user.name);
+      localStorage.setItem('userEmail', data.data.user.email);
+      localStorage.setItem('userId',    data.data.user.id);
+      localStorage.setItem('user',      JSON.stringify(data.data.user));
 
-      try {
-        // Backend accepts email field but also supports roll number
-        // The backend will try email first, then roll number if not found by email
-        var payload = { email: username, password: password };
-        console.log('🚀 Sending POST request to:', API_ENDPOINT);
-        console.log('📦 Payload:', { email: username, passwordLength: password.length });
-
-        var res = await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        console.log('📨 Response status:', res.status);
-        var data = await res.json();
-        console.log('📦 Response data:', data);
-
-        if (!res.ok || !data.success) {
-          console.log('❌ Login failed');
-          showMessage(data.message || 'Login failed. Check your credentials.');
-          submitBtn.disabled = false;
-          btnText.textContent = origText;
-          return;
-        }
-
-        console.log('✅ Login successful!');
-        console.log('👤 User:', data.data.user);
-
-        // Store authentication data
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('userRole', data.data.user.role);
-        localStorage.setItem('userName', data.data.user.name);
-        localStorage.setItem('userEmail', data.data.user.email);
-        localStorage.setItem('userId', data.data.user.id);
-        
-        // Store additional user data for dashboard
-        localStorage.setItem('user', JSON.stringify(data.data.user));
-
-        console.log('💾 User data stored in localStorage');
-        console.log('📍 Dashboard URL:', data.data.dashboardUrl);
-
-        showMessage('Login successful! Redirecting...', 'success');
-
-        // Redirect based on role
-        var dashboardUrl = 'student-dashboard.html'; // default
-        if (data.data.user.role === 'faculty') {
-          dashboardUrl = 'faculty-dashboard.html';
-        } else if (data.data.user.role === 'admin') {
-          dashboardUrl = 'admin-dashboard.html';
-        }
-
-        console.log('🔀 Redirecting to:', dashboardUrl);
-
-        setTimeout(function () {
-          window.location.href = dashboardUrl;
-        }, 800);
-      } catch (err) {
-        console.error('❌ LOGIN ERROR:', err);
-        showMessage('Network error. Make sure backend server is running on port 5000.');
-        submitBtn.disabled = false;
-        btnText.textContent = origText;
-      }
-    });
-
-    document.getElementById('username').addEventListener('input', clearMessage);
-    document.getElementById('password').addEventListener('input', clearMessage);
-
-    var supportLink = document.getElementById('supportLink');
-    if (supportLink) {
-      supportLink.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        window.location.href = 'mailto:support@iec.edu.in?subject=Portal%20Support%20Request';
-      });
+      showMsg('Login successful! Redirecting…', 'ok');
+      const map = { faculty: 'faculty-dashboard.html', admin: 'admin-dashboard.html' };
+      const dest = map[data.data.user.role] || 'student-dashboard.html';
+      setTimeout(() => { window.location.href = dest; }, 900);
+    } catch (err) {
+      ovl.classList.remove('show');
+      showMsg('Network error — please ensure the backend server is running on port 5000.');
+      btn.disabled = false; btnT.textContent = 'LOGIN TO PORTAL';
     }
-  </script>
+  });
+
+  document.getElementById('username').addEventListener('input', clearMsg);
+  pwInput.addEventListener('input', clearMsg);
+</script>
 </body>
-
 </html>
