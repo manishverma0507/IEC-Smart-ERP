@@ -1,1345 +1,1679 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MY IEC Smart ERP - Faculty Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEC Smart ERP – Faculty Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ─── DESIGN TOKENS ──────────────────────────────────── */
+:root{
+  --bg:#0a0f1e;
+  --surface:#111827;
+  --surface2:#1a2235;
+  --border:rgba(255,255,255,.07);
+  --text:#e8eaf0;
+  --muted:#8b95aa;
+  --accent:#4f8ef7;
+  --accent2:#7c5ef7;
+  --green:#34d399;
+  --red:#f87171;
+  --yellow:#fbbf24;
+  --orange:#fb923c;
+  --sidebar-w:260px;
+  --header-h:64px;
+  --radius:14px;
+  --radius-sm:8px;
+}
 
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      overflow-x: hidden;
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-    .glass-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    .glass-hover:hover {
-      background: rgba(255, 255, 255, 0.08);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .fade-in { animation: fadeIn 0.6s ease-out forwards; }
-    .tab-btn { transition: all 0.3s ease; position: relative; }
-    .tab-btn.active { color: #8b5cf6; border-bottom: 2px solid #8b5cf6; }
-    .modal-backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.5); border-radius: 10px; }
-    select option { background: #1e293b; color: white; }
-    .att-badge-present { background: rgba(34,197,94,0.2); color: #86efac; }
-    .att-badge-absent  { background: rgba(239,68,68,0.2);  color: #fca5a5; }
-    .att-badge-late    { background: rgba(234,179,8,0.2);  color: #fde68a; }
-    .progress-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-  </style>
+/* ─── RESET / BASE ───────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.55;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;line-height:1.2}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;color:var(--text)}
+img{display:block;max-width:100%}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ─── APP SHELL ──────────────────────────────────────── */
+.app{display:flex;min-height:100vh}
+
+/* ─── SIDEBAR ────────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:200;
+  transform:translateX(0);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+
+.sidebar-logo{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 22px;
+  border-bottom:1px solid var(--border);
+  min-height:var(--header-h);
+  flex-shrink:0;
+}
+.logo-icon{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+}
+.logo-icon i{color:#fff;font-size:17px}
+.logo-text{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);white-space:nowrap}
+.logo-sub{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap}
+
+.sidebar-profile{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:var(--surface2);
+  margin:14px 12px;
+  border-radius:var(--radius-sm);
+  flex-shrink:0;
+}
+.avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;
+  overflow:hidden;
+}
+.prof-name{font-size:13px;font-weight:600;color:var(--text)}
+.prof-role{font-size:11px;color:var(--muted)}
+
+.nav-section-label{
+  font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+  padding:6px 24px 4px;margin-top:8px;
+}
+.nav-link{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 22px;
+  color:var(--muted);
+  font-size:14px;font-weight:500;
+  transition:background .2s,color .2s;
+  position:relative;cursor:pointer;
+  background:none;border:none;width:100%;text-align:left;
+}
+.nav-link i{width:18px;text-align:center;flex-shrink:0;font-size:15px}
+.nav-link:hover{background:var(--surface2);color:var(--text)}
+.nav-link.active{color:var(--accent);background:rgba(79,142,247,.08)}
+.nav-link.active::before{
+  content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  background:var(--accent);border-radius:0 3px 3px 0;
+}
+.nav-badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;
+}
+
+.sidebar-footer{margin-top:auto;padding:16px 22px;border-top:1px solid var(--border);flex-shrink:0}
+.sidebar-footer-btn{
+  display:flex;align-items:center;gap:10px;
+  color:var(--muted);font-size:13px;font-weight:500;
+  padding:8px 0;transition:color .2s;cursor:pointer;
+  background:none;border:none;width:100%;
+}
+.sidebar-footer-btn:hover{color:var(--text)}
+
+/* mobile overlay */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);z-index:150;
+  backdrop-filter:blur(4px);
+}
+.overlay.show{display:block}
+
+/* ─── MAIN AREA ──────────────────────────────────────── */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  transition:margin-left .3s cubic-bezier(.4,0,.2,1);
+}
+.main.expanded{margin-left:0}
+
+/* ─── TOPBAR ─────────────────────────────────────────── */
+.topbar{
+  height:var(--header-h);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 24px;gap:14px;
+  position:sticky;top:0;z-index:100;
+}
+.hamburger{
+  display:none;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  color:var(--text);transition:background .2s;background:none;border:none;
+}
+.hamburger:hover{background:var(--surface2)}
+.hamburger i{font-size:18px}
+
+.topbar-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:0 12px;height:38px;
+  max-width:240px;width:100%;
+}
+.topbar-search i{color:var(--muted);font-size:13px;flex-shrink:0}
+.topbar-search input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-size:13px;width:100%;
+}
+.topbar-search input::placeholder{color:var(--muted)}
+
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topbar-btn{
+  width:38px;height:38px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);background:var(--surface2);
+  transition:all .2s;position:relative;border:none;
+}
+.topbar-btn:hover{color:var(--text)}
+.topbar-btn .tbadge{
+  position:absolute;top:-3px;right:-3px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:9px;
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+  border:2px solid var(--surface);
+}
+.ai-topbtn{
+  display:flex;align-items:center;gap:8px;
+  padding:0 14px;height:38px;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;font-size:13px;font-weight:600;border:none;
+  transition:opacity .2s,transform .2s;box-shadow:0 4px 16px rgba(79,142,247,.25);
+}
+.ai-topbtn:hover{opacity:.9;transform:translateY(-1px)}
+.ai-topbtn i{font-size:14px}
+.ai-topbtn-txt{white-space:nowrap}
+
+/* ─── PAGE CONTENT ───────────────────────────────────── */
+.content{padding:24px;flex:1}
+
+/* ─── STAT CARDS ─────────────────────────────────────── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  transition:transform .2s,box-shadow .2s;
+  animation:fadeUp .45s ease both;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.35)}
+.stat-card:nth-child(1){animation-delay:.04s}
+.stat-card:nth-child(2){animation-delay:.08s}
+.stat-card:nth-child(3){animation-delay:.12s}
+.stat-card:nth-child(4){animation-delay:.16s}
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.stat-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:500;letter-spacing:.02em}
+.stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.stat-meta{font-size:12px;margin-top:6px}
+
+/* ─── TAB BAR ────────────────────────────────────────── */
+.tab-bar{
+  display:flex;gap:4px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:6px;
+  margin-bottom:24px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn2{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 14px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:500;color:var(--muted);
+  white-space:nowrap;transition:all .2s;flex-shrink:0;
+  background:none;border:none;
+}
+.tab-btn2 i{font-size:13px}
+.tab-btn2:hover{color:var(--text);background:var(--surface2)}
+.tab-btn2.active{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(79,142,247,.3)}
+
+/* ─── PANELS ─────────────────────────────────────────── */
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+  animation:fadeUp .4s ease both;
+}
+.panel-title{
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);
+  margin-bottom:18px;display:flex;align-items:center;gap:8px;
+}
+.panel-title i{font-size:14px;opacity:.8}
+
+/* ─── OVERVIEW LAYOUT ────────────────────────────────── */
+.overview-grid{display:grid;grid-template-columns:1fr 330px;gap:16px}
+.overview-left{display:flex;flex-direction:column;gap:16px}
+.overview-right{display:flex;flex-direction:column;gap:16px}
+
+/* schedule items */
+.sched-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;
+  background:var(--surface2);border-radius:var(--radius-sm);
+  border-left:3px solid var(--accent);
+  transition:background .2s;margin-bottom:10px;
+}
+.sched-item:hover{background:rgba(255,255,255,.04)}
+.sched-item:last-child{margin-bottom:0}
+.sched-time{text-align:center;min-width:68px;flex-shrink:0}
+.sched-time .t{font-size:13px;font-weight:600;color:var(--text)}
+.sched-time .d{font-size:11px;color:var(--muted)}
+.sched-div{width:1px;height:36px;background:var(--border);flex-shrink:0}
+.sched-info{flex:1;min-width:0}
+.sched-title{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sched-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.join-btn{
+  padding:7px 14px;border-radius:var(--radius-sm);
+  background:rgba(79,142,247,.12);color:var(--accent);
+  font-size:12px;font-weight:600;white-space:nowrap;
+  border:1px solid rgba(79,142,247,.25);transition:all .2s;
+}
+.join-btn:hover{background:var(--accent);color:#fff}
+
+/* quick actions */
+.quick-actions{display:grid;gap:8px}
+.qa-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:600;
+  transition:opacity .2s,transform .15s;border:none;
+}
+.qa-btn:hover{opacity:.9;transform:translateX(3px)}
+.qa-btn i{width:16px;text-align:center;font-size:14px}
+
+/* notifications */
+.notif-item{
+  padding:12px 14px;border-radius:var(--radius-sm);
+  border-left:3px solid;margin-bottom:8px;
+  background:rgba(0,0,0,.2);
+}
+.notif-item:last-child{margin-bottom:0}
+.notif-title{font-size:13px;font-weight:600;color:var(--text)}
+.notif-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.notif-time{font-size:11px;margin-top:4px;color:var(--muted)}
+
+/* progress bar */
+.prog{height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s ease}
+
+/* attendance summary cards */
+.att-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.att-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  transition:transform .2s;
+}
+.att-card:hover{transform:translateY(-2px)}
+.att-card-course{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:500}
+.att-card-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text)}
+
+/* ─── ATTENDANCE FORM ────────────────────────────────── */
+.att-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+
+/* ─── FORM CONTROLS ──────────────────────────────────── */
+.form-group label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.form-control{
+  width:100%;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;color:var(--text);font-size:13px;outline:none;
+  transition:border-color .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.form-control:focus{border-color:var(--accent)}
+.form-control option{background:var(--surface)}
+textarea.form-control{resize:vertical}
+
+/* attendance radio */
+.att-radio-wrap{display:flex;gap:10px;justify-content:center;align-items:center}
+.att-radio{position:absolute;opacity:0;width:0;height:0}
+.att-radio+label{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--border);cursor:pointer;
+  font-size:11px;font-weight:700;transition:all .15s;
+}
+.att-radio.rp+label{color:var(--green)}
+.att-radio.ra+label{color:var(--red)}
+.att-radio.rl+label{color:var(--yellow)}
+.att-radio:checked+label{border-color:currentColor;background:rgba(255,255,255,.08);transform:scale(1.12)}
+
+/* ─── TIMETABLE ──────────────────────────────────────── */
+.tt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tt-table{width:100%;border-collapse:collapse;min-width:560px}
+.tt-table th,.tt-table td{border:1px solid var(--border);padding:10px 8px;text-align:center;font-size:12px}
+.tt-table th{background:var(--surface2);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.tt-table td.time-col{background:var(--surface2);color:var(--muted);font-size:11px;font-weight:600;white-space:nowrap;text-align:left;padding-left:12px}
+.tt-cell{display:inline-flex;flex-direction:column;align-items:center;gap:3px}
+.tt-code{font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap}
+.tt-room{font-size:10px;color:var(--muted)}
+.today-col{background:rgba(79,142,247,.05)}
+
+/* ─── DATA TABLES ────────────────────────────────────── */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.dtable{width:100%;border-collapse:collapse;min-width:540px}
+table.dtable thead tr{border-bottom:1px solid var(--border)}
+table.dtable th{
+  padding:10px 14px;text-align:left;
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap;
+}
+table.dtable td{
+  padding:12px 14px;font-size:13px;color:var(--text);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  vertical-align:middle;
+}
+table.dtable tbody tr{transition:background .15s}
+table.dtable tbody tr:hover{background:rgba(255,255,255,.03)}
+table.dtable tbody tr:last-child td{border-bottom:none}
+td.muted{color:var(--muted)}
+
+/* ─── BADGES ─────────────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:3px 9px;border-radius:99px;
+  font-size:11px;font-weight:600;white-space:nowrap;
+}
+.bg-green{background:rgba(52,211,153,.12);color:var(--green)}
+.bg-yellow{background:rgba(251,191,36,.12);color:var(--yellow)}
+.bg-red{background:rgba(248,113,113,.12);color:var(--red)}
+.bg-blue{background:rgba(79,142,247,.12);color:var(--accent)}
+.bg-purple{background:rgba(124,94,247,.12);color:var(--accent2)}
+.bg-gray{background:rgba(139,149,170,.12);color:var(--muted)}
+.bg-orange{background:rgba(251,146,60,.12);color:var(--orange)}
+
+/* ─── BUTTONS ────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:600;border:none;
+  transition:all .2s;white-space:nowrap;cursor:pointer;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.btn-secondary:hover{color:var(--text)}
+.btn-success{background:#059669;color:#fff}
+.btn-success:hover{opacity:.9}
+.btn-purple{background:var(--accent2);color:#fff;box-shadow:0 4px 12px rgba(124,94,247,.3)}
+.btn-purple:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-ghost{color:var(--accent);background:none;border:none;font-size:12px;padding:2px 0;cursor:pointer;font-weight:600}
+.btn-ghost:hover{text-decoration:underline}
+.btn-ghost-red{color:var(--red);background:none;border:none;font-size:12px;padding:2px 0;cursor:pointer;font-weight:600}
+.btn-ghost-red:hover{text-decoration:underline}
+.flex-between{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.flex-gap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ─── MODAL ──────────────────────────────────────────── */
+.modal-back{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  z-index:300;align-items:center;justify-content:center;padding:16px;
+}
+.modal-back.show{display:flex}
+.modal-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);width:100%;max-width:600px;
+  max-height:90vh;overflow-y:auto;padding:24px;
+  animation:modalIn .25s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{
+  width:32px;height:32px;border-radius:var(--radius-sm);flex-shrink:0;
+  background:var(--surface2);color:var(--muted);border:none;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-size:14px;cursor:pointer;
+}
+.modal-close:hover{color:var(--text)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-1{display:grid;grid-template-columns:1fr;gap:14px}
+.form-full{grid-column:1/-1}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ─── AI PANEL ───────────────────────────────────────── */
+.ai-panel{
+  position:fixed;inset:0 0 0 auto;
+  width:min(400px,100vw);
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  z-index:250;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.ai-panel.open{transform:none}
+.ai-panel-header{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.ai-panel-header h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);flex:1}
+.ai-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);margin-top:2px}
+.ai-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{display:flex;gap:10px;align-items:flex-start}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-avt{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#fff;
+}
+.chat-msg.user .chat-avt{background:var(--surface2)}
+.chat-bubble{
+  max-width:82%;padding:10px 14px;border-radius:12px;
+  background:var(--surface2);font-size:13px;color:var(--text);line-height:1.5;
+}
+.chat-msg.user .chat-bubble{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border-radius:12px 2px 12px 12px}
+.chat-bubble.bot{border-radius:2px 12px 12px 12px}
+.chat-time{font-size:10px;color:var(--muted);margin-top:3px}
+.typing-dots{display:flex;gap:5px;align-items:center;padding:4px 0}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+.chat-input-area{padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-wrap{
+  display:flex;gap:8px;align-items:center;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:6px 8px 6px 14px;
+  transition:border-color .2s;
+}
+.chat-input-wrap:focus-within{border-color:var(--accent)}
+.chat-input-wrap input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:13px}
+.chat-input-wrap input::placeholder{color:var(--muted)}
+.chat-send{
+  width:32px;height:32px;border-radius:6px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:13px;transition:opacity .2s;border:none;cursor:pointer;
+}
+.chat-send:hover{opacity:.85}
+.quick-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{
+  padding:5px 10px;border-radius:99px;
+  background:var(--surface2);border:1px solid var(--border);
+  font-size:11px;color:var(--muted);cursor:pointer;
+  transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── TOAST ──────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 18px;
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--text);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  z-index:999;max-width:360px;
+  transform:translateY(100px);opacity:0;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.toast.show{transform:none;opacity:1}
+
+/* ─── ANIMATIONS ─────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ─── UTILITIES ──────────────────────────────────────── */
+.hidden{display:none!important}
+.truncate{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+
+/* Tablet / Small Desktop (≤1024px) */
+@media(max-width:1024px){
+  .sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .overview-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Tablet (≤768px) */
+@media(max-width:768px){
+  .content{padding:16px}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .att-controls{grid-template-columns:1fr}
+  .att-summary-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .form-grid{grid-template-columns:1fr}
+  .form-full{grid-column:1}
+  .panel{padding:16px}
+  .topbar{padding:0 16px;gap:10px}
+  .topbar-search{display:none}
+  .overview-grid{gap:12px}
+  .tab-btn2{padding:8px 11px;font-size:12px}
+  table.dtable{min-width:460px}
+}
+
+/* Mobile (≤480px) */
+@media(max-width:480px){
+  :root{--header-h:58px}
+  .content{padding:12px}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-value{font-size:22px}
+  .stat-icon{width:36px;height:36px;font-size:15px}
+  .att-summary-grid{grid-template-columns:1fr}
+  .ai-topbtn-txt{display:none}
+  .sched-item{flex-wrap:wrap;gap:10px}
+  .join-btn{width:100%;justify-content:center;text-align:center}
+  .toast{left:12px;right:12px;bottom:12px;max-width:none}
+  .tab-btn2 span{display:none}
+
+  /* Card view for tables on mobile */
+  .mobile-cards .dtable{min-width:unset}
+  .mobile-cards .dtable thead{display:none}
+  .mobile-cards .dtable tbody tr{
+    display:block;
+    background:var(--surface2);
+    border-radius:var(--radius-sm);
+    margin-bottom:10px;
+    padding:12px 14px;
+    border:1px solid var(--border);
+  }
+  .mobile-cards .dtable td{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:5px 0;border:none;font-size:12px;
+    border-bottom:1px solid var(--border);
+  }
+  .mobile-cards .dtable td:last-child{border-bottom:none}
+  .mobile-cards .dtable td::before{
+    content:attr(data-label);
+    font-size:10px;color:var(--muted);font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;
+    flex-shrink:0;margin-right:8px;
+  }
+}
+</style>
 </head>
+<body>
 
-<body class="min-h-screen">
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-  <!-- Header -->
-  <header class="glass mb-6">
-    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-          <i class="fas fa-graduation-cap text-white text-2xl"></i>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-white">IEC Smart ERP</h1>
-          <p class="text-sm text-blue-200">Faculty Portal</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-6">
-        <div class="relative">
-          <i class="fas fa-bell text-white text-xl cursor-pointer"></i>
-          <span id="notif-count" class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white">5</span>
-        </div>
-        <button id="btnAI" class="glass-hover px-4 py-2 rounded-lg text-white flex items-center gap-2">
-          <i class="fas fa-robot"></i>
-          <span class="hidden md:inline">AI Assistant</span>
-        </button>
-        <div class="flex items-center gap-3">
-          <img id="profileImg" src="https://ui-avatars.com/api/?name=Dr+B+Sharan&background=8b5cf6&color=fff" alt="Profile" class="w-10 h-10 rounded-full">
-          <div class="text-right">
-            <p id="profileName" class="font-semibold text-white">Dr. B. Sharan</p>
-            <p class="text-xs text-blue-200">Professor, CSE Dept.</p>
-          </div>
-        </div>
-      </div>
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+    <div>
+      <div class="logo-text">IEC Smart ERP</div>
+      <div class="logo-sub">Faculty Portal</div>
+    </div>
+  </div>
+
+  <div class="sidebar-profile">
+    <div class="avatar">BS</div>
+    <div>
+      <div class="prof-name">Dr. B. Sharan</div>
+      <div class="prof-role">Professor · CSE Dept.</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">Main</div>
+  <button class="nav-link active" data-tab="overview" onclick="switchTab('overview')">
+    <i class="fas fa-home"></i> Overview
+  </button>
+  <button class="nav-link" data-tab="attendance" onclick="switchTab('attendance')">
+    <i class="fas fa-clipboard-check"></i> Attendance
+    <span class="nav-badge">3</span>
+  </button>
+  <button class="nav-link" data-tab="timetable" onclick="switchTab('timetable')">
+    <i class="fas fa-calendar-alt"></i> Timetable
+  </button>
+
+  <div class="nav-section-label">Academic</div>
+  <button class="nav-link" data-tab="assignments" onclick="switchTab('assignments')">
+    <i class="fas fa-file-alt"></i> Assignments
+  </button>
+  <button class="nav-link" data-tab="exams" onclick="switchTab('exams')">
+    <i class="fas fa-pen-square"></i> Exams
+  </button>
+  <button class="nav-link" data-tab="students" onclick="switchTab('students')">
+    <i class="fas fa-user-graduate"></i> Students
+  </button>
+  <button class="nav-link" data-tab="resources" onclick="switchTab('resources')">
+    <i class="fas fa-folder-open"></i> Resources
+  </button>
+
+  <div class="sidebar-footer">
+    <button class="sidebar-footer-btn" onclick="toggleAI()">
+      <i class="fas fa-robot"></i> AI Assistant
+    </button>
+    <button class="sidebar-footer-btn">
+      <i class="fas fa-cog"></i> Settings
+    </button>
+  </div>
+</aside>
+
+<!-- ════════════ MAIN ════════════ -->
+<div class="main" id="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <h1 class="topbar-title" id="topbar-title">Overview</h1>
+
+    <div class="topbar-search" role="search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search anything…" aria-label="Global search">
+    </div>
+
+    <div class="topbar-right">
+      <button class="topbar-btn" aria-label="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="tbadge">5</span>
+      </button>
+      <button class="topbar-btn" aria-label="Messages">
+        <i class="fas fa-envelope"></i>
+        <span class="tbadge">2</span>
+      </button>
+      <button class="ai-topbtn" onclick="toggleAI()" aria-label="Open AI Assistant">
+        <i class="fas fa-robot"></i>
+        <span class="ai-topbtn-txt">AI Assistant</span>
+      </button>
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-6">
+  <!-- CONTENT -->
+  <main class="content">
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-      <div class="glass-hover glass rounded-2xl p-6">
-        <div class="flex items-center justify-between">
+    <!-- STAT CARDS -->
+    <div class="stat-grid" role="region" aria-label="Dashboard statistics">
+      <div class="stat-card">
+        <div class="stat-header">
           <div>
-            <p class="text-gray-400 text-sm">Total Classes</p>
-            <p id="stat-classes" class="text-3xl font-bold text-white">24</p>
-            <p class="text-xs text-green-400 mt-1"><i class="fas fa-arrow-up mr-1"></i>+2 this week</p>
+            <div class="stat-label">Total Classes</div>
+            <div class="stat-value" id="stat-classes">30</div>
           </div>
-          <i class="fas fa-book-open text-4xl text-blue-400"></i>
+          <div class="stat-icon" style="background:rgba(79,142,247,.12)">
+            <i class="fas fa-book-open" style="color:var(--accent)"></i>
+          </div>
         </div>
+        <div class="stat-meta" style="color:var(--green)"><i class="fas fa-arrow-up"></i> +2 this week</div>
       </div>
-      <div class="glass-hover glass rounded-2xl p-6">
-        <div class="flex items-center justify-between">
+      <div class="stat-card">
+        <div class="stat-header">
           <div>
-            <p class="text-gray-400 text-sm">Total Students</p>
-            <p id="stat-students" class="text-3xl font-bold text-white">156</p>
-            <p class="text-xs text-blue-400 mt-1"><i class="fas fa-users mr-1"></i>4 sections</p>
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value" id="stat-students">156</div>
           </div>
-          <i class="fas fa-users text-4xl text-green-400"></i>
+          <div class="stat-icon" style="background:rgba(52,211,153,.12)">
+            <i class="fas fa-users" style="color:var(--green)"></i>
+          </div>
         </div>
+        <div class="stat-meta" style="color:var(--accent)"><i class="fas fa-layer-group"></i> 4 sections</div>
       </div>
-      <div class="glass-hover glass rounded-2xl p-6">
-        <div class="flex items-center justify-between">
+      <div class="stat-card">
+        <div class="stat-header">
           <div>
-            <p class="text-gray-400 text-sm">Pending Tasks</p>
-            <p id="stat-tasks" class="text-3xl font-bold text-white">8</p>
-            <p class="text-xs text-orange-400 mt-1"><i class="fas fa-exclamation mr-1"></i>3 urgent</p>
+            <div class="stat-label">Pending Tasks</div>
+            <div class="stat-value" id="stat-tasks">8</div>
           </div>
-          <i class="fas fa-tasks text-4xl text-orange-400"></i>
+          <div class="stat-icon" style="background:rgba(251,146,60,.12)">
+            <i class="fas fa-tasks" style="color:var(--orange)"></i>
+          </div>
         </div>
+        <div class="stat-meta" style="color:var(--orange)"><i class="fas fa-exclamation-circle"></i> 3 urgent</div>
       </div>
-      <div class="glass-hover glass rounded-2xl p-6">
-        <div class="flex items-center justify-between">
+      <div class="stat-card">
+        <div class="stat-header">
           <div>
-            <p class="text-gray-400 text-sm">Attendance Rate</p>
-            <p id="stat-att-rate" class="text-3xl font-bold text-white">92%</p>
-            <p class="text-xs text-purple-400 mt-1"><i class="fas fa-chart-line mr-1"></i>+1.2% vs last month</p>
+            <div class="stat-label">Attendance Rate</div>
+            <div class="stat-value" id="stat-att-rate">92%</div>
           </div>
-          <i class="fas fa-chart-line text-4xl text-purple-400"></i>
+          <div class="stat-icon" style="background:rgba(124,94,247,.12)">
+            <i class="fas fa-chart-line" style="color:var(--accent2)"></i>
+          </div>
         </div>
+        <div class="stat-meta" style="color:var(--accent2)"><i class="fas fa-arrow-up"></i> +1.2% vs last month</div>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="glass rounded-2xl mb-6 overflow-x-auto">
-      <div id="tab-list" class="flex">
-        <button class="tab-btn px-6 py-4 font-medium text-white active" data-tab="overview" onclick="switchTab('overview')">
-          <i class="fas fa-home mr-2"></i>Overview
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="attendance" onclick="switchTab('attendance')">
-          <i class="fas fa-clipboard-check mr-2"></i>Attendance
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="timetable" onclick="switchTab('timetable')">
-          <i class="fas fa-calendar mr-2"></i>Timetable
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="assignments" onclick="switchTab('assignments')">
-          <i class="fas fa-file-alt mr-2"></i>Assignments
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="exams" onclick="switchTab('exams')">
-          <i class="fas fa-pen-square mr-2"></i>Exams
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="students" onclick="switchTab('students')">
-          <i class="fas fa-user-graduate mr-2"></i>Students
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="resources" onclick="switchTab('resources')">
-          <i class="fas fa-folder-open mr-2"></i>Resources
-        </button>
-      </div>
-    </div>
+    <!-- TAB BAR -->
+    <nav class="tab-bar" role="tablist" aria-label="Dashboard sections">
+      <button class="tab-btn2 active" data-tab="overview" onclick="switchTab('overview')" role="tab" aria-selected="true">
+        <i class="fas fa-home"></i><span> Overview</span>
+      </button>
+      <button class="tab-btn2" data-tab="attendance" onclick="switchTab('attendance')" role="tab" aria-selected="false">
+        <i class="fas fa-clipboard-check"></i><span> Attendance</span>
+      </button>
+      <button class="tab-btn2" data-tab="timetable" onclick="switchTab('timetable')" role="tab" aria-selected="false">
+        <i class="fas fa-calendar-alt"></i><span> Timetable</span>
+      </button>
+      <button class="tab-btn2" data-tab="assignments" onclick="switchTab('assignments')" role="tab" aria-selected="false">
+        <i class="fas fa-file-alt"></i><span> Assignments</span>
+      </button>
+      <button class="tab-btn2" data-tab="exams" onclick="switchTab('exams')" role="tab" aria-selected="false">
+        <i class="fas fa-pen-square"></i><span> Exams</span>
+      </button>
+      <button class="tab-btn2" data-tab="students" onclick="switchTab('students')" role="tab" aria-selected="false">
+        <i class="fas fa-user-graduate"></i><span> Students</span>
+      </button>
+      <button class="tab-btn2" data-tab="resources" onclick="switchTab('resources')" role="tab" aria-selected="false">
+        <i class="fas fa-folder-open"></i><span> Resources</span>
+      </button>
+    </nav>
 
-    <!-- Tab content -->
-    <div id="tab-content">
-
-      <!-- ===== OVERVIEW ===== -->
-      <section id="overview" class="tab-section">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 glass rounded-2xl p-6">
-            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <i class="fas fa-clock text-blue-400"></i> Today's Schedule
-            </h3>
-            <div id="today-schedule" class="space-y-4"></div>
+    <!-- ══ OVERVIEW ══ -->
+    <section id="tab-overview" role="tabpanel">
+      <div class="overview-grid">
+        <div class="overview-left">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-clock" style="color:var(--accent)"></i> Today's Schedule</div>
+            <div id="today-schedule"></div>
           </div>
-
-          <div class="space-y-6">
-            <div class="glass rounded-2xl p-6">
-              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <i class="fas fa-bolt text-yellow-400"></i> Quick Actions
-              </h3>
-              <div class="grid gap-3">
-                <button onclick="openMarkAttendance()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
-                  <i class="fas fa-clipboard-check"></i> Mark Attendance
-                </button>
-                <button onclick="openCreateAssignment()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">
-                  <i class="fas fa-plus"></i> Create Assignment
-                </button>
-                <button onclick="openUploadMaterial()" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2">
-                  <i class="fas fa-upload"></i> Upload Material
-                </button>
-                <button onclick="openGradeModal()" class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 flex items-center justify-center gap-2">
-                  <i class="fas fa-file-signature"></i> Grade Submissions
-                </button>
-              </div>
+          <div class="panel">
+            <div class="flex-between" style="margin-bottom:18px">
+              <div class="panel-title" style="margin:0"><i class="fas fa-tasks" style="color:var(--orange)"></i> Pending Tasks</div>
             </div>
-
-            <div class="glass rounded-2xl p-6">
-              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <i class="fas fa-bell text-red-400"></i> Notifications
-              </h3>
-              <div id="notifications" class="space-y-3"></div>
+            <div class="table-wrap mobile-cards">
+              <table class="dtable" aria-label="Pending tasks">
+                <thead><tr><th>Task</th><th>Course</th><th>Due</th><th>Priority</th><th>Action</th></tr></thead>
+                <tbody id="tasks-list"></tbody>
+              </table>
             </div>
           </div>
         </div>
-
-        <!-- Attendance Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div class="glass rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-sm text-gray-400">CS301 - Data Structures</p>
-              <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full">Good</span>
-            </div>
-            <p class="text-2xl font-bold text-white mb-2">94%</p>
-            <div class="progress-bar"><div class="progress-fill bg-green-400" style="width:94%"></div></div>
-          </div>
-          <div class="glass rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-sm text-gray-400">CS402 - Algorithms</p>
-              <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">Average</span>
-            </div>
-            <p class="text-2xl font-bold text-white mb-2">87%</p>
-            <div class="progress-bar"><div class="progress-fill bg-yellow-400" style="width:87%"></div></div>
-          </div>
-          <div class="glass rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-sm text-gray-400">CS501 - Machine Learning</p>
-              <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">Good</span>
-            </div>
-            <p class="text-2xl font-bold text-white mb-2">91%</p>
-            <div class="progress-bar"><div class="progress-fill bg-blue-400" style="width:91%"></div></div>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-6 mt-6">
-          <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <i class="fas fa-tasks text-orange-400"></i> Pending Tasks
-          </h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Task</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Due Date</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Priority</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Action</th>
-                </tr>
-              </thead>
-              <tbody id="tasks-list" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== ATTENDANCE ===== -->
-      <section id="attendance" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4">Mark Attendance</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div>
-              <label class="block text-sm font-semibold text-gray-400 mb-2">Select Course</label>
-              <select id="att-course" onchange="renderAttendanceForCourse(this.value)" class="w-full glass rounded-lg px-4 py-2 text-white"></select>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-400 mb-2">Date</label>
-              <input id="att-date" type="date" class="w-full glass rounded-lg px-4 py-2 text-white">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-400 mb-2">Session</label>
-              <select id="att-session" class="w-full glass rounded-lg px-4 py-2 text-white">
-                <option>Morning (10:00 AM)</option>
-                <option>Afternoon (02:00 PM)</option>
-                <option>Evening (04:30 PM)</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex gap-3 mb-4">
-            <button onclick="markAllPresent()" class="text-xs bg-green-600/30 text-green-300 px-3 py-1 rounded-lg hover:bg-green-600/50">Mark All Present</button>
-            <button onclick="markAllAbsent()"  class="text-xs bg-red-600/30  text-red-300  px-3 py-1 rounded-lg hover:bg-red-600/50">Mark All Absent</button>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Roll No</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Name</th>
-                  <th class="px-4 py-3 text-left text-gray-400">% Attendance</th>
-                  <th class="px-4 py-3 text-center text-gray-400">Present</th>
-                  <th class="px-4 py-3 text-center text-gray-400">Absent</th>
-                  <th class="px-4 py-3 text-center text-gray-400">Late</th>
-                </tr>
-              </thead>
-              <tbody id="attendance-list" class="text-white"></tbody>
-            </table>
-          </div>
-          <div class="mt-6 flex justify-end gap-3">
-            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600" onclick="resetAttendance()">Reset</button>
-            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onclick="submitAttendance()">Submit Attendance</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== TIMETABLE ===== -->
-      <section id="timetable" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <h3 class="text-xl font-bold text-white mb-4">Weekly Timetable</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full border-collapse text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Time</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Monday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Tuesday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Wednesday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Thursday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Friday</th>
-                </tr>
-              </thead>
-              <tbody id="timetable-body" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== ASSIGNMENTS ===== -->
-      <section id="assignments" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-white">Assignments</h3>
-            <div class="flex items-center gap-3">
-              <button onclick="openCreateAssignment()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                <i class="fas fa-plus mr-2"></i>New Assignment
+        <div class="overview-right">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-bolt" style="color:var(--yellow)"></i> Quick Actions</div>
+            <div class="quick-actions">
+              <button class="qa-btn" style="background:rgba(79,142,247,.12);color:var(--accent)" onclick="switchTab('attendance')">
+                <i class="fas fa-clipboard-check"></i> Mark Attendance
               </button>
-              <button onclick="exportAssignmentsCSV()" class="glass-hover px-4 py-2 rounded-lg text-white">
-                <i class="fas fa-file-csv mr-2"></i>Export CSV
+              <button class="qa-btn" style="background:rgba(52,211,153,.12);color:var(--green)" onclick="openCreateAssignment()">
+                <i class="fas fa-plus"></i> Create Assignment
+              </button>
+              <button class="qa-btn" style="background:rgba(124,94,247,.12);color:var(--accent2)" onclick="openUploadMaterial()">
+                <i class="fas fa-upload"></i> Upload Material
+              </button>
+              <button class="qa-btn" style="background:rgba(251,146,60,.12);color:var(--orange)" onclick="openGradeModal()">
+                <i class="fas fa-file-signature"></i> Grade Submissions
               </button>
             </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Title</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Due Date</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Submissions</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Status</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="assignments-list" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== EXAMS ===== -->
-      <section id="exams" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-white">Exams & Assessments</h3>
-            <button onclick="createExam()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              <i class="fas fa-plus mr-2"></i>Create Exam
-            </button>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Exam</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Date</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Duration</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Room</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Status</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="exams-list" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== STUDENTS ===== -->
-      <section id="students" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-white">Students</h3>
-            <div class="flex items-center gap-2">
-              <input id="student-search" oninput="filterStudents()" type="text" placeholder="Search by name or roll no" class="glass rounded-lg px-4 py-2 text-sm text-white">
-              <select id="student-filter-course" onchange="filterStudents()" class="glass rounded-lg px-3 py-2 text-sm text-white">
-                <option value="">All Courses</option>
-              </select>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Roll No</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Name</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Email</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Phone</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Attendance</th>
-                </tr>
-              </thead>
-              <tbody id="students-list" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== RESOURCES ===== -->
-      <section id="resources" class="tab-section hidden">
-        <div class="glass rounded-2xl p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-white">Resources & Materials</h3>
-            <button onclick="openUploadMaterial()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
-              <i class="fas fa-upload mr-2"></i>Upload Material
-            </button>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-white/10">
-                  <th class="px-4 py-3 text-left text-gray-400">Title</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Course</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Type</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Size</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Uploaded</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Downloads</th>
-                  <th class="px-4 py-3 text-left text-gray-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="resources-list" class="text-white"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- AI Assistant Panel -->
-  <div id="aiPanel" class="fixed top-0 right-0 h-full w-full md:w-96 glass z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
-    <div class="p-6 border-b border-white/10">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">
-          <span class="text-2xl">🤖</span> AI Assistant
-        </h3>
-        <button id="btnCloseAI" class="glass-hover w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-      <div class="flex gap-2">
-        <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs">Online</span>
-        <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-xs">Ready to help</span>
-      </div>
-    </div>
-
-    <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
-      <div class="chat-message">
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-            <span class="text-white text-sm">🤖</span>
-          </div>
-          <div class="flex-1">
-            <div class="glass rounded-2xl rounded-tl-none p-4">
-              <p class="text-white text-sm">Hello Dr. Sharan! I'm your AI assistant. I can help you with:</p>
-              <ul class="mt-2 space-y-1 text-gray-300 text-sm">
-                <li>• Class schedules & timetable</li>
-                <li>• Student attendance reports</li>
-                <li>• Assignment management</li>
-                <li>• Grading assistance</li>
-                <li>• Resource organization</li>
-              </ul>
-              <p class="text-gray-300 text-sm mt-3">What can I help you with today?</p>
-            </div>
-            <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-bell" style="color:var(--red)"></i> Notifications</div>
+            <div id="notifications" aria-live="polite"></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="p-6 border-t border-white/10">
-      <div class="flex gap-3">
-        <input id="aiInput" type="text" placeholder="Ask me anything..."
-          class="flex-1 glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-        <button id="aiSend" class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-          </svg>
-        </button>
+      <!-- Attendance Summary -->
+      <div class="att-summary-grid" role="region" aria-label="Course attendance">
+        <div class="att-card">
+          <div class="att-card-course">CS301 – Data Structures</div>
+          <div class="att-card-val">94%</div>
+          <div style="margin-top:6px"><span class="badge bg-green">Good</span></div>
+          <div class="prog"><div class="prog-fill" style="width:94%;background:var(--green)"></div></div>
+        </div>
+        <div class="att-card">
+          <div class="att-card-course">CS402 – Algorithms</div>
+          <div class="att-card-val">87%</div>
+          <div style="margin-top:6px"><span class="badge bg-yellow">Average</span></div>
+          <div class="prog"><div class="prog-fill" style="width:87%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="att-card">
+          <div class="att-card-course">CS501 – Machine Learning</div>
+          <div class="att-card-val">91%</div>
+          <div style="margin-top:6px"><span class="badge bg-blue">Good</span></div>
+          <div class="prog"><div class="prog-fill" style="width:91%;background:var(--accent)"></div></div>
+        </div>
       </div>
-      <div class="flex gap-2 mt-3 flex-wrap">
-        <button onclick="quickQuery('Student attendance summary')" class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Attendance</button>
-        <button onclick="quickQuery('Pending grading tasks')"      class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Grading</button>
-        <button onclick="quickQuery('Today schedule')"             class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Schedule</button>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Create Assignment Modal -->
-  <div id="create-assignment-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-backdrop absolute inset-0" onclick="closeCreateAssignment()"></div>
-    <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
-      <div class="flex justify-between items-center mb-4">
-        <h4 class="font-bold text-lg text-white">Create Assignment</h4>
-        <button onclick="closeCreateAssignment()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-      </div>
-      <form id="create-assignment-form" onsubmit="handleCreateAssignment(event)">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
-            <input id="assign-title" required class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="e.g. Linked List Implementation">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
-            <select id="assign-course" required class="w-full glass rounded-lg px-3 py-2 text-white"></select>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Due Date</label>
-            <input id="assign-due" type="date" required class="w-full glass rounded-lg px-3 py-2 text-white">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Max Marks</label>
-            <input id="assign-marks" type="number" min="1" max="100" value="20" class="w-full glass rounded-lg px-3 py-2 text-white">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Description</label>
-            <textarea id="assign-desc" rows="2" class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="Brief description of the assignment..."></textarea>
+    <!-- ══ ATTENDANCE ══ -->
+    <section id="tab-attendance" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:20px">
+          <div class="panel-title" style="margin:0"><i class="fas fa-clipboard-check" style="color:var(--accent)"></i> Mark Attendance</div>
+          <div class="flex-gap">
+            <button class="btn btn-sm" style="background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.2)" onclick="markAllPresent()">All Present</button>
+            <button class="btn btn-sm" style="background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2)" onclick="markAllAbsent()">All Absent</button>
           </div>
         </div>
-        <div class="mt-4 flex justify-end gap-3">
-          <button type="button" onclick="closeCreateAssignment()" class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">Create</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Upload Material Modal -->
-  <div id="upload-material-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-backdrop absolute inset-0" onclick="closeUploadMaterial()"></div>
-    <div class="relative glass rounded-2xl w-full max-w-xl p-6 z-10 m-4">
-      <div class="flex justify-between items-center mb-4">
-        <h4 class="font-bold text-lg text-white">Upload Material</h4>
-        <button onclick="closeUploadMaterial()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-      </div>
-      <form id="upload-material-form" onsubmit="handleUploadMaterial(event)">
-        <div class="grid grid-cols-1 gap-4">
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
-            <input id="material-title" required class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="e.g. Unit 3 - Trees & Graphs Notes">
+        <div class="att-controls">
+          <div class="form-group">
+            <label for="att-course">Course</label>
+            <select id="att-course" class="form-control" onchange="renderAttendanceForCourse(this.value)"></select>
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
-            <select id="material-course" required class="w-full glass rounded-lg px-3 py-2 text-white"></select>
+          <div class="form-group">
+            <label for="att-date">Date</label>
+            <input id="att-date" type="date" class="form-control">
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">Type</label>
-            <select id="material-type" required class="w-full glass rounded-lg px-3 py-2 text-white">
-              <option>Lecture Notes</option>
-              <option>Presentation</option>
-              <option>Assignment</option>
-              <option>Reference Book</option>
-              <option>Video Link</option>
-              <option>Other</option>
+          <div class="form-group">
+            <label for="att-session">Session</label>
+            <select id="att-session" class="form-control">
+              <option>Morning (10:00 AM)</option>
+              <option>Afternoon (02:00 PM)</option>
+              <option>Evening (04:30 PM)</option>
             </select>
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-400 mb-2">File (simulated)</label>
-            <input id="material-file" type="file" class="w-full text-white">
-            <p class="text-xs text-gray-400 mt-1">Demo stores metadata only</p>
+        </div>
+        <div class="table-wrap mobile-cards">
+          <table class="dtable" aria-label="Student attendance">
+            <thead><tr>
+              <th>Roll No</th><th>Name</th><th>Overall %</th>
+              <th style="text-align:center">P</th>
+              <th style="text-align:center">A</th>
+              <th style="text-align:center">L</th>
+            </tr></thead>
+            <tbody id="attendance-list"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+          <button class="btn btn-secondary" onclick="resetAttendance()">Reset</button>
+          <button class="btn btn-primary" onclick="submitAttendance()">
+            <i class="fas fa-save"></i> Submit
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ TIMETABLE ══ -->
+    <section id="tab-timetable" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="panel-title"><i class="fas fa-calendar-alt" style="color:var(--accent2)"></i> Weekly Timetable</div>
+        <div class="tt-wrap">
+          <table class="tt-table" aria-label="Weekly schedule">
+            <thead><tr>
+              <th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>
+            </tr></thead>
+            <tbody id="timetable-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ASSIGNMENTS ══ -->
+    <section id="tab-assignments" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:20px">
+          <div class="panel-title" style="margin:0"><i class="fas fa-file-alt" style="color:var(--green)"></i> Assignments</div>
+          <div class="flex-gap">
+            <button class="btn btn-success" onclick="openCreateAssignment()"><i class="fas fa-plus"></i> New</button>
+            <button class="btn btn-secondary" onclick="exportAssignmentsCSV()"><i class="fas fa-download"></i> Export</button>
           </div>
         </div>
-        <div class="mt-4 flex justify-end gap-3">
-          <button type="button" onclick="closeUploadMaterial()" class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Upload</button>
+        <div class="table-wrap mobile-cards">
+          <table class="dtable" aria-label="Assignments">
+            <thead><tr><th>Title</th><th>Course</th><th>Due</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="assignments-list"></tbody>
+          </table>
         </div>
-      </form>
+      </div>
+    </section>
+
+    <!-- ══ EXAMS ══ -->
+    <section id="tab-exams" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:20px">
+          <div class="panel-title" style="margin:0"><i class="fas fa-pen-square" style="color:var(--accent)"></i> Exams &amp; Assessments</div>
+          <button class="btn btn-primary" onclick="createExam()"><i class="fas fa-plus"></i> Create Exam</button>
+        </div>
+        <div class="table-wrap mobile-cards">
+          <table class="dtable" aria-label="Exams">
+            <thead><tr><th>Exam</th><th>Course</th><th>Date</th><th>Duration</th><th>Room</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="exams-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STUDENTS ══ -->
+    <section id="tab-students" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:20px">
+          <div class="panel-title" style="margin:0"><i class="fas fa-user-graduate" style="color:var(--accent2)"></i> Students</div>
+          <div class="flex-gap">
+            <input id="student-search" oninput="filterStudents()" type="search" placeholder="Name or roll no…" class="form-control" style="max-width:200px" aria-label="Search students">
+            <select id="student-filter-course" onchange="filterStudents()" class="form-control" style="max-width:160px" aria-label="Filter by course">
+              <option value="">All Courses</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap mobile-cards">
+          <table class="dtable" aria-label="Students">
+            <thead><tr><th>Roll No</th><th>Name</th><th>Course</th><th>Email</th><th>Phone</th><th>Attendance</th></tr></thead>
+            <tbody id="students-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ RESOURCES ══ -->
+    <section id="tab-resources" class="hidden" role="tabpanel">
+      <div class="panel">
+        <div class="flex-between" style="margin-bottom:20px">
+          <div class="panel-title" style="margin:0"><i class="fas fa-folder-open" style="color:var(--accent2)"></i> Resources &amp; Materials</div>
+          <button class="btn btn-purple" onclick="openUploadMaterial()"><i class="fas fa-upload"></i> Upload</button>
+        </div>
+        <div class="table-wrap mobile-cards">
+          <table class="dtable" aria-label="Resources">
+            <thead><tr><th>Title</th><th>Course</th><th>Type</th><th>Size</th><th>Uploaded</th><th>Downloads</th><th>Actions</th></tr></thead>
+            <tbody id="resources-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div><!-- /main -->
+
+<!-- ════════════ AI PANEL ════════════ -->
+<aside class="ai-panel" id="aiPanel" aria-label="AI Assistant">
+  <div class="ai-panel-header">
+    <div>
+      <h3>AI Assistant</h3>
+      <div class="ai-status">Online · Ready to help</div>
+    </div>
+    <button class="modal-close" onclick="toggleAI()" aria-label="Close AI panel"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-area" id="chatMessages" aria-live="polite">
+    <div class="chat-msg">
+      <div class="chat-avt">🤖</div>
+      <div>
+        <div class="chat-bubble bot">Hello Dr. Sharan! I can help with attendance, assignments, grading, schedules, and student queries. What do you need?</div>
+        <div class="chat-time">Just now</div>
+      </div>
     </div>
   </div>
-
-  <!-- Grade Modal -->
-  <div id="grade-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-backdrop absolute inset-0" onclick="closeGradeModal()"></div>
-    <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
-      <div class="flex justify-between items-center mb-4">
-        <h4 id="grade-modal-title" class="font-bold text-lg text-white">Grade Submissions</h4>
-        <button onclick="closeGradeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-white/10">
-              <th class="px-4 py-2 text-left text-gray-400">Roll No</th>
-              <th class="px-4 py-2 text-left text-gray-400">Name</th>
-              <th class="px-4 py-2 text-left text-gray-400">Submission</th>
-              <th class="px-4 py-2 text-left text-gray-400">Marks /20</th>
-              <th class="px-4 py-2 text-left text-gray-400">Action</th>
-            </tr>
-          </thead>
-          <tbody id="grade-list" class="text-white"></tbody>
-        </table>
-      </div>
-      <div class="mt-4 flex justify-end gap-3">
-        <button onclick="saveAllGrades()" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save All</button>
-        <button class="px-4 py-2 rounded-lg glass-hover text-white" onclick="closeGradeModal()">Close</button>
-      </div>
+  <div class="chat-input-area">
+    <div class="chat-input-wrap">
+      <input id="aiInput" type="text" placeholder="Ask me anything…" aria-label="Type a message">
+      <button class="chat-send" id="aiSend" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <div class="quick-chips">
+      <button class="chip" onclick="quickQuery('Attendance summary for all courses')">Attendance</button>
+      <button class="chip" onclick="quickQuery('Pending grading tasks')">Grading</button>
+      <button class="chip" onclick="quickQuery('Today schedule')">Today</button>
+      <button class="chip" onclick="quickQuery('Students with attendance below 75%')">Low Att.</button>
     </div>
   </div>
+</aside>
 
-  <div id="toast" class="fixed bottom-6 right-6 hidden glass text-white px-4 py-3 rounded-lg shadow z-50 flex items-center gap-2">
-    <i id="toast-icon" class="fas fa-check-circle text-green-400"></i>
-    <span id="toast-msg"></span>
+<!-- ════════════ MODALS ════════════ -->
+
+<!-- Create Assignment -->
+<div class="modal-back" id="create-assignment-modal" role="dialog" aria-modal="true" aria-labelledby="ca-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="ca-title"><i class="fas fa-file-alt" style="color:var(--green);margin-right:8px"></i>Create Assignment</div>
+      <button class="modal-close" onclick="closeCreateAssignment()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <form onsubmit="handleCreateAssignment(event)" novalidate>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="assign-title">Title *</label>
+          <input id="assign-title" required class="form-control" placeholder="e.g. Linked List Implementation">
+        </div>
+        <div class="form-group">
+          <label for="assign-course">Course *</label>
+          <select id="assign-course" required class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="assign-due">Due Date *</label>
+          <input id="assign-due" type="date" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="assign-marks">Max Marks</label>
+          <input id="assign-marks" type="number" min="1" max="100" value="20" class="form-control">
+        </div>
+        <div class="form-group form-full">
+          <label for="assign-desc">Description</label>
+          <textarea id="assign-desc" rows="3" class="form-control" placeholder="Brief description…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCreateAssignment()">Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Create</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <script>
-    // ============================
-    //  MOCK DATA
-    // ============================
-    const COURSES = [
-      { id: 'CS301', name: 'CS301 - Data Structures' },
-      { id: 'CS402', name: 'CS402 - Design & Analysis of Algorithms' },
-      { id: 'CS501', name: 'CS501 - Machine Learning' },
-      { id: 'CS206', name: 'CS206 - Object Oriented Programming' },
-    ];
+<!-- Upload Material -->
+<div class="modal-back" id="upload-material-modal" role="dialog" aria-modal="true" aria-labelledby="um-title">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title" id="um-title"><i class="fas fa-upload" style="color:var(--accent2);margin-right:8px"></i>Upload Material</div>
+      <button class="modal-close" onclick="closeUploadMaterial()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <form onsubmit="handleUploadMaterial(event)" novalidate>
+      <div class="form-grid-1">
+        <div class="form-group">
+          <label for="material-title">Title *</label>
+          <input id="material-title" required class="form-control" placeholder="e.g. Unit 3 – Trees &amp; Graphs Notes">
+        </div>
+        <div class="form-group">
+          <label for="material-course">Course *</label>
+          <select id="material-course" required class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="material-type">Type</label>
+          <select id="material-type" class="form-control">
+            <option>Lecture Notes</option><option>Presentation</option>
+            <option>Assignment</option><option>Reference Book</option>
+            <option>Video Link</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="material-file">File <span style="color:var(--muted)">(demo)</span></label>
+          <input id="material-file" type="file" class="form-control">
+          <p style="font-size:11px;color:var(--muted);margin-top:4px">Stores metadata only in this demo.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeUploadMaterial()">Cancel</button>
+        <button type="submit" class="btn btn-purple"><i class="fas fa-upload"></i> Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-    const STUDENTS = [
-      { id: 's1',  roll: '2021CSE001', name: 'Aarav Sharma',      course: 'CS301', email: 'aarav.sharma@iec.edu',      phone: '9810001111', att: 96 },
-      { id: 's2',  roll: '2021CSE002', name: 'Priya Nair',        course: 'CS301', email: 'priya.nair@iec.edu',        phone: '9810002222', att: 78 },
-      { id: 's3',  roll: '2021CSE003', name: 'Rohit Verma',       course: 'CS402', email: 'rohit.verma@iec.edu',       phone: '9810003333', att: 92 },
-      { id: 's4',  roll: '2021CSE004', name: 'Sneha Kapoor',      course: 'CS402', email: 'sneha.kapoor@iec.edu',      phone: '9810004444', att: 88 },
-      { id: 's5',  roll: '2021CSE005', name: 'Karan Mehta',       course: 'CS501', email: 'karan.mehta@iec.edu',       phone: '9810005555', att: 65 },
-      { id: 's6',  roll: '2021CSE006', name: 'Divya Rao',         course: 'CS501', email: 'divya.rao@iec.edu',         phone: '9810006666', att: 91 },
-      { id: 's7',  roll: '2021CSE007', name: 'Ankit Singh',       course: 'CS206', email: 'ankit.singh@iec.edu',       phone: '9810007777', att: 83 },
-      { id: 's8',  roll: '2021CSE008', name: 'Meera Pillai',      course: 'CS206', email: 'meera.pillai@iec.edu',      phone: '9810008888', att: 97 },
-      { id: 's9',  roll: '2021CSE009', name: 'Rahul Gupta',       course: 'CS301', email: 'rahul.gupta@iec.edu',       phone: '9810009999', att: 74 },
-      { id: 's10', roll: '2021CSE010', name: 'Pooja Iyer',        course: 'CS402', email: 'pooja.iyer@iec.edu',        phone: '9810010000', att: 89 },
-      { id: 's11', roll: '2021CSE011', name: 'Vikram Reddy',      course: 'CS501', email: 'vikram.reddy@iec.edu',      phone: '9810011000', att: 93 },
-      { id: 's12', roll: '2021CSE012', name: 'Ishita Banerjee',   course: 'CS206', email: 'ishita.banerjee@iec.edu',   phone: '9810012000', att: 86 },
-      { id: 's13', roll: '2021CSE013', name: 'Arjun Patel',       course: 'CS301', email: 'arjun.patel@iec.edu',       phone: '9810013000', att: 100 },
-      { id: 's14', roll: '2021CSE014', name: 'Ritika Joshi',      course: 'CS402', email: 'ritika.joshi@iec.edu',      phone: '9810014000', att: 70 },
-      { id: 's15', roll: '2021CSE015', name: 'Nikhil Choudhary',  course: 'CS501', email: 'nikhil.choudhary@iec.edu', phone: '9810015000', att: 82 },
-    ];
+<!-- Grade Submissions -->
+<div class="modal-back" id="grade-modal" role="dialog" aria-modal="true" aria-labelledby="gm-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="gm-title"><i class="fas fa-star" style="color:var(--yellow);margin-right:8px"></i>Grade Submissions</div>
+      <button class="modal-close" onclick="closeGradeModal()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="table-wrap">
+      <table class="dtable" aria-label="Grading">
+        <thead><tr><th>Roll No</th><th>Name</th><th>Submitted</th><th>Marks /20</th><th>Action</th></tr></thead>
+        <tbody id="grade-list"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeGradeModal()">Close</button>
+      <button class="btn btn-purple" onclick="saveAllGrades()"><i class="fas fa-save"></i> Save All</button>
+    </div>
+  </div>
+</div>
 
-    const TIMETABLE = [
-      { time: '09:00 – 10:00', Mon: 'CS301\n(Lab-3)',     Tue: 'CS206\n(R-102)',   Wed: 'CS301\n(Lab-3)',     Thu: 'CS402\n(R-201)',   Fri: 'CS501\n(R-305)' },
-      { time: '10:00 – 11:00', Mon: 'CS402\n(R-201)',     Tue: 'CS301\n(Lab-3)',   Wed: 'CS501\n(R-305)',     Thu: 'CS206\n(R-102)',   Fri: 'CS301\n(Lab-3)' },
-      { time: '11:15 – 12:15', Mon: 'CS501\n(R-305)',     Tue: '',                 Wed: 'CS402\n(R-201)',     Thu: 'CS501\n(R-305)',   Fri: 'CS206\n(R-102)' },
-      { time: '12:15 – 01:15', Mon: '',                   Tue: 'CS402\n(R-201)',   Wed: 'CS206\n(R-102)',     Thu: '',                 Fri: 'CS402\n(R-201)' },
-      { time: '02:00 – 03:00', Mon: 'CS206\n(R-102)',     Tue: 'CS501\n(R-305)',   Wed: '',                   Thu: 'CS301\n(Lab-3)',   Fri: '' },
-      { time: '03:00 – 04:00', Mon: '',                   Tue: '',                 Wed: 'CS301\n(Lab-3)',     Thu: 'CS402\n(R-201)',   Fri: 'CS501\n(R-305)' },
-    ];
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="assertive">
+  <i id="toast-icon" class="fas fa-check-circle" style="color:var(--green);font-size:16px"></i>
+  <span id="toast-msg"></span>
+</div>
 
-    const ASSIGNMENTS = [
-      { id: 'A1', title: 'Linked List Implementation',      course: 'CS301', due: '2026-04-20', submissions: 38, total: 42, status: 'Active',   maxMarks: 20 },
-      { id: 'A2', title: 'Merge Sort vs Quick Sort Report', course: 'CS402', due: '2026-04-22', submissions: 30, total: 40, status: 'Active',   maxMarks: 15 },
-      { id: 'A3', title: 'Linear Regression from Scratch',  course: 'CS501', due: '2026-04-18', submissions: 34, total: 35, status: 'Closing',  maxMarks: 25 },
-      { id: 'A4', title: 'UML Diagrams for Library System', course: 'CS206', due: '2026-04-25', submissions: 20, total: 38, status: 'Active',   maxMarks: 10 },
-      { id: 'A5', title: 'Binary Tree Traversal Lab',       course: 'CS301', due: '2026-04-10', submissions: 42, total: 42, status: 'Graded',   maxMarks: 20 },
-      { id: 'A6', title: 'NP-Completeness Essay',           course: 'CS402', due: '2026-04-12', submissions: 39, total: 40, status: 'Graded',   maxMarks: 15 },
-    ];
+<script>
+// ══ DATA ══════════════════════════════════════════════
+const COURSES=[
+  {id:'CS301',name:'CS301 – Data Structures'},
+  {id:'CS402',name:'CS402 – Design & Analysis of Algorithms'},
+  {id:'CS501',name:'CS501 – Machine Learning'},
+  {id:'CS206',name:'CS206 – Object Oriented Programming'},
+];
+const STUDENTS=[
+  {id:'s1', roll:'2021CSE001',name:'Aarav Sharma',     course:'CS301',email:'aarav.sharma@iec.edu',    phone:'9810001111',att:96},
+  {id:'s2', roll:'2021CSE002',name:'Priya Nair',       course:'CS301',email:'priya.nair@iec.edu',      phone:'9810002222',att:78},
+  {id:'s3', roll:'2021CSE003',name:'Rohit Verma',      course:'CS402',email:'rohit.verma@iec.edu',     phone:'9810003333',att:92},
+  {id:'s4', roll:'2021CSE004',name:'Sneha Kapoor',     course:'CS402',email:'sneha.kapoor@iec.edu',    phone:'9810004444',att:88},
+  {id:'s5', roll:'2021CSE005',name:'Karan Mehta',      course:'CS501',email:'karan.mehta@iec.edu',     phone:'9810005555',att:65},
+  {id:'s6', roll:'2021CSE006',name:'Divya Rao',        course:'CS501',email:'divya.rao@iec.edu',       phone:'9810006666',att:91},
+  {id:'s7', roll:'2021CSE007',name:'Ankit Singh',      course:'CS206',email:'ankit.singh@iec.edu',     phone:'9810007777',att:83},
+  {id:'s8', roll:'2021CSE008',name:'Meera Pillai',     course:'CS206',email:'meera.pillai@iec.edu',    phone:'9810008888',att:97},
+  {id:'s9', roll:'2021CSE009',name:'Rahul Gupta',      course:'CS301',email:'rahul.gupta@iec.edu',     phone:'9810009999',att:74},
+  {id:'s10',roll:'2021CSE010',name:'Pooja Iyer',       course:'CS402',email:'pooja.iyer@iec.edu',      phone:'9810010000',att:89},
+  {id:'s11',roll:'2021CSE011',name:'Vikram Reddy',     course:'CS501',email:'vikram.reddy@iec.edu',    phone:'9810011000',att:93},
+  {id:'s12',roll:'2021CSE012',name:'Ishita Banerjee',  course:'CS206',email:'ishita.banerjee@iec.edu', phone:'9810012000',att:86},
+  {id:'s13',roll:'2021CSE013',name:'Arjun Patel',      course:'CS301',email:'arjun.patel@iec.edu',     phone:'9810013000',att:100},
+  {id:'s14',roll:'2021CSE014',name:'Ritika Joshi',     course:'CS402',email:'ritika.joshi@iec.edu',    phone:'9810014000',att:70},
+  {id:'s15',roll:'2021CSE015',name:'Nikhil Choudhary', course:'CS501',email:'nikhil.choudhary@iec.edu',phone:'9810015000',att:82},
+];
+const TIMETABLE=[
+  {time:'09:00–10:00',Mon:'CS301\nLab-3',  Tue:'CS206\nR-102',Wed:'CS301\nLab-3', Thu:'CS402\nR-201',Fri:'CS501\nR-305'},
+  {time:'10:00–11:00',Mon:'CS402\nR-201',  Tue:'CS301\nLab-3',Wed:'CS501\nR-305', Thu:'CS206\nR-102',Fri:'CS301\nLab-3'},
+  {time:'11:15–12:15',Mon:'CS501\nR-305',  Tue:'',            Wed:'CS402\nR-201', Thu:'CS501\nR-305',Fri:'CS206\nR-102'},
+  {time:'12:15–01:15',Mon:'',              Tue:'CS402\nR-201',Wed:'CS206\nR-102', Thu:'',            Fri:'CS402\nR-201'},
+  {time:'02:00–03:00',Mon:'CS206\nR-102',  Tue:'CS501\nR-305',Wed:'',             Thu:'CS301\nLab-3',Fri:''},
+  {time:'03:00–04:00',Mon:'',              Tue:'',            Wed:'CS301\nLab-3', Thu:'CS402\nR-201',Fri:'CS501\nR-305'},
+];
+const ASSIGNMENTS=[
+  {id:'A1',title:'Linked List Implementation',      course:'CS301',due:'2026-04-20',submissions:38,total:42,status:'Active', maxMarks:20},
+  {id:'A2',title:'Merge Sort vs Quick Sort Report', course:'CS402',due:'2026-04-22',submissions:30,total:40,status:'Active', maxMarks:15},
+  {id:'A3',title:'Linear Regression from Scratch',  course:'CS501',due:'2026-04-18',submissions:34,total:35,status:'Closing',maxMarks:25},
+  {id:'A4',title:'UML Diagrams for Library System', course:'CS206',due:'2026-04-25',submissions:20,total:38,status:'Active', maxMarks:10},
+  {id:'A5',title:'Binary Tree Traversal Lab',       course:'CS301',due:'2026-04-10',submissions:42,total:42,status:'Graded', maxMarks:20},
+  {id:'A6',title:'NP-Completeness Essay',           course:'CS402',due:'2026-04-12',submissions:39,total:40,status:'Graded', maxMarks:15},
+];
+const EXAMS=[
+  {id:'E1',title:'Mid-Semester Examination',course:'CS301',date:'2026-04-28',duration:'2 hrs',  room:'Hall A',status:'Scheduled'},
+  {id:'E2',title:'Mid-Semester Examination',course:'CS402',date:'2026-04-29',duration:'2 hrs',  room:'Hall B',status:'Scheduled'},
+  {id:'E3',title:'Unit Test – Module 2',    course:'CS501',date:'2026-04-21',duration:'1 hr',   room:'R-305', status:'Upcoming'},
+  {id:'E4',title:'Practical Viva Voce',     course:'CS206',date:'2026-05-05',duration:'30 min', room:'Lab-1', status:'Upcoming'},
+  {id:'E5',title:'Unit Test – Module 1',    course:'CS301',date:'2026-03-15',duration:'1 hr',   room:'R-201', status:'Completed'},
+];
+const TASKS=[
+  {task:'Grade Linked List Submissions',       course:'CS301',    due:'2026-04-19',priority:'High'},
+  {task:'Prepare Mid-Sem Question Paper',      course:'CS402',    due:'2026-04-20',priority:'High'},
+  {task:'Upload Unit 4 Notes',                 course:'CS501',    due:'2026-04-21',priority:'Medium'},
+  {task:'Update Attendance Records for April', course:'CS206',    due:'2026-04-22',priority:'Medium'},
+  {task:'Review Merge Sort Reports',           course:'CS402',    due:'2026-04-23',priority:'Medium'},
+  {task:'Submit Student Progress Report',      course:'CSE Dept', due:'2026-04-25',priority:'High'},
+  {task:'Conduct Doubt Session – Algorithms',  course:'CS402',    due:'2026-04-24',priority:'Low'},
+  {task:'Update Syllabus Coverage Sheet',      course:'CS301',    due:'2026-04-28',priority:'Low'},
+];
+const RESOURCES=[
+  {id:'R1',title:'Unit 1 – Arrays & Pointers Slides',       course:'CS301',type:'Presentation', size:'4.2 MB',uploaded:'2026-03-05',downloads:142},
+  {id:'R2',title:'Unit 2 – Linked Lists Notes',             course:'CS301',type:'Lecture Notes',size:'1.8 MB',uploaded:'2026-03-18',downloads:138},
+  {id:'R3',title:'Unit 3 – Trees & Graphs Notes',           course:'CS301',type:'Lecture Notes',size:'2.1 MB',uploaded:'2026-04-01',downloads:89},
+  {id:'R4',title:'Sorting Algorithms Comparison Sheet',      course:'CS402',type:'Reference',    size:'0.9 MB',uploaded:'2026-03-10',downloads:175},
+  {id:'R5',title:'Dynamic Programming Practice Problems',    course:'CS402',type:'Assignment',   size:'0.5 MB',uploaded:'2026-03-25',downloads:120},
+  {id:'R6',title:'Introduction to ML – Lecture Deck',       course:'CS501',type:'Presentation', size:'6.7 MB',uploaded:'2026-02-20',downloads:200},
+  {id:'R7',title:'Supervised Learning – scikit-learn Guide', course:'CS501',type:'Lecture Notes',size:'3.3 MB',uploaded:'2026-03-14',downloads:167},
+  {id:'R8',title:'OOP Design Patterns Reference',           course:'CS206',type:'Reference',    size:'2.8 MB',uploaded:'2026-03-08',downloads:154},
+  {id:'R9',title:'Java Lab Manual',                         course:'CS206',type:'Lecture Notes',size:'5.1 MB',uploaded:'2026-02-28',downloads:180},
+];
+const NOTIFICATIONS=[
+  {title:'Mid-Semester Schedule Released',  desc:'Exams scheduled Apr 28–30. Check timetable.',  time:'2 hours ago',  color:'var(--accent)'},
+  {title:'Assignment Grading Reminder',     desc:'8 ungraded submissions in CS301.',              time:'5 hours ago',  color:'var(--orange)'},
+  {title:'Faculty Meeting – Tomorrow 11 AM',desc:'Agenda: Syllabus review for May.',              time:'1 day ago',    color:'var(--accent2)'},
+  {title:'Dept Head Notice',                desc:'Submit attendance records by Apr 22.',          time:'1 day ago',    color:'var(--red)'},
+  {title:'Student Feedback Portal Open',    desc:'Students can submit feedback till Apr 30.',     time:'2 days ago',   color:'var(--green)'},
+];
+const TODAY_SCHEDULE=[
+  {time:'09:00 AM',dur:'60 min',title:'CS301 – Data Structures',               loc:'Lab-3', batch:'CSE-A · 42 students'},
+  {time:'10:00 AM',dur:'60 min',title:'CS402 – Design & Analysis of Algorithms',loc:'R-201', batch:'CSE-B · 40 students'},
+  {time:'11:15 AM',dur:'60 min',title:'CS501 – Machine Learning',               loc:'R-305', batch:'CSE-C · 35 students'},
+  {time:'02:00 PM',dur:'60 min',title:'CS206 – Object Oriented Programming',    loc:'R-102', batch:'CSE-D · 38 students'},
+];
 
-    const EXAMS = [
-      { id: 'E1', title: 'Mid-Semester Examination',  course: 'CS301', date: '2026-04-28', duration: '2 hrs',   room: 'Hall A', status: 'Scheduled' },
-      { id: 'E2', title: 'Mid-Semester Examination',  course: 'CS402', date: '2026-04-29', duration: '2 hrs',   room: 'Hall B', status: 'Scheduled' },
-      { id: 'E3', title: 'Unit Test – Module 2',      course: 'CS501', date: '2026-04-21', duration: '1 hr',    room: 'R-305',  status: 'Upcoming'  },
-      { id: 'E4', title: 'Practical Viva Voce',       course: 'CS206', date: '2026-05-05', duration: '30 min',  room: 'Lab-1',  status: 'Upcoming'  },
-      { id: 'E5', title: 'Unit Test – Module 1',      course: 'CS301', date: '2026-03-15', duration: '1 hr',    room: 'R-201',  status: 'Completed' },
-    ];
+const state={courses:COURSES,students:[...STUDENTS],assignments:[...ASSIGNMENTS],exams:[...EXAMS],tasks:[...TASKS],resources:[...RESOURCES]};
 
-    const TASKS = [
-      { task: 'Grade Linked List Submissions',         course: 'CS301', due: '2026-04-19', priority: 'High'   },
-      { task: 'Prepare Mid-Sem Question Paper',        course: 'CS402', due: '2026-04-20', priority: 'High'   },
-      { task: 'Upload Unit 4 Notes',                   course: 'CS501', due: '2026-04-21', priority: 'Medium' },
-      { task: 'Update Attendance Records for April',   course: 'CS206', due: '2026-04-22', priority: 'Medium' },
-      { task: 'Review Merge Sort Reports',             course: 'CS402', due: '2026-04-23', priority: 'Medium' },
-      { task: 'Submit Student Progress Report',        course: 'CSE Dept', due: '2026-04-25', priority: 'High' },
-      { task: 'Conduct Doubt Session – Algorithms',    course: 'CS402', due: '2026-04-24', priority: 'Low'    },
-      { task: 'Update Syllabus Coverage Sheet',        course: 'CS301', due: '2026-04-28', priority: 'Low'    },
-    ];
+// ══ UTILS ═════════════════════════════════════════════
+function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dayKey(){return['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()]}
+function attBadge(p){
+  if(p>=90)return`<span class="badge bg-green">${p}%</span>`;
+  if(p>=75)return`<span class="badge bg-yellow">${p}%</span>`;
+  return`<span class="badge bg-red">${p}% ⚠</span>`;
+}
+function statusBadge(s){
+  const m={Active:'bg-green',Closing:'bg-yellow',Graded:'bg-blue',Scheduled:'bg-purple',Upcoming:'bg-blue',Completed:'bg-gray'};
+  return`<span class="badge ${m[s]||'bg-gray'}">${s}</span>`;
+}
+function prioBadge(p){
+  const m={High:'bg-red',Medium:'bg-yellow',Low:'bg-gray'};
+  return`<span class="badge ${m[p]||'bg-gray'}">${p}</span>`;
+}
+function escHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
 
-    const RESOURCES = [
-      { id: 'R1', title: 'Unit 1 – Arrays & Pointers Slides',        course: 'CS301', type: 'Presentation',  size: '4.2 MB',  uploaded: '2026-03-05', downloads: 142 },
-      { id: 'R2', title: 'Unit 2 – Linked Lists Notes',              course: 'CS301', type: 'Lecture Notes', size: '1.8 MB',  uploaded: '2026-03-18', downloads: 138 },
-      { id: 'R3', title: 'Unit 3 – Trees & Graphs Notes',            course: 'CS301', type: 'Lecture Notes', size: '2.1 MB',  uploaded: '2026-04-01', downloads: 89  },
-      { id: 'R4', title: 'Sorting Algorithms Comparison Sheet',       course: 'CS402', type: 'Reference',     size: '0.9 MB',  uploaded: '2026-03-10', downloads: 175 },
-      { id: 'R5', title: 'Dynamic Programming Practice Problems',     course: 'CS402', type: 'Assignment',    size: '0.5 MB',  uploaded: '2026-03-25', downloads: 120 },
-      { id: 'R6', title: 'Introduction to ML – Lecture Deck',        course: 'CS501', type: 'Presentation',  size: '6.7 MB',  uploaded: '2026-02-20', downloads: 200 },
-      { id: 'R7', title: 'Supervised Learning – scikit-learn Guide',  course: 'CS501', type: 'Lecture Notes', size: '3.3 MB',  uploaded: '2026-03-14', downloads: 167 },
-      { id: 'R8', title: 'OOP Design Patterns Reference',            course: 'CS206', type: 'Reference',     size: '2.8 MB',  uploaded: '2026-03-08', downloads: 154 },
-      { id: 'R9', title: 'Java Lab Manual',                          course: 'CS206', type: 'Lecture Notes', size: '5.1 MB',  uploaded: '2026-02-28', downloads: 180 },
-    ];
+let _toastTimer;
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  const icon=document.getElementById('toast-icon');
+  document.getElementById('toast-msg').textContent=msg;
+  icon.className='fas fa-'+(type==='success'?'check-circle':'exclamation-circle');
+  icon.style.color=type==='success'?'var(--green)':'var(--red)';
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
 
-    const NOTIFICATIONS = [
-      { title: 'Mid-Semester Schedule Released',   desc: 'Exams scheduled Apr 28–30. Check timetable.',  time: '2 hours ago',  color: 'blue'   },
-      { title: 'Assignment Grading Reminder',       desc: '8 ungraded submissions in CS301.',             time: '5 hours ago',  color: 'orange' },
-      { title: 'Faculty Meeting – Tomorrow 11 AM', desc: 'Agenda: Syllabus review for May.',              time: '1 day ago',    color: 'purple' },
-      { title: 'New Notice from Dept Head',         desc: 'Submit attendance records by Apr 22.',         time: '1 day ago',    color: 'red'    },
-      { title: 'Student Feedback Portal Open',      desc: 'Students can submit feedback till Apr 30.',    time: '2 days ago',   color: 'green'  },
-    ];
+// ══ SIDEBAR ═══════════════════════════════════════════
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const hb=document.getElementById('hamburger');
+  const ov=document.getElementById('overlay');
+  const open=sb.classList.toggle('open');
+  hb.setAttribute('aria-expanded',open);
+  ov.classList.toggle('show',open);
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('hamburger').setAttribute('aria-expanded','false');
+  document.getElementById('overlay').classList.remove('show');
+}
 
-    const TODAY_SCHEDULE = [
-      { time: '09:00 AM', duration: '60 min', title: 'CS301 – Data Structures',               location: 'Lab-3',   batch: 'CSE-A (42 students)' },
-      { time: '10:00 AM', duration: '60 min', title: 'CS402 – Design & Analysis of Algorithms', location: 'R-201',  batch: 'CSE-B (40 students)' },
-      { time: '11:15 AM', duration: '60 min', title: 'CS501 – Machine Learning',               location: 'R-305',   batch: 'CSE-C (35 students)' },
-      { time: '02:00 PM', duration: '60 min', title: 'CS206 – Object Oriented Programming',    location: 'R-102',   batch: 'CSE-D (38 students)' },
-    ];
+// ══ TAB SWITCH ════════════════════════════════════════
+const TAB_LABELS={overview:'Overview',attendance:'Attendance',timetable:'Timetable',assignments:'Assignments',exams:'Exams',students:'Students',resources:'Resources'};
+function switchTab(tab){
+  document.querySelectorAll('[data-tab]').forEach(el=>{
+    const a=el.dataset.tab===tab;
+    el.classList.toggle('active',a);
+    if(el.getAttribute('role')==='tab')el.setAttribute('aria-selected',a);
+  });
+  document.querySelectorAll('section[id^="tab-"]').forEach(s=>s.classList.toggle('hidden',s.id!=='tab-'+tab));
+  document.getElementById('topbar-title').textContent=TAB_LABELS[tab]||tab;
+  if(window.innerWidth<=1024)closeSidebar();
+}
 
-    // ============================
-    //  STATE
-    // ============================
-    const state = {
-      profile: { name: 'Dr. B. Sharan', dept: 'CSE Dept.' },
-      courses: COURSES,
-      students: STUDENTS,
-      timetable: TIMETABLE,
-      assignments: ASSIGNMENTS,
-      exams: EXAMS,
-      tasks: TASKS,
-      resources: RESOURCES,
-      notifications: NOTIFICATIONS,
-    };
+// ══ OVERVIEW ══════════════════════════════════════════
+function renderOverview(){
+  // Schedule
+  const c=document.getElementById('today-schedule');
+  c.innerHTML='';
+  TODAY_SCHEDULE.forEach(it=>{
+    const d=document.createElement('div');
+    d.className='sched-item';
+    d.innerHTML=`
+      <div class="sched-time"><div class="t">${it.time}</div><div class="d">${it.dur}</div></div>
+      <div class="sched-div"></div>
+      <div class="sched-info">
+        <div class="sched-title">${it.title}</div>
+        <div class="sched-sub"><i class="fas fa-map-marker-alt" style="color:var(--muted);margin-right:4px"></i>${it.loc} &nbsp;·&nbsp; ${it.batch}</div>
+      </div>
+      <button class="join-btn"><i class="fas fa-video"></i> Join</button>`;
+    c.appendChild(d);
+  });
+  // Notifications
+  const n=document.getElementById('notifications');
+  n.innerHTML='';
+  NOTIFICATIONS.forEach(no=>{
+    const el=document.createElement('div');
+    el.className='notif-item';
+    el.style.borderColor=no.color;
+    el.innerHTML=`<div class="notif-title">${no.title}</div><div class="notif-desc">${no.desc}</div><div class="notif-time">${no.time}</div>`;
+    n.appendChild(el);
+  });
+  // Tasks
+  const tb=document.getElementById('tasks-list');
+  tb.innerHTML='';
+  state.tasks.forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td data-label="Task" style="font-weight:500">${t.task}</td>
+      <td class="muted" data-label="Course">${t.course}</td>
+      <td class="muted" data-label="Due">${t.due}</td>
+      <td data-label="Priority">${prioBadge(t.priority)}</td>
+      <td data-label="Action"><button class="btn-ghost">View →</button></td>`;
+    tb.appendChild(tr);
+  });
+}
 
-    // ============================
-    //  UTILS
-    // ============================
-    function showToast(msg, type = 'success') {
-      const t   = document.getElementById('toast');
-      const icon = document.getElementById('toast-icon');
-      const msgEl = document.getElementById('toast-msg');
-      msgEl.textContent = msg;
-      icon.className = type === 'success'
-        ? 'fas fa-check-circle text-green-400'
-        : 'fas fa-exclamation-circle text-red-400';
-      t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 2800);
-    }
+// ══ ATTENDANCE ════════════════════════════════════════
+function populateAttendance(){
+  const sel=document.getElementById('att-course');
+  sel.innerHTML='';
+  state.courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});
+  document.getElementById('att-date').value=todayStr();
+  renderAttendanceForCourse(state.courses[0].id);
+}
+function renderAttendanceForCourse(cid){
+  const tb=document.getElementById('attendance-list');
+  tb.innerHTML='';
+  const students=state.students.filter(s=>s.course===cid);
+  if(!students.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">No students found</td></tr>';return}
+  students.forEach(s=>{
+    const tr=document.createElement('tr');
+    tr.dataset.studentId=s.id;
+    tr.innerHTML=`
+      <td class="muted" data-label="Roll">${s.roll}</td>
+      <td data-label="Name" style="font-weight:600">${s.name}</td>
+      <td data-label="Attendance">${attBadge(s.att)}</td>
+      <td data-label="Present" style="text-align:center">
+        <input type="radio" class="att-radio rp" id="p${s.id}" name="att${s.id}" value="present" checked>
+        <label for="p${s.id}">P</label>
+      </td>
+      <td data-label="Absent" style="text-align:center">
+        <input type="radio" class="att-radio ra" id="a${s.id}" name="att${s.id}" value="absent">
+        <label for="a${s.id}">A</label>
+      </td>
+      <td data-label="Late" style="text-align:center">
+        <input type="radio" class="att-radio rl" id="l${s.id}" name="att${s.id}" value="late">
+        <label for="l${s.id}">L</label>
+      </td>`;
+    tb.appendChild(tr);
+  });
+}
+function markAllPresent(){document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr=>{const r=tr.querySelector('input[value="present"]');if(r)r.checked=true})}
+function markAllAbsent() {document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr=>{const r=tr.querySelector('input[value="absent"]'); if(r)r.checked=true})}
+function resetAttendance(){populateAttendance();showToast('Attendance reset')}
+function submitAttendance(){
+  const cid=document.getElementById('att-course').value;
+  const date=document.getElementById('att-date').value;
+  if(!cid||!date){showToast('Select course and date','error');return}
+  let p=0,a=0,l=0;
+  document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr=>{
+    const ch=tr.querySelector('input[type="radio"]:checked');
+    if(ch){if(ch.value==='present')p++;else if(ch.value==='absent')a++;else l++;}
+  });
+  showToast(`Saved — Present: ${p}, Late: ${l}, Absent: ${a}`);
+}
 
-    function todayStr() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    }
+// ══ TIMETABLE ═════════════════════════════════════════
+const TT_COLORS={
+  CS301:'background:rgba(79,142,247,.15);color:var(--accent)',
+  CS402:'background:rgba(52,211,153,.15);color:var(--green)',
+  CS501:'background:rgba(124,94,247,.15);color:var(--accent2)',
+  CS206:'background:rgba(251,146,60,.15);color:var(--orange)',
+};
+function renderTimetable(){
+  const tb=document.getElementById('timetable-body');
+  tb.innerHTML='';
+  const today=dayKey();
+  ['Mon','Tue','Wed','Thu','Fri'].forEach(()=>{});
+  state.timetable.forEach(row=>{
+    const tr=document.createElement('tr');
+    let h=`<td class="time-col">${row.time}</td>`;
+    ['Mon','Tue','Wed','Thu','Fri'].forEach(d=>{
+      const val=row[d]||'';
+      const isT=d===today;
+      const[code,room]=(val||'\n').split('\n');
+      const col=TT_COLORS[code]||'';
+      h+=`<td class="${isT?'today-col':''}">
+        ${val?`<div class="tt-cell"><span class="tt-code" style="${col}">${code}</span>${room?`<span class="tt-room">${room}</span>`:''}</div>`:'<span style="color:var(--border)">—</span>'}
+      </td>`;
+    });
+    tr.innerHTML=h;
+    tb.appendChild(tr);
+  });
+}
 
-    function dayKey() {
-      return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-    }
+// ══ ASSIGNMENTS ═══════════════════════════════════════
+function renderAssignments(){
+  const tb=document.getElementById('assignments-list');
+  tb.innerHTML='';
+  state.assignments.forEach(a=>{
+    const pct=Math.round(a.submissions/a.total*100)||0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td data-label="Title" style="font-weight:600;max-width:180px" class="truncate">${a.title}</td>
+      <td class="muted" data-label="Course">${a.course}</td>
+      <td class="muted" data-label="Due">${a.due}</td>
+      <td data-label="Submissions">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;font-weight:600;white-space:nowrap">${a.submissions}/${a.total}</span>
+          <div class="prog" style="width:52px"><div class="prog-fill" style="width:${pct}%;background:var(--accent2)"></div></div>
+        </div>
+      </td>
+      <td data-label="Status">${statusBadge(a.status)}</td>
+      <td data-label="Actions" style="white-space:nowrap">
+        <button class="btn-ghost" onclick="openGradeModal('${a.id}','${escHtml(a.title)}')" style="margin-right:8px">Grade</button>
+        <button class="btn-ghost-red" onclick="deleteAssignment('${a.id}')">Delete</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+}
+function openCreateAssignment(){
+  document.getElementById('assign-title').value='';
+  document.getElementById('assign-desc').value='';
+  document.getElementById('assign-due').value=todayStr();
+  const sel=document.getElementById('assign-course');
+  sel.innerHTML='';
+  state.courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});
+  document.getElementById('create-assignment-modal').classList.add('show');
+}
+function closeCreateAssignment(){document.getElementById('create-assignment-modal').classList.remove('show')}
+function handleCreateAssignment(e){
+  e.preventDefault();
+  const title=document.getElementById('assign-title').value.trim();
+  const course=document.getElementById('assign-course').value;
+  const due=document.getElementById('assign-due').value;
+  const marks=parseInt(document.getElementById('assign-marks').value)||20;
+  state.assignments.unshift({id:'A'+Date.now(),title,course,due,submissions:0,total:state.students.filter(s=>s.course===course).length||0,status:'Active',maxMarks:marks});
+  closeCreateAssignment();renderAssignments();showToast('Assignment created: '+title);
+}
+function deleteAssignment(id){state.assignments=state.assignments.filter(a=>a.id!==id);renderAssignments();showToast('Assignment deleted')}
+function exportAssignmentsCSV(){
+  const rows=[['Title','Course','Due Date','Submissions','Status']];
+  state.assignments.forEach(a=>rows.push([`"${a.title}"`,a.course,a.due,`${a.submissions}/${a.total}`,a.status]));
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='assignments.csv';a.click();
+  showToast('Exported as CSV');
+}
 
-    function attColor(pct) {
-      if (pct >= 90) return 'text-green-400';
-      if (pct >= 75) return 'text-yellow-400';
-      return 'text-red-400';
-    }
+// ══ EXAMS ═════════════════════════════════════════════
+function renderExams(){
+  const tb=document.getElementById('exams-list');
+  tb.innerHTML='';
+  state.exams.forEach(e=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td data-label="Exam" style="font-weight:600">${e.title}</td>
+      <td class="muted" data-label="Course">${e.course}</td>
+      <td class="muted" data-label="Date">${e.date}</td>
+      <td class="muted" data-label="Duration">${e.duration}</td>
+      <td class="muted" data-label="Room">${e.room}</td>
+      <td data-label="Status">${statusBadge(e.status)}</td>
+      <td data-label="Action"><button class="btn-ghost">View →</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function createExam(){
+  state.exams.unshift({id:'E'+Date.now(),title:'New Exam',course:state.courses[0].id,date:todayStr(),duration:'2 hrs',room:'TBD',status:'Upcoming'});
+  renderExams();showToast('Exam created — update details');
+}
 
-    function statusBadge(status) {
-      const map = {
-        'Active':    'bg-green-500/20 text-green-300',
-        'Closing':   'bg-yellow-500/20 text-yellow-300',
-        'Graded':    'bg-blue-500/20 text-blue-300',
-        'Scheduled': 'bg-purple-500/20 text-purple-300',
-        'Upcoming':  'bg-blue-500/20 text-blue-300',
-        'Completed': 'bg-gray-500/20 text-gray-300',
-      };
-      return map[status] || 'bg-gray-500/20 text-gray-300';
-    }
+// ══ STUDENTS ══════════════════════════════════════════
+function renderStudents(list){
+  const students=list||state.students;
+  const tb=document.getElementById('students-list');
+  tb.innerHTML='';
+  if(!students.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">No students found</td></tr>';return}
+  students.forEach(s=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="muted" data-label="Roll">${s.roll}</td>
+      <td data-label="Name" style="font-weight:600">${s.name}</td>
+      <td class="muted" data-label="Course">${s.course}</td>
+      <td class="muted" data-label="Email" style="font-size:12px">${s.email}</td>
+      <td class="muted" data-label="Phone">${s.phone}</td>
+      <td data-label="Attendance">${attBadge(s.att)}</td>`;
+    tb.appendChild(tr);
+  });
+  const fil=document.getElementById('student-filter-course');
+  const cur=fil.value;
+  fil.innerHTML='<option value="">All Courses</option>';
+  state.courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;if(c.id===cur)o.selected=true;fil.appendChild(o)});
+}
+function filterStudents(){
+  const q=document.getElementById('student-search').value.toLowerCase().trim();
+  const course=document.getElementById('student-filter-course').value;
+  renderStudents(state.students.filter(s=>(!q||s.name.toLowerCase().includes(q)||s.roll.toLowerCase().includes(q))&&(!course||s.course===course)));
+}
 
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-        btn.classList.toggle('text-white', btn.dataset.tab === tab);
-        btn.classList.toggle('text-gray-400', btn.dataset.tab !== tab);
-      });
-      document.querySelectorAll('.tab-section').forEach(sec => {
-        sec.classList.toggle('hidden', sec.id !== tab);
-      });
-      const renders = { attendance: populateAttendance, assignments: renderAssignments,
-                        overview: renderOverview, timetable: renderTimetable,
-                        students: renderStudents, resources: renderResources, exams: renderExams };
-      if (renders[tab]) renders[tab]();
-    }
+// ══ RESOURCES ═════════════════════════════════════════
+const TYPE_ICONS={'Lecture Notes':'fa-file-lines','Presentation':'fa-file-powerpoint','Reference':'fa-book','Assignment':'fa-tasks','Video Link':'fa-video','Other':'fa-file'};
+function renderResources(){
+  const tb=document.getElementById('resources-list');
+  tb.innerHTML='';
+  state.resources.forEach(r=>{
+    const icon=TYPE_ICONS[r.type]||'fa-file';
+    const safeTitle=r.title.replace(/'/g,"\\'");
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td data-label="Title" style="font-weight:600">
+        <i class="fas ${icon}" style="color:var(--accent2);margin-right:8px"></i>${r.title}
+      </td>
+      <td class="muted" data-label="Course">${r.course}</td>
+      <td class="muted" data-label="Type">${r.type}</td>
+      <td class="muted" data-label="Size">${r.size}</td>
+      <td class="muted" data-label="Uploaded">${r.uploaded}</td>
+      <td data-label="Downloads" style="font-weight:600;color:var(--accent)">${r.downloads}</td>
+      <td data-label="Actions" style="white-space:nowrap">
+        <button class="btn-ghost" onclick="showToast('Downloading: ${safeTitle}')" style="margin-right:8px">Download</button>
+        <button class="btn-ghost-red" onclick="deleteResource('${r.id}')">Delete</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+}
+function deleteResource(id){state.resources=state.resources.filter(r=>r.id!==id);renderResources();showToast('Resource deleted')}
+function openUploadMaterial(){
+  const sel=document.getElementById('material-course');
+  sel.innerHTML='';
+  state.courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});
+  document.getElementById('upload-material-modal').classList.add('show');
+}
+function closeUploadMaterial(){document.getElementById('upload-material-modal').classList.remove('show')}
+function handleUploadMaterial(e){
+  e.preventDefault();
+  const title=document.getElementById('material-title').value.trim();
+  const course=document.getElementById('material-course').value;
+  const type=document.getElementById('material-type').value;
+  state.resources.unshift({id:'R'+Date.now(),title,course,type,size:'—',uploaded:new Date().toLocaleDateString('en-IN'),downloads:0});
+  document.getElementById('material-title').value='';
+  closeUploadMaterial();renderResources();showToast('Material uploaded: '+title);
+}
 
-    // ============================
-    //  OVERVIEW
-    // ============================
-    function renderOverview() {
-      // Today schedule
-      const container = document.getElementById('today-schedule');
-      container.innerHTML = '';
-      TODAY_SCHEDULE.forEach(it => {
-        const el = document.createElement('div');
-        el.className = 'flex items-start gap-4 p-4 rounded-lg glass border-l-4 border-blue-400 glass-hover';
-        el.innerHTML = `
-          <div class="text-center min-w-[72px]">
-            <p class="text-sm font-semibold text-white">${it.time}</p>
-            <p class="text-xs text-gray-400">${it.duration}</p>
-          </div>
-          <div class="flex-1">
-            <h4 class="font-semibold text-white">${it.title}</h4>
-            <p class="text-sm text-gray-400 mt-1">Room: <span class="text-blue-300">${it.location}</span> &nbsp;|&nbsp; ${it.batch}</p>
-          </div>
-          <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm flex-shrink-0">
-            <i class="fas fa-video mr-1"></i>Join
-          </button>`;
-        container.appendChild(el);
-      });
+// ══ GRADING ═══════════════════════════════════════════
+function openGradeModal(assignmentId,assignmentTitle){
+  const titleEl=document.getElementById('gm-title');
+  titleEl.innerHTML=`<i class="fas fa-star" style="color:var(--yellow);margin-right:8px"></i>${assignmentTitle?'Grade — '+assignmentTitle:'Grade Submissions'}`;
+  const tb=document.getElementById('grade-list');
+  tb.innerHTML='';
+  const sampleGrades=[null,17,14,null,19,12,null,18,15,null];
+  state.students.slice(0,10).forEach((s,i)=>{
+    const ex=sampleGrades[i];
+    const submitted=ex!==null||Math.random()>.3;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="muted" data-label="Roll">${s.roll}</td>
+      <td data-label="Name" style="font-weight:600">${s.name}</td>
+      <td data-label="Status">${submitted?'<span class="badge bg-green">Submitted</span>':'<span class="badge bg-red">Not Submitted</span>'}</td>
+      <td data-label="Marks">
+        <input type="number" min="0" max="20" value="${ex!==null?ex:''}" placeholder="—"
+          class="form-control" style="width:70px;padding:5px 8px" ${submitted?'':'disabled'}>
+      </td>
+      <td data-label="Action"><button class="btn-ghost" onclick="showToast('Grade saved for ${s.name}')">Save</button></td>`;
+    tb.appendChild(tr);
+  });
+  document.getElementById('grade-modal').classList.add('show');
+}
+function closeGradeModal(){document.getElementById('grade-modal').classList.remove('show')}
+function saveAllGrades(){showToast('All grades saved successfully');closeGradeModal()}
 
-      // Notifications
-      const notifEl = document.getElementById('notifications');
-      notifEl.innerHTML = '';
-      const colorMap = { blue: 'bg-blue-500/20 border-blue-500/30', orange: 'bg-orange-500/20 border-orange-500/30',
-                         purple: 'bg-purple-500/20 border-purple-500/30', red: 'bg-red-500/20 border-red-500/30',
-                         green: 'bg-green-500/20 border-green-500/30' };
-      state.notifications.forEach(n => {
-        const el = document.createElement('div');
-        el.className = `p-3 rounded-lg border ${colorMap[n.color] || colorMap.blue}`;
-        el.innerHTML = `<p class="text-sm font-semibold text-white">${n.title}</p>
-          <p class="text-xs text-gray-300 mt-1">${n.desc}</p>
-          <p class="text-xs text-gray-500 mt-1">${n.time}</p>`;
-        notifEl.appendChild(el);
-      });
+// ══ AI ASSISTANT ══════════════════════════════════════
+function toggleAI(){document.getElementById('aiPanel').classList.toggle('open')}
 
-      // Tasks
-      const tasksBody = document.getElementById('tasks-list');
-      tasksBody.innerHTML = '';
-      state.tasks.forEach(t => {
-        const priBadge = t.priority === 'High'
-          ? 'bg-red-500/20 text-red-300'
-          : t.priority === 'Medium'
-            ? 'bg-yellow-500/20 text-yellow-300'
-            : 'bg-gray-500/20 text-gray-300';
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-3 font-medium">${t.task}</td>
-          <td class="px-4 py-3 text-gray-300">${t.course}</td>
-          <td class="px-4 py-3 text-gray-300">${t.due}</td>
-          <td class="px-4 py-3"><span class="${priBadge} px-2 py-1 rounded-full text-xs">${t.priority}</span></td>
-          <td class="px-4 py-3"><button class="text-purple-400 hover:underline text-xs">View</button></td>`;
-        tasksBody.appendChild(tr);
-      });
-    }
+async function sendMessage(){
+  const inp=document.getElementById('aiInput');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  const chat=document.getElementById('chatMessages');
 
-    // ============================
-    //  ATTENDANCE
-    // ============================
-    function populateAttendance() {
-      const courseSelect = document.getElementById('att-course');
-      courseSelect.innerHTML = '';
-      state.courses.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id; opt.textContent = c.name;
-        courseSelect.appendChild(opt);
-      });
-      document.getElementById('att-date').value = todayStr();
-      renderAttendanceForCourse(state.courses[0].id);
-    }
+  const uDiv=document.createElement('div');
+  uDiv.className='chat-msg user';
+  uDiv.innerHTML=`
+    <div class="chat-avt"><i class="fas fa-user" style="font-size:12px"></i></div>
+    <div><div class="chat-bubble">${escHtml(msg)}</div><div class="chat-time">Just now</div></div>`;
+  chat.appendChild(uDiv);
+  inp.value='';
 
-    function renderAttendanceForCourse(courseId) {
-      const tbody = document.getElementById('attendance-list');
-      tbody.innerHTML = '';
-      const students = state.students.filter(s => s.course === courseId);
-      if (!students.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-gray-400">No students in this course</td></tr>';
-        return;
-      }
-      students.forEach(s => {
-        const attClass = attColor(s.att);
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.dataset.studentId = s.id;
-        tr.innerHTML = `
-          <td class="px-4 py-3 text-gray-300">${s.roll}</td>
-          <td class="px-4 py-3 font-medium">${s.name}</td>
-          <td class="px-4 py-3">
-            <span class="${attClass} font-semibold">${s.att}%</span>
-            ${s.att < 75 ? '<span class="ml-2 text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full">Low</span>' : ''}
-          </td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="present" checked></td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="absent"></td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="late"></td>`;
-        tbody.appendChild(tr);
-      });
-    }
+  const typing=document.createElement('div');
+  typing.className='chat-msg';
+  typing.id='typing-indicator';
+  typing.innerHTML=`
+    <div class="chat-avt">🤖</div>
+    <div><div class="chat-bubble bot"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  chat.appendChild(typing);
+  chat.scrollTop=chat.scrollHeight;
 
-    function markAllPresent() {
-      document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr => {
-        const id = tr.dataset.studentId;
-        const radio = tr.querySelector(`input[value="present"]`);
-        if (radio) radio.checked = true;
-      });
-    }
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:'You are an AI assistant embedded in IEC University faculty ERP. The user is Dr. B. Sharan, Professor in CSE. Be concise, professional, and helpful. Data: 156 students, 4 courses (CS301 Data Structures, CS402 Algorithms, CS501 Machine Learning, CS206 OOP), 92% attendance, 8 pending tasks, 6 active assignments.',
+        messages:[{role:'user',content:msg}]
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'Unable to process. Please try again.';
+    document.getElementById('typing-indicator')?.remove();
+    const aDiv=document.createElement('div');
+    aDiv.className='chat-msg';
+    aDiv.innerHTML=`
+      <div class="chat-avt">🤖</div>
+      <div><div class="chat-bubble bot">${escHtml(reply)}</div><div class="chat-time">Just now</div></div>`;
+    chat.appendChild(aDiv);
+  }catch(err){
+    document.getElementById('typing-indicator')?.remove();
+    const eDiv=document.createElement('div');
+    eDiv.className='chat-msg';
+    eDiv.innerHTML=`
+      <div class="chat-avt" style="background:var(--red)">⚠</div>
+      <div><div class="chat-bubble bot" style="color:var(--red)">Unable to reach AI. Check your connection.</div></div>`;
+    chat.appendChild(eDiv);
+  }
+  chat.scrollTop=chat.scrollHeight;
+}
 
-    function markAllAbsent() {
-      document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr => {
-        const id = tr.dataset.studentId;
-        const radio = tr.querySelector(`input[value="absent"]`);
-        if (radio) radio.checked = true;
-      });
-    }
+function quickQuery(q){document.getElementById('aiInput').value=q;sendMessage()}
 
-    function resetAttendance() { populateAttendance(); showToast('Attendance reset'); }
+// ══ MODAL BACKDROP CLOSE ══════════════════════════════
+document.querySelectorAll('.modal-back').forEach(mb=>{
+  mb.addEventListener('click',e=>{if(e.target===mb)mb.classList.remove('show')});
+});
 
-    function submitAttendance() {
-      const courseId = document.getElementById('att-course').value;
-      const date = document.getElementById('att-date').value;
-      if (!courseId || !date) { showToast('Select course and date', 'error'); return; }
-      const rows = document.querySelectorAll('#attendance-list tr[data-student-id]');
-      let present = 0, absent = 0, late = 0;
-      rows.forEach(tr => {
-        const checked = tr.querySelector('input[type="radio"]:checked');
-        if (checked) {
-          if (checked.value === 'present') present++;
-          else if (checked.value === 'absent') absent++;
-          else late++;
-        }
-      });
-      showToast(`Attendance saved — Present: ${present}, Late: ${late}, Absent: ${absent}`);
-    }
+// ══ ESC KEY ═══════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-back.show').forEach(m=>m.classList.remove('show'));
+    document.getElementById('aiPanel').classList.remove('open');
+  }
+});
 
-    // ============================
-    //  TIMETABLE
-    // ============================
-    function renderTimetable() {
-      const tbody = document.getElementById('timetable-body');
-      tbody.innerHTML = '';
-      const today = dayKey();
-      const days = ['Mon','Tue','Wed','Thu','Fri'];
-      const subjectColors = {
-        'CS301': 'bg-blue-500/20 text-blue-300',
-        'CS402': 'bg-green-500/20 text-green-300',
-        'CS501': 'bg-purple-500/20 text-purple-300',
-        'CS206': 'bg-orange-500/20 text-orange-300',
-      };
-      state.timetable.forEach(row => {
-        const tr = document.createElement('tr');
-        const todayStyle = `border border-white/10 px-4 py-3`;
-        let html = `<td class="border border-white/10 px-4 py-3 font-semibold text-gray-300 bg-white/5 whitespace-nowrap">${row.time}</td>`;
-        days.forEach(d => {
-          const val = row[d] || '';
-          const isToday = d === today;
-          const code = val.split('\n')[0];
-          const room = val.split('\n')[1] || '';
-          const colorClass = subjectColors[code] || '';
-          html += `<td class="border border-white/10 px-3 py-3 text-center ${isToday ? 'bg-purple-500/10' : ''}">
-            ${val ? `<span class="inline-block ${colorClass} rounded-lg px-2 py-1 text-xs font-semibold">${code}</span><br><span class="text-gray-400 text-xs">${room}</span>` : '<span class="text-gray-600">—</span>'}
-          </td>`;
-        });
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
-      });
-    }
+// ══ AI SEND SHORTCUTS ═════════════════════════════════
+document.getElementById('aiSend').addEventListener('click',sendMessage);
+document.getElementById('aiInput').addEventListener('keypress',e=>{if(e.key==='Enter')sendMessage()});
 
-    // ============================
-    //  ASSIGNMENTS
-    // ============================
-    function renderAssignments() {
-      const tbody = document.getElementById('assignments-list');
-      tbody.innerHTML = '';
-      state.assignments.forEach(a => {
-        const pct = Math.round((a.submissions / a.total) * 100);
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-3 font-medium">${a.title}</td>
-          <td class="px-4 py-3 text-gray-300">${a.course}</td>
-          <td class="px-4 py-3 text-gray-300">${a.due}</td>
-          <td class="px-4 py-3">
-            <div class="flex items-center gap-2">
-              <span class="text-sm">${a.submissions}/${a.total}</span>
-              <div class="progress-bar w-20"><div class="progress-fill bg-purple-400" style="width:${pct}%"></div></div>
-            </div>
-          </td>
-          <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${statusBadge(a.status)}">${a.status}</span></td>
-          <td class="px-4 py-3">
-            <button class="text-purple-400 hover:underline mr-3 text-xs" onclick="openGradeModal('${a.id}','${a.title}')">Grade</button>
-            <button class="text-gray-400 hover:underline text-xs" onclick="deleteAssignment('${a.id}')">Delete</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function openCreateAssignment() {
-      document.getElementById('assign-title').value = '';
-      document.getElementById('assign-desc').value  = '';
-      document.getElementById('assign-due').value   = todayStr();
-      const courseSelect = document.getElementById('assign-course');
-      courseSelect.innerHTML = '';
-      state.courses.forEach(c => {
-        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
-        courseSelect.appendChild(opt);
-      });
-      document.getElementById('create-assignment-modal').classList.remove('hidden');
-      document.getElementById('create-assignment-modal').classList.add('flex');
-    }
-
-    function closeCreateAssignment() {
-      document.getElementById('create-assignment-modal').classList.add('hidden');
-      document.getElementById('create-assignment-modal').classList.remove('flex');
-    }
-
-    function handleCreateAssignment(e) {
-      e.preventDefault();
-      const title = document.getElementById('assign-title').value.trim();
-      const course = document.getElementById('assign-course').value;
-      const due = document.getElementById('assign-due').value;
-      const desc = document.getElementById('assign-desc').value;
-      const marks = parseInt(document.getElementById('assign-marks').value) || 20;
-      state.assignments.unshift({ id: 'A' + Date.now(), title, course, due, desc, submissions: 0, total: state.students.filter(s => s.course === course).length || 0, status: 'Active', maxMarks: marks });
-      closeCreateAssignment();
-      renderAssignments();
-      showToast('Assignment created: ' + title);
-    }
-
-    function deleteAssignment(id) {
-      state.assignments = state.assignments.filter(a => a.id !== id);
-      renderAssignments();
-      showToast('Assignment deleted');
-    }
-
-    function exportAssignmentsCSV() {
-      const rows = [['Title','Course','Due Date','Submissions','Status']];
-      state.assignments.forEach(a => rows.push([a.title, a.course, a.due, `${a.submissions}/${a.total}`, a.status]));
-      const csv = rows.map(r => r.join(',')).join('\n');
-      const a = document.createElement('a');
-      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-      a.download = 'assignments.csv';
-      a.click();
-      showToast('Assignments exported');
-    }
-
-    // ============================
-    //  EXAMS
-    // ============================
-    function renderExams() {
-      const tbody = document.getElementById('exams-list');
-      tbody.innerHTML = '';
-      state.exams.forEach(e => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-3 font-medium">${e.title}</td>
-          <td class="px-4 py-3 text-gray-300">${e.course}</td>
-          <td class="px-4 py-3 text-gray-300">${e.date}</td>
-          <td class="px-4 py-3 text-gray-300">${e.duration}</td>
-          <td class="px-4 py-3 text-gray-300">${e.room}</td>
-          <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${statusBadge(e.status)}">${e.status}</span></td>
-          <td class="px-4 py-3"><button class="text-purple-400 hover:underline text-xs">View</button></td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function createExam() {
-      const course = state.courses[0];
-      state.exams.unshift({ id: 'E' + Date.now(), title: 'New Exam', course: course.id, date: todayStr(), duration: '2 hrs', room: 'TBD', status: 'Upcoming' });
-      renderExams();
-      showToast('Exam created — update details as needed');
-    }
-
-    // ============================
-    //  STUDENTS
-    // ============================
-    function renderStudents(list) {
-      const students = list || state.students;
-      const tbody = document.getElementById('students-list');
-      tbody.innerHTML = '';
-      students.forEach(s => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-3 text-gray-300">${s.roll}</td>
-          <td class="px-4 py-3 font-medium">${s.name}</td>
-          <td class="px-4 py-3 text-gray-300">${s.course}</td>
-          <td class="px-4 py-3 text-gray-300">${s.email}</td>
-          <td class="px-4 py-3 text-gray-300">${s.phone}</td>
-          <td class="px-4 py-3">
-            <span class="${attColor(s.att)} font-semibold">${s.att}%</span>
-            ${s.att < 75 ? '<span class="ml-1 text-xs bg-red-500/20 text-red-300 px-1.5 rounded-full">⚠</span>' : ''}
-          </td>`;
-        tbody.appendChild(tr);
-      });
-      const filter = document.getElementById('student-filter-course');
-      filter.innerHTML = '<option value="">All Courses</option>';
-      state.courses.forEach(c => {
-        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
-        filter.appendChild(opt);
-      });
-    }
-
-    function filterStudents() {
-      const q = document.getElementById('student-search').value.toLowerCase().trim();
-      const course = document.getElementById('student-filter-course').value;
-      const filtered = state.students.filter(s => {
-        const matchQ = !q || s.name.toLowerCase().includes(q) || s.roll.toLowerCase().includes(q);
-        const matchC = !course || s.course === course;
-        return matchQ && matchC;
-      });
-      renderStudents(filtered);
-    }
-
-    // ============================
-    //  RESOURCES
-    // ============================
-    function renderResources() {
-      const tbody = document.getElementById('resources-list');
-      tbody.innerHTML = '';
-      const typeIcons = { 'Lecture Notes': 'fa-file-alt', 'Presentation': 'fa-file-powerpoint', 'Reference': 'fa-book', 'Assignment': 'fa-tasks', 'Video Link': 'fa-video', 'Other': 'fa-file' };
-      state.resources.forEach(r => {
-        const icon = typeIcons[r.type] || 'fa-file';
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-3 font-medium"><i class="fas ${icon} text-purple-400 mr-2"></i>${r.title}</td>
-          <td class="px-4 py-3 text-gray-300">${r.course}</td>
-          <td class="px-4 py-3 text-gray-300">${r.type}</td>
-          <td class="px-4 py-3 text-gray-400">${r.size}</td>
-          <td class="px-4 py-3 text-gray-300">${r.uploaded}</td>
-          <td class="px-4 py-3 text-gray-300">${r.downloads}</td>
-          <td class="px-4 py-3">
-            <button class="text-purple-400 hover:underline text-xs mr-3" onclick="showToast('Download started: ${r.title}')">Download</button>
-            <button class="text-gray-400 hover:underline text-xs" onclick="deleteResource('${r.id}')">Delete</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function deleteResource(id) {
-      state.resources = state.resources.filter(r => r.id !== id);
-      renderResources();
-      showToast('Resource deleted');
-    }
-
-    function openUploadMaterial() {
-      const courseSelect = document.getElementById('material-course');
-      courseSelect.innerHTML = '';
-      state.courses.forEach(c => {
-        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
-        courseSelect.appendChild(opt);
-      });
-      document.getElementById('upload-material-modal').classList.remove('hidden');
-      document.getElementById('upload-material-modal').classList.add('flex');
-    }
-
-    function closeUploadMaterial() {
-      document.getElementById('upload-material-modal').classList.add('hidden');
-      document.getElementById('upload-material-modal').classList.remove('flex');
-    }
-
-    function handleUploadMaterial(e) {
-      e.preventDefault();
-      const title = document.getElementById('material-title').value.trim();
-      const course = document.getElementById('material-course').value;
-      const type   = document.getElementById('material-type').value;
-      state.resources.unshift({ id: 'R' + Date.now(), title, course, type, size: '—', uploaded: new Date().toLocaleDateString('en-IN'), downloads: 0 });
-      closeUploadMaterial();
-      renderResources();
-      showToast('Material uploaded: ' + title);
-    }
-
-    // ============================
-    //  GRADING
-    // ============================
-    function openGradeModal(assignmentId, assignmentTitle) {
-      document.getElementById('grade-modal-title').textContent = assignmentTitle ? `Grade — ${assignmentTitle}` : 'Grade Submissions';
-      const tbody = document.getElementById('grade-list');
-      tbody.innerHTML = '';
-      const sampleGrades = [null, 17, 14, null, 19, 12, null, 18, 15, null];
-      state.students.slice(0, 10).forEach((s, i) => {
-        const existing = sampleGrades[i];
-        const submitted = existing !== null || Math.random() > 0.3;
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `
-          <td class="px-4 py-2 text-gray-300">${s.roll}</td>
-          <td class="px-4 py-2">${s.name}</td>
-          <td class="px-4 py-2">
-            ${submitted ? '<span class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full">Submitted</span>'
-                        : '<span class="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full">Not Submitted</span>'}
-          </td>
-          <td class="px-4 py-2">
-            <input type="number" class="w-20 glass rounded px-2 py-1 text-white text-sm" min="0" max="20"
-              value="${existing !== null ? existing : ''}" placeholder="—" ${submitted ? '' : 'disabled'}>
-          </td>
-          <td class="px-4 py-2">
-            <button onclick="showToast('Grade saved for ${s.name}')" class="text-purple-400 hover:underline text-xs">Save</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-      document.getElementById('grade-modal').classList.remove('hidden');
-      document.getElementById('grade-modal').classList.add('flex');
-    }
-
-    function closeGradeModal() {
-      document.getElementById('grade-modal').classList.add('hidden');
-      document.getElementById('grade-modal').classList.remove('flex');
-    }
-
-    function saveAllGrades() {
-      showToast('All grades saved successfully');
-      closeGradeModal();
-    }
-
-    // ============================
-    //  AI ASSISTANT
-    // ============================
-    function toggleAIPanel() {
-      document.getElementById('aiPanel').classList.toggle('translate-x-full');
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('aiInput');
-      const message = input.value.trim();
-      if (!message) return;
-
-      const chatMessages = document.getElementById('chatMessages');
-
-      const userMsg = document.createElement('div');
-      userMsg.className = 'chat-message flex justify-end';
-      userMsg.innerHTML = `
-        <div class="max-w-[80%]">
-          <div class="bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl rounded-tr-none p-4">
-            <p class="text-white text-sm">${escapeHtml(message)}</p>
-          </div>
-          <p class="text-gray-500 text-xs mt-1 mr-1 text-right">Just now</p>
-        </div>`;
-      chatMessages.appendChild(userMsg);
-      input.value = '';
-
-      const typingIndicator = document.createElement('div');
-      typingIndicator.id = 'typingIndicator';
-      typingIndicator.className = 'chat-message';
-      typingIndicator.innerHTML = `
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-            <span class="text-sm">🤖</span>
-          </div>
-          <div class="flex-1">
-            <div class="glass rounded-2xl rounded-tl-none p-4">
-              <div class="flex space-x-2">
-                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay:0.2s"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay:0.4s"></div>
-              </div>
-            </div>
-          </div>
-        </div>`;
-      chatMessages.appendChild(typingIndicator);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            system: `You are an AI assistant embedded inside a college faculty ERP portal for IEC University. The faculty member is Dr. B. Sharan, a Professor in the CSE Department. Help with questions about attendance, assignments, exams, students, timetable, grading, and academic administration. Be concise and helpful. Current data: 156 students across 4 courses (CS301 Data Structures, CS402 Algorithms, CS501 Machine Learning, CS206 OOP). Attendance rate is 92%. 8 pending tasks. 6 active assignments.`,
-            messages: [{ role: 'user', content: message }]
-          })
-        });
-        const data = await response.json();
-        const reply = data.content?.[0]?.text || 'I could not process that. Please try again.';
-
-        typingIndicator.remove();
-        const aiMsg = document.createElement('div');
-        aiMsg.className = 'chat-message';
-        aiMsg.innerHTML = `
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-              <span class="text-sm">🤖</span>
-            </div>
-            <div class="flex-1">
-              <div class="glass rounded-2xl rounded-tl-none p-4">
-                <p class="text-white text-sm">${escapeHtml(reply)}</p>
-              </div>
-              <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
-            </div>
-          </div>`;
-        chatMessages.appendChild(aiMsg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      } catch (e) {
-        typingIndicator.remove();
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'chat-message';
-        errorMsg.innerHTML = `
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-              <span class="text-sm">⚠️</span>
-            </div>
-            <div class="flex-1">
-              <div class="glass rounded-2xl rounded-tl-none p-4">
-                <p class="text-red-300 text-sm">Unable to reach AI service. Please try again.</p>
-              </div>
-            </div>
-          </div>`;
-        chatMessages.appendChild(errorMsg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-    }
-
-    function quickQuery(query) {
-      document.getElementById('aiInput').value = query;
-      sendMessage();
-    }
-
-    // ============================
-    //  HELPERS
-    // ============================
-    function openMarkAttendance() { switchTab('attendance'); }
-
-    // ============================
-    //  EVENTS
-    // ============================
-    document.getElementById('btnAI').addEventListener('click', toggleAIPanel);
-    document.getElementById('btnCloseAI').addEventListener('click', toggleAIPanel);
-    document.getElementById('aiSend').addEventListener('click', sendMessage);
-    document.getElementById('aiInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
-
-    // ============================
-    //  INIT
-    // ============================
-    (function init() {
-      document.getElementById('profileName').textContent = state.profile.name;
-      document.getElementById('stat-students').textContent = state.students.length;
-      document.getElementById('stat-classes').textContent = state.timetable.length * 5; // slots across week
-      document.getElementById('stat-tasks').textContent = state.tasks.length;
-      document.getElementById('notif-count').textContent = state.notifications.length;
-      renderOverview();
-      populateAttendance();
-      renderAssignments();
-      renderTimetable();
-      renderStudents();
-      renderResources();
-      renderExams();
-    })();
-  </script>
+// ══ INIT ══════════════════════════════════════════════
+(function init(){
+  document.getElementById('stat-students').textContent=state.students.length;
+  document.getElementById('stat-tasks').textContent=state.tasks.length;
+  renderOverview();
+  populateAttendance();
+  renderTimetable();
+  renderAssignments();
+  renderExams();
+  renderStudents();
+  renderResources();
+})();
+</script>
 </body>
 </html>
