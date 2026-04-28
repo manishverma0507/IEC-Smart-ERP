@@ -8,82 +8,44 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    * {
-      font-family: 'Inter', sans-serif;
-    }
-
+    * { font-family: 'Inter', sans-serif; }
     body {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       overflow-x: hidden;
     }
-
     .glass {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-
-    .glass-hover {
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
+    .glass-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     .glass-hover:hover {
       background: rgba(255, 255, 255, 0.08);
       transform: translateY(-4px);
       box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
     }
-
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    .fade-in {
-      animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    .tab-btn {
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .tab-btn.active {
-      color: #8b5cf6;
-      border-bottom: 2px solid #8b5cf6;
-    }
-
-    .modal-backdrop {
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.5);
-      border-radius: 10px;
-    }
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    .tab-btn { transition: all 0.3s ease; position: relative; }
+    .tab-btn.active { color: #8b5cf6; border-bottom: 2px solid #8b5cf6; }
+    .modal-backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.5); border-radius: 10px; }
+    select option { background: #1e293b; color: white; }
+    .att-badge-present { background: rgba(34,197,94,0.2); color: #86efac; }
+    .att-badge-absent  { background: rgba(239,68,68,0.2);  color: #fca5a5; }
+    .att-badge-late    { background: rgba(234,179,8,0.2);  color: #fde68a; }
+    .progress-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
   </style>
 </head>
 
@@ -93,8 +55,7 @@
   <header class="glass mb-6">
     <div class="container mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <div
-          class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
           <i class="fas fa-graduation-cap text-white text-2xl"></i>
         </div>
         <div>
@@ -105,18 +66,16 @@
       <div class="flex items-center gap-6">
         <div class="relative">
           <i class="fas fa-bell text-white text-xl cursor-pointer"></i>
-          <span id="notif-count"
-            class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white">5</span>
+          <span id="notif-count" class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white">5</span>
         </div>
         <button id="btnAI" class="glass-hover px-4 py-2 rounded-lg text-white flex items-center gap-2">
           <i class="fas fa-robot"></i>
           <span class="hidden md:inline">AI Assistant</span>
         </button>
         <div class="flex items-center gap-3">
-          <img id="profileImg" src="https://ui-avatars.com/api/?name=Dr+B+sharan&background=8b5cf6&color=fff"
-            alt="Profile" class="w-10 h-10 rounded-full">
+          <img id="profileImg" src="https://ui-avatars.com/api/?name=Dr+B+Sharan&background=8b5cf6&color=fff" alt="Profile" class="w-10 h-10 rounded-full">
           <div class="text-right">
-            <p id="profileName" class="font-semibold text-white">Dr.B sharan</p>
+            <p id="profileName" class="font-semibold text-white">Dr. B. Sharan</p>
             <p class="text-xs text-blue-200">Professor, CSE Dept.</p>
           </div>
         </div>
@@ -125,6 +84,7 @@
   </header>
 
   <main class="container mx-auto px-4 py-6">
+
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <div class="glass-hover glass rounded-2xl p-6">
@@ -132,6 +92,7 @@
           <div>
             <p class="text-gray-400 text-sm">Total Classes</p>
             <p id="stat-classes" class="text-3xl font-bold text-white">24</p>
+            <p class="text-xs text-green-400 mt-1"><i class="fas fa-arrow-up mr-1"></i>+2 this week</p>
           </div>
           <i class="fas fa-book-open text-4xl text-blue-400"></i>
         </div>
@@ -141,6 +102,7 @@
           <div>
             <p class="text-gray-400 text-sm">Total Students</p>
             <p id="stat-students" class="text-3xl font-bold text-white">156</p>
+            <p class="text-xs text-blue-400 mt-1"><i class="fas fa-users mr-1"></i>4 sections</p>
           </div>
           <i class="fas fa-users text-4xl text-green-400"></i>
         </div>
@@ -150,6 +112,7 @@
           <div>
             <p class="text-gray-400 text-sm">Pending Tasks</p>
             <p id="stat-tasks" class="text-3xl font-bold text-white">8</p>
+            <p class="text-xs text-orange-400 mt-1"><i class="fas fa-exclamation mr-1"></i>3 urgent</p>
           </div>
           <i class="fas fa-tasks text-4xl text-orange-400"></i>
         </div>
@@ -159,6 +122,7 @@
           <div>
             <p class="text-gray-400 text-sm">Attendance Rate</p>
             <p id="stat-att-rate" class="text-3xl font-bold text-white">92%</p>
+            <p class="text-xs text-purple-400 mt-1"><i class="fas fa-chart-line mr-1"></i>+1.2% vs last month</p>
           </div>
           <i class="fas fa-chart-line text-4xl text-purple-400"></i>
         </div>
@@ -168,20 +132,16 @@
     <!-- Tabs -->
     <div class="glass rounded-2xl mb-6 overflow-x-auto">
       <div id="tab-list" class="flex">
-        <button class="tab-btn px-6 py-4 font-medium text-white active" data-tab="overview"
-          onclick="switchTab('overview')">
+        <button class="tab-btn px-6 py-4 font-medium text-white active" data-tab="overview" onclick="switchTab('overview')">
           <i class="fas fa-home mr-2"></i>Overview
         </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="attendance"
-          onclick="switchTab('attendance')">
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="attendance" onclick="switchTab('attendance')">
           <i class="fas fa-clipboard-check mr-2"></i>Attendance
         </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="timetable"
-          onclick="switchTab('timetable')">
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="timetable" onclick="switchTab('timetable')">
           <i class="fas fa-calendar mr-2"></i>Timetable
         </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="assignments"
-          onclick="switchTab('assignments')">
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="assignments" onclick="switchTab('assignments')">
           <i class="fas fa-file-alt mr-2"></i>Assignments
         </button>
         <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="exams" onclick="switchTab('exams')">
@@ -190,8 +150,7 @@
         <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="students" onclick="switchTab('students')">
           <i class="fas fa-user-graduate mr-2"></i>Students
         </button>
-        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="resources"
-          onclick="switchTab('resources')">
+        <button class="tab-btn px-6 py-4 font-medium text-gray-400" data-tab="resources" onclick="switchTab('resources')">
           <i class="fas fa-folder-open mr-2"></i>Resources
         </button>
       </div>
@@ -199,7 +158,8 @@
 
     <!-- Tab content -->
     <div id="tab-content">
-      <!-- Overview -->
+
+      <!-- ===== OVERVIEW ===== -->
       <section id="overview" class="tab-section">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 glass rounded-2xl p-6">
@@ -215,20 +175,16 @@
                 <i class="fas fa-bolt text-yellow-400"></i> Quick Actions
               </h3>
               <div class="grid gap-3">
-                <button onclick="openMarkAttendance()"
-                  class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
+                <button onclick="openMarkAttendance()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
                   <i class="fas fa-clipboard-check"></i> Mark Attendance
                 </button>
-                <button onclick="openCreateAssignment()"
-                  class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">
+                <button onclick="openCreateAssignment()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">
                   <i class="fas fa-plus"></i> Create Assignment
                 </button>
-                <button onclick="openUploadMaterial()"
-                  class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2">
+                <button onclick="openUploadMaterial()" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2">
                   <i class="fas fa-upload"></i> Upload Material
                 </button>
-                <button onclick="openGradeModal()"
-                  class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 flex items-center justify-center gap-2">
+                <button onclick="openGradeModal()" class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 flex items-center justify-center gap-2">
                   <i class="fas fa-file-signature"></i> Grade Submissions
                 </button>
               </div>
@@ -240,6 +196,34 @@
               </h3>
               <div id="notifications" class="space-y-3"></div>
             </div>
+          </div>
+        </div>
+
+        <!-- Attendance Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm text-gray-400">CS301 - Data Structures</p>
+              <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full">Good</span>
+            </div>
+            <p class="text-2xl font-bold text-white mb-2">94%</p>
+            <div class="progress-bar"><div class="progress-fill bg-green-400" style="width:94%"></div></div>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm text-gray-400">CS402 - Algorithms</p>
+              <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">Average</span>
+            </div>
+            <p class="text-2xl font-bold text-white mb-2">87%</p>
+            <div class="progress-bar"><div class="progress-fill bg-yellow-400" style="width:87%"></div></div>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm text-gray-400">CS501 - Machine Learning</p>
+              <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">Good</span>
+            </div>
+            <p class="text-2xl font-bold text-white mb-2">91%</p>
+            <div class="progress-bar"><div class="progress-fill bg-blue-400" style="width:91%"></div></div>
           </div>
         </div>
 
@@ -264,14 +248,14 @@
         </div>
       </section>
 
-      <!-- Attendance -->
+      <!-- ===== ATTENDANCE ===== -->
       <section id="attendance" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <h3 class="text-xl font-bold text-white mb-4">Mark Attendance</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
               <label class="block text-sm font-semibold text-gray-400 mb-2">Select Course</label>
-              <select id="att-course" class="w-full glass rounded-lg px-4 py-2 text-white"></select>
+              <select id="att-course" onchange="renderAttendanceForCourse(this.value)" class="w-full glass rounded-lg px-4 py-2 text-white"></select>
             </div>
             <div>
               <label class="block text-sm font-semibold text-gray-400 mb-2">Date</label>
@@ -286,13 +270,17 @@
               </select>
             </div>
           </div>
-
+          <div class="flex gap-3 mb-4">
+            <button onclick="markAllPresent()" class="text-xs bg-green-600/30 text-green-300 px-3 py-1 rounded-lg hover:bg-green-600/50">Mark All Present</button>
+            <button onclick="markAllAbsent()"  class="text-xs bg-red-600/30  text-red-300  px-3 py-1 rounded-lg hover:bg-red-600/50">Mark All Absent</button>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-white/10">
                   <th class="px-4 py-3 text-left text-gray-400">Roll No</th>
                   <th class="px-4 py-3 text-left text-gray-400">Name</th>
+                  <th class="px-4 py-3 text-left text-gray-400">% Attendance</th>
                   <th class="px-4 py-3 text-center text-gray-400">Present</th>
                   <th class="px-4 py-3 text-center text-gray-400">Absent</th>
                   <th class="px-4 py-3 text-center text-gray-400">Late</th>
@@ -301,17 +289,14 @@
               <tbody id="attendance-list" class="text-white"></tbody>
             </table>
           </div>
-
           <div class="mt-6 flex justify-end gap-3">
-            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
-              onclick="resetAttendance()">Reset</button>
-            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-              onclick="submitAttendance()">Submit Attendance</button>
+            <button class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600" onclick="resetAttendance()">Reset</button>
+            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onclick="submitAttendance()">Submit Attendance</button>
           </div>
         </div>
       </section>
 
-      <!-- Timetable -->
+      <!-- ===== TIMETABLE ===== -->
       <section id="timetable" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <h3 class="text-xl font-bold text-white mb-4">Weekly Timetable</h3>
@@ -319,12 +304,12 @@
             <table class="w-full border-collapse text-sm">
               <thead>
                 <tr class="border-b border-white/10">
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Time</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Monday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Tuesday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Wednesday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Thursday</th>
-                  <th class="border border-white/10 px-4 py-3 text-gray-400">Friday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Time</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Monday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Tuesday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Wednesday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Thursday</th>
+                  <th class="border border-white/10 px-4 py-3 text-gray-400 bg-white/5">Friday</th>
                 </tr>
               </thead>
               <tbody id="timetable-body" class="text-white"></tbody>
@@ -333,14 +318,13 @@
         </div>
       </section>
 
-      <!-- Assignments -->
+      <!-- ===== ASSIGNMENTS ===== -->
       <section id="assignments" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold text-white">Assignments</h3>
             <div class="flex items-center gap-3">
-              <button onclick="openCreateAssignment()"
-                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+              <button onclick="openCreateAssignment()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
                 <i class="fas fa-plus mr-2"></i>New Assignment
               </button>
               <button onclick="exportAssignmentsCSV()" class="glass-hover px-4 py-2 rounded-lg text-white">
@@ -356,6 +340,7 @@
                   <th class="px-4 py-3 text-left text-gray-400">Course</th>
                   <th class="px-4 py-3 text-left text-gray-400">Due Date</th>
                   <th class="px-4 py-3 text-left text-gray-400">Submissions</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Status</th>
                   <th class="px-4 py-3 text-left text-gray-400">Actions</th>
                 </tr>
               </thead>
@@ -365,7 +350,7 @@
         </div>
       </section>
 
-      <!-- Exams -->
+      <!-- ===== EXAMS ===== -->
       <section id="exams" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <div class="flex items-center justify-between mb-4">
@@ -382,6 +367,8 @@
                   <th class="px-4 py-3 text-left text-gray-400">Course</th>
                   <th class="px-4 py-3 text-left text-gray-400">Date</th>
                   <th class="px-4 py-3 text-left text-gray-400">Duration</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Room</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Status</th>
                   <th class="px-4 py-3 text-left text-gray-400">Actions</th>
                 </tr>
               </thead>
@@ -391,16 +378,14 @@
         </div>
       </section>
 
-      <!-- Students -->
+      <!-- ===== STUDENTS ===== -->
       <section id="students" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-xl font-bold text-white">Students</h3>
             <div class="flex items-center gap-2">
-              <input id="student-search" oninput="filterStudents()" type="text" placeholder="Search by name or roll no"
-                class="glass rounded-lg px-4 py-2 text-sm text-white">
-              <select id="student-filter-course" onchange="filterStudents()"
-                class="glass rounded-lg px-3 py-2 text-sm text-white">
+              <input id="student-search" oninput="filterStudents()" type="text" placeholder="Search by name or roll no" class="glass rounded-lg px-4 py-2 text-sm text-white">
+              <select id="student-filter-course" onchange="filterStudents()" class="glass rounded-lg px-3 py-2 text-sm text-white">
                 <option value="">All Courses</option>
               </select>
             </div>
@@ -414,6 +399,7 @@
                   <th class="px-4 py-3 text-left text-gray-400">Course</th>
                   <th class="px-4 py-3 text-left text-gray-400">Email</th>
                   <th class="px-4 py-3 text-left text-gray-400">Phone</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Attendance</th>
                 </tr>
               </thead>
               <tbody id="students-list" class="text-white"></tbody>
@@ -422,13 +408,12 @@
         </div>
       </section>
 
-      <!-- Resources -->
+      <!-- ===== RESOURCES ===== -->
       <section id="resources" class="tab-section hidden">
         <div class="glass rounded-2xl p-6">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold text-white">Resources & Materials</h3>
-            <button onclick="openUploadMaterial()"
-              class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+            <button onclick="openUploadMaterial()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
               <i class="fas fa-upload mr-2"></i>Upload Material
             </button>
           </div>
@@ -439,7 +424,9 @@
                   <th class="px-4 py-3 text-left text-gray-400">Title</th>
                   <th class="px-4 py-3 text-left text-gray-400">Course</th>
                   <th class="px-4 py-3 text-left text-gray-400">Type</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Size</th>
                   <th class="px-4 py-3 text-left text-gray-400">Uploaded</th>
+                  <th class="px-4 py-3 text-left text-gray-400">Downloads</th>
                   <th class="px-4 py-3 text-left text-gray-400">Actions</th>
                 </tr>
               </thead>
@@ -448,22 +435,20 @@
           </div>
         </div>
       </section>
+
     </div>
   </main>
 
   <!-- AI Assistant Panel -->
-  <div id="aiPanel"
-    class="fixed top-0 right-0 h-full w-full md:w-96 glass z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+  <div id="aiPanel" class="fixed top-0 right-0 h-full w-full md:w-96 glass z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
     <div class="p-6 border-b border-white/10">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
-          <span class="text-2xl">🤖</span>
-          AI Assistant
+          <span class="text-2xl">🤖</span> AI Assistant
         </h3>
-        <button id="btnCloseAI"
-          class="glass-hover w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white">
+        <button id="btnCloseAI" class="glass-hover w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
@@ -476,13 +461,12 @@
     <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
       <div class="chat-message">
         <div class="flex items-start gap-3">
-          <div
-            class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
             <span class="text-white text-sm">🤖</span>
           </div>
           <div class="flex-1">
             <div class="glass rounded-2xl rounded-tl-none p-4">
-              <p class="text-white text-sm">Hello! I'm your AI assistant. I can help you with:</p>
+              <p class="text-white text-sm">Hello Dr. Sharan! I'm your AI assistant. I can help you with:</p>
               <ul class="mt-2 space-y-1 text-gray-300 text-sm">
                 <li>• Class schedules & timetable</li>
                 <li>• Student attendance reports</li>
@@ -490,7 +474,7 @@
                 <li>• Grading assistance</li>
                 <li>• Resource organization</li>
               </ul>
-              <p class="text-gray-300 text-sm mt-3">What can I help you with?</p>
+              <p class="text-gray-300 text-sm mt-3">What can I help you with today?</p>
             </div>
             <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
           </div>
@@ -502,46 +486,33 @@
       <div class="flex gap-3">
         <input id="aiInput" type="text" placeholder="Ask me anything..."
           class="flex-1 glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-        <button id="aiSend"
-          class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+        <button id="aiSend" class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
           </svg>
         </button>
       </div>
       <div class="flex gap-2 mt-3 flex-wrap">
-        <button onclick="quickQuery('Student attendance summary')"
-          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
-          Attendance
-        </button>
-        <button onclick="quickQuery('Pending grading tasks')"
-          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
-          Grading
-        </button>
-        <button onclick="quickQuery('Today schedule')"
-          class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white transition-colors">
-          Schedule
-        </button>
+        <button onclick="quickQuery('Student attendance summary')" class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Attendance</button>
+        <button onclick="quickQuery('Pending grading tasks')"      class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Grading</button>
+        <button onclick="quickQuery('Today schedule')"             class="px-3 py-1 rounded-lg glass-hover text-gray-300 text-xs hover:text-white">Schedule</button>
       </div>
     </div>
   </div>
 
-  <!-- Modals -->
+  <!-- Create Assignment Modal -->
   <div id="create-assignment-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="modal-backdrop absolute inset-0" onclick="closeCreateAssignment()"></div>
     <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
       <div class="flex justify-between items-center mb-4">
         <h4 class="font-bold text-lg text-white">Create Assignment</h4>
-        <button onclick="closeCreateAssignment()" class="text-gray-400 hover:text-white">
-          <i class="fas fa-times"></i>
-        </button>
+        <button onclick="closeCreateAssignment()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
       <form id="create-assignment-form" onsubmit="handleCreateAssignment(event)">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
-            <input id="assign-title" required class="w-full glass rounded-lg px-3 py-2 text-white">
+            <input id="assign-title" required class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="e.g. Linked List Implementation">
           </div>
           <div>
             <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
@@ -552,33 +523,35 @@
             <input id="assign-due" type="date" required class="w-full glass rounded-lg px-3 py-2 text-white">
           </div>
           <div>
+            <label class="block text-sm font-semibold text-gray-400 mb-2">Max Marks</label>
+            <input id="assign-marks" type="number" min="1" max="100" value="20" class="w-full glass rounded-lg px-3 py-2 text-white">
+          </div>
+          <div class="md:col-span-2">
             <label class="block text-sm font-semibold text-gray-400 mb-2">Description</label>
-            <input id="assign-desc" class="w-full glass rounded-lg px-3 py-2 text-white">
+            <textarea id="assign-desc" rows="2" class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="Brief description of the assignment..."></textarea>
           </div>
         </div>
         <div class="mt-4 flex justify-end gap-3">
-          <button type="button" onclick="closeCreateAssignment()"
-            class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
+          <button type="button" onclick="closeCreateAssignment()" class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
           <button type="submit" class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">Create</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Upload Material Modal -->
   <div id="upload-material-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="modal-backdrop absolute inset-0" onclick="closeUploadMaterial()"></div>
     <div class="relative glass rounded-2xl w-full max-w-xl p-6 z-10 m-4">
       <div class="flex justify-between items-center mb-4">
         <h4 class="font-bold text-lg text-white">Upload Material</h4>
-        <button onclick="closeUploadMaterial()" class="text-gray-400 hover:text-white">
-          <i class="fas fa-times"></i>
-        </button>
+        <button onclick="closeUploadMaterial()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
       <form id="upload-material-form" onsubmit="handleUploadMaterial(event)">
         <div class="grid grid-cols-1 gap-4">
           <div>
             <label class="block text-sm font-semibold text-gray-400 mb-2">Title</label>
-            <input id="material-title" required class="w-full glass rounded-lg px-3 py-2 text-white">
+            <input id="material-title" required class="w-full glass rounded-lg px-3 py-2 text-white" placeholder="e.g. Unit 3 - Trees & Graphs Notes">
           </div>
           <div>
             <label class="block text-sm font-semibold text-gray-400 mb-2">Course</label>
@@ -590,6 +563,8 @@
               <option>Lecture Notes</option>
               <option>Presentation</option>
               <option>Assignment</option>
+              <option>Reference Book</option>
+              <option>Video Link</option>
               <option>Other</option>
             </select>
           </div>
@@ -600,23 +575,20 @@
           </div>
         </div>
         <div class="mt-4 flex justify-end gap-3">
-          <button type="button" onclick="closeUploadMaterial()"
-            class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
-          <button type="submit"
-            class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Upload</button>
+          <button type="button" onclick="closeUploadMaterial()" class="px-4 py-2 rounded-lg glass-hover text-white">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Upload</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Grade Modal -->
   <div id="grade-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="modal-backdrop absolute inset-0" onclick="closeGradeModal()"></div>
     <div class="relative glass rounded-2xl w-full max-w-2xl p-6 z-10 m-4">
       <div class="flex justify-between items-center mb-4">
         <h4 id="grade-modal-title" class="font-bold text-lg text-white">Grade Submissions</h4>
-        <button onclick="closeGradeModal()" class="text-gray-400 hover:text-white">
-          <i class="fas fa-times"></i>
-        </button>
+        <button onclick="closeGradeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -625,7 +597,7 @@
               <th class="px-4 py-2 text-left text-gray-400">Roll No</th>
               <th class="px-4 py-2 text-left text-gray-400">Name</th>
               <th class="px-4 py-2 text-left text-gray-400">Submission</th>
-              <th class="px-4 py-2 text-left text-gray-400">Marks</th>
+              <th class="px-4 py-2 text-left text-gray-400">Marks /20</th>
               <th class="px-4 py-2 text-left text-gray-400">Action</th>
             </tr>
           </thead>
@@ -633,78 +605,165 @@
         </table>
       </div>
       <div class="mt-4 flex justify-end gap-3">
+        <button onclick="saveAllGrades()" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save All</button>
         <button class="px-4 py-2 rounded-lg glass-hover text-white" onclick="closeGradeModal()">Close</button>
       </div>
     </div>
   </div>
 
-  <div id="toast" class="fixed bottom-6 right-6 hidden glass text-white px-4 py-2 rounded-lg shadow"></div>
+  <div id="toast" class="fixed bottom-6 right-6 hidden glass text-white px-4 py-3 rounded-lg shadow z-50 flex items-center gap-2">
+    <i id="toast-icon" class="fas fa-check-circle text-green-400"></i>
+    <span id="toast-msg"></span>
+  </div>
 
   <script>
-    const API_BASE = 'http://localhost:5000/api';
+    // ============================
+    //  MOCK DATA
+    // ============================
+    const COURSES = [
+      { id: 'CS301', name: 'CS301 - Data Structures' },
+      { id: 'CS402', name: 'CS402 - Design & Analysis of Algorithms' },
+      { id: 'CS501', name: 'CS501 - Machine Learning' },
+      { id: 'CS206', name: 'CS206 - Object Oriented Programming' },
+    ];
+
+    const STUDENTS = [
+      { id: 's1',  roll: '2021CSE001', name: 'Aarav Sharma',      course: 'CS301', email: 'aarav.sharma@iec.edu',      phone: '9810001111', att: 96 },
+      { id: 's2',  roll: '2021CSE002', name: 'Priya Nair',        course: 'CS301', email: 'priya.nair@iec.edu',        phone: '9810002222', att: 78 },
+      { id: 's3',  roll: '2021CSE003', name: 'Rohit Verma',       course: 'CS402', email: 'rohit.verma@iec.edu',       phone: '9810003333', att: 92 },
+      { id: 's4',  roll: '2021CSE004', name: 'Sneha Kapoor',      course: 'CS402', email: 'sneha.kapoor@iec.edu',      phone: '9810004444', att: 88 },
+      { id: 's5',  roll: '2021CSE005', name: 'Karan Mehta',       course: 'CS501', email: 'karan.mehta@iec.edu',       phone: '9810005555', att: 65 },
+      { id: 's6',  roll: '2021CSE006', name: 'Divya Rao',         course: 'CS501', email: 'divya.rao@iec.edu',         phone: '9810006666', att: 91 },
+      { id: 's7',  roll: '2021CSE007', name: 'Ankit Singh',       course: 'CS206', email: 'ankit.singh@iec.edu',       phone: '9810007777', att: 83 },
+      { id: 's8',  roll: '2021CSE008', name: 'Meera Pillai',      course: 'CS206', email: 'meera.pillai@iec.edu',      phone: '9810008888', att: 97 },
+      { id: 's9',  roll: '2021CSE009', name: 'Rahul Gupta',       course: 'CS301', email: 'rahul.gupta@iec.edu',       phone: '9810009999', att: 74 },
+      { id: 's10', roll: '2021CSE010', name: 'Pooja Iyer',        course: 'CS402', email: 'pooja.iyer@iec.edu',        phone: '9810010000', att: 89 },
+      { id: 's11', roll: '2021CSE011', name: 'Vikram Reddy',      course: 'CS501', email: 'vikram.reddy@iec.edu',      phone: '9810011000', att: 93 },
+      { id: 's12', roll: '2021CSE012', name: 'Ishita Banerjee',   course: 'CS206', email: 'ishita.banerjee@iec.edu',   phone: '9810012000', att: 86 },
+      { id: 's13', roll: '2021CSE013', name: 'Arjun Patel',       course: 'CS301', email: 'arjun.patel@iec.edu',       phone: '9810013000', att: 100 },
+      { id: 's14', roll: '2021CSE014', name: 'Ritika Joshi',      course: 'CS402', email: 'ritika.joshi@iec.edu',      phone: '9810014000', att: 70 },
+      { id: 's15', roll: '2021CSE015', name: 'Nikhil Choudhary',  course: 'CS501', email: 'nikhil.choudhary@iec.edu', phone: '9810015000', att: 82 },
+    ];
+
+    const TIMETABLE = [
+      { time: '09:00 – 10:00', Mon: 'CS301\n(Lab-3)',     Tue: 'CS206\n(R-102)',   Wed: 'CS301\n(Lab-3)',     Thu: 'CS402\n(R-201)',   Fri: 'CS501\n(R-305)' },
+      { time: '10:00 – 11:00', Mon: 'CS402\n(R-201)',     Tue: 'CS301\n(Lab-3)',   Wed: 'CS501\n(R-305)',     Thu: 'CS206\n(R-102)',   Fri: 'CS301\n(Lab-3)' },
+      { time: '11:15 – 12:15', Mon: 'CS501\n(R-305)',     Tue: '',                 Wed: 'CS402\n(R-201)',     Thu: 'CS501\n(R-305)',   Fri: 'CS206\n(R-102)' },
+      { time: '12:15 – 01:15', Mon: '',                   Tue: 'CS402\n(R-201)',   Wed: 'CS206\n(R-102)',     Thu: '',                 Fri: 'CS402\n(R-201)' },
+      { time: '02:00 – 03:00', Mon: 'CS206\n(R-102)',     Tue: 'CS501\n(R-305)',   Wed: '',                   Thu: 'CS301\n(Lab-3)',   Fri: '' },
+      { time: '03:00 – 04:00', Mon: '',                   Tue: '',                 Wed: 'CS301\n(Lab-3)',     Thu: 'CS402\n(R-201)',   Fri: 'CS501\n(R-305)' },
+    ];
+
+    const ASSIGNMENTS = [
+      { id: 'A1', title: 'Linked List Implementation',      course: 'CS301', due: '2026-04-20', submissions: 38, total: 42, status: 'Active',   maxMarks: 20 },
+      { id: 'A2', title: 'Merge Sort vs Quick Sort Report', course: 'CS402', due: '2026-04-22', submissions: 30, total: 40, status: 'Active',   maxMarks: 15 },
+      { id: 'A3', title: 'Linear Regression from Scratch',  course: 'CS501', due: '2026-04-18', submissions: 34, total: 35, status: 'Closing',  maxMarks: 25 },
+      { id: 'A4', title: 'UML Diagrams for Library System', course: 'CS206', due: '2026-04-25', submissions: 20, total: 38, status: 'Active',   maxMarks: 10 },
+      { id: 'A5', title: 'Binary Tree Traversal Lab',       course: 'CS301', due: '2026-04-10', submissions: 42, total: 42, status: 'Graded',   maxMarks: 20 },
+      { id: 'A6', title: 'NP-Completeness Essay',           course: 'CS402', due: '2026-04-12', submissions: 39, total: 40, status: 'Graded',   maxMarks: 15 },
+    ];
+
+    const EXAMS = [
+      { id: 'E1', title: 'Mid-Semester Examination',  course: 'CS301', date: '2026-04-28', duration: '2 hrs',   room: 'Hall A', status: 'Scheduled' },
+      { id: 'E2', title: 'Mid-Semester Examination',  course: 'CS402', date: '2026-04-29', duration: '2 hrs',   room: 'Hall B', status: 'Scheduled' },
+      { id: 'E3', title: 'Unit Test – Module 2',      course: 'CS501', date: '2026-04-21', duration: '1 hr',    room: 'R-305',  status: 'Upcoming'  },
+      { id: 'E4', title: 'Practical Viva Voce',       course: 'CS206', date: '2026-05-05', duration: '30 min',  room: 'Lab-1',  status: 'Upcoming'  },
+      { id: 'E5', title: 'Unit Test – Module 1',      course: 'CS301', date: '2026-03-15', duration: '1 hr',    room: 'R-201',  status: 'Completed' },
+    ];
+
+    const TASKS = [
+      { task: 'Grade Linked List Submissions',         course: 'CS301', due: '2026-04-19', priority: 'High'   },
+      { task: 'Prepare Mid-Sem Question Paper',        course: 'CS402', due: '2026-04-20', priority: 'High'   },
+      { task: 'Upload Unit 4 Notes',                   course: 'CS501', due: '2026-04-21', priority: 'Medium' },
+      { task: 'Update Attendance Records for April',   course: 'CS206', due: '2026-04-22', priority: 'Medium' },
+      { task: 'Review Merge Sort Reports',             course: 'CS402', due: '2026-04-23', priority: 'Medium' },
+      { task: 'Submit Student Progress Report',        course: 'CSE Dept', due: '2026-04-25', priority: 'High' },
+      { task: 'Conduct Doubt Session – Algorithms',    course: 'CS402', due: '2026-04-24', priority: 'Low'    },
+      { task: 'Update Syllabus Coverage Sheet',        course: 'CS301', due: '2026-04-28', priority: 'Low'    },
+    ];
+
+    const RESOURCES = [
+      { id: 'R1', title: 'Unit 1 – Arrays & Pointers Slides',        course: 'CS301', type: 'Presentation',  size: '4.2 MB',  uploaded: '2026-03-05', downloads: 142 },
+      { id: 'R2', title: 'Unit 2 – Linked Lists Notes',              course: 'CS301', type: 'Lecture Notes', size: '1.8 MB',  uploaded: '2026-03-18', downloads: 138 },
+      { id: 'R3', title: 'Unit 3 – Trees & Graphs Notes',            course: 'CS301', type: 'Lecture Notes', size: '2.1 MB',  uploaded: '2026-04-01', downloads: 89  },
+      { id: 'R4', title: 'Sorting Algorithms Comparison Sheet',       course: 'CS402', type: 'Reference',     size: '0.9 MB',  uploaded: '2026-03-10', downloads: 175 },
+      { id: 'R5', title: 'Dynamic Programming Practice Problems',     course: 'CS402', type: 'Assignment',    size: '0.5 MB',  uploaded: '2026-03-25', downloads: 120 },
+      { id: 'R6', title: 'Introduction to ML – Lecture Deck',        course: 'CS501', type: 'Presentation',  size: '6.7 MB',  uploaded: '2026-02-20', downloads: 200 },
+      { id: 'R7', title: 'Supervised Learning – scikit-learn Guide',  course: 'CS501', type: 'Lecture Notes', size: '3.3 MB',  uploaded: '2026-03-14', downloads: 167 },
+      { id: 'R8', title: 'OOP Design Patterns Reference',            course: 'CS206', type: 'Reference',     size: '2.8 MB',  uploaded: '2026-03-08', downloads: 154 },
+      { id: 'R9', title: 'Java Lab Manual',                          course: 'CS206', type: 'Lecture Notes', size: '5.1 MB',  uploaded: '2026-02-28', downloads: 180 },
+    ];
+
+    const NOTIFICATIONS = [
+      { title: 'Mid-Semester Schedule Released',   desc: 'Exams scheduled Apr 28–30. Check timetable.',  time: '2 hours ago',  color: 'blue'   },
+      { title: 'Assignment Grading Reminder',       desc: '8 ungraded submissions in CS301.',             time: '5 hours ago',  color: 'orange' },
+      { title: 'Faculty Meeting – Tomorrow 11 AM', desc: 'Agenda: Syllabus review for May.',              time: '1 day ago',    color: 'purple' },
+      { title: 'New Notice from Dept Head',         desc: 'Submit attendance records by Apr 22.',         time: '1 day ago',    color: 'red'    },
+      { title: 'Student Feedback Portal Open',      desc: 'Students can submit feedback till Apr 30.',    time: '2 days ago',   color: 'green'  },
+    ];
+
+    const TODAY_SCHEDULE = [
+      { time: '09:00 AM', duration: '60 min', title: 'CS301 – Data Structures',               location: 'Lab-3',   batch: 'CSE-A (42 students)' },
+      { time: '10:00 AM', duration: '60 min', title: 'CS402 – Design & Analysis of Algorithms', location: 'R-201',  batch: 'CSE-B (40 students)' },
+      { time: '11:15 AM', duration: '60 min', title: 'CS501 – Machine Learning',               location: 'R-305',   batch: 'CSE-C (35 students)' },
+      { time: '02:00 PM', duration: '60 min', title: 'CS206 – Object Oriented Programming',    location: 'R-102',   batch: 'CSE-D (38 students)' },
+    ];
+
+    // ============================
+    //  STATE
+    // ============================
     const state = {
-      profile: { name: 'Faculty', dept: '' },
-      courses: [],
-      students: [],
-      timetable: [],
-      assignments: [],
-      exams: [],
-      tasks: [],
-      resources: [],
-      notifications: []
+      profile: { name: 'Dr. B. Sharan', dept: 'CSE Dept.' },
+      courses: COURSES,
+      students: STUDENTS,
+      timetable: TIMETABLE,
+      assignments: ASSIGNMENTS,
+      exams: EXAMS,
+      tasks: TASKS,
+      resources: RESOURCES,
+      notifications: NOTIFICATIONS,
     };
 
-    async function loadState(token) {
-      try {
-        const headers = { 'Authorization': 'Bearer ' + token };
-        const [subjRes, studentsRes, ttRes, noticesRes] = await Promise.all([
-          fetch(API_BASE + '/faculty/subjects', { headers }),
-          fetch(API_BASE + '/faculty/students', { headers }),
-          fetch(API_BASE + '/faculty/timetable', { headers }),
-          fetch(API_BASE + '/notices?limit=10', { headers })
-        ]);
-        const subjData = subjRes.ok ? (await subjRes.json()).data : [];
-        const studentsData = studentsRes.ok ? (await studentsRes.json()).data : [];
-        const ttData = ttRes.ok ? (await ttRes.json()).data : [];
-        const noticesData = noticesRes.ok ? (await noticesRes.json()).data : [];
-        state.courses = (subjData || []).map(function(c) {
-          return { id: (c._id || c.id).toString(), name: (c.code || '') + ' - ' + (c.name || '') };
-        });
-        state.students = (studentsData || []).map(function(s) {
-          return { id: (s._id || s.id || '').toString(), roll: s.rollNo || s.roll || '', name: s.name || '', course: (s.department || ''), email: s.email || '', phone: s.phone || '' };
-        });
-        var slotMap = {};
-        (ttData || []).forEach(function(tt) {
-          (tt.slots || []).forEach(function(slot) {
-            var key = (slot.startTime || '') + '-' + (slot.endTime || '');
-            if (!slotMap[key]) slotMap[key] = { time: key, Mon: '', Tue: '', Wed: '', Thu: '', Fri: '' };
-            var subjName = (slot.subject && (slot.subject.name || slot.subject.code)) || '';
-            var room = slot.room ? ' (' + slot.room + ')' : '';
-            if (slot.day) slotMap[key][slot.day] = subjName + room;
-          });
-        });
-        state.timetable = Object.values(slotMap);
-        state.notifications = (noticesData || []).slice(0, 5).map(function(n) {
-          return { title: n.title || '', desc: (n.body || n.summary || '').slice(0, 60), time: n.publishedAt ? new Date(n.publishedAt).toLocaleDateString() : '', color: 'blue' };
-        });
-      } catch (e) {
-        console.error('loadState error', e);
-      }
-    }
-
-    function showToast(msg, timeout = 2500) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
+    // ============================
+    //  UTILS
+    // ============================
+    function showToast(msg, type = 'success') {
+      const t   = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      const msgEl = document.getElementById('toast-msg');
+      msgEl.textContent = msg;
+      icon.className = type === 'success'
+        ? 'fas fa-check-circle text-green-400'
+        : 'fas fa-exclamation-circle text-red-400';
       t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), timeout);
+      setTimeout(() => t.classList.add('hidden'), 2800);
     }
 
-    function formatDateForInput(dateStr) {
-      if (!dateStr) {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      }
-      return dateStr;
+    function todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function dayKey() {
+      return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
+    }
+
+    function attColor(pct) {
+      if (pct >= 90) return 'text-green-400';
+      if (pct >= 75) return 'text-yellow-400';
+      return 'text-red-400';
+    }
+
+    function statusBadge(status) {
+      const map = {
+        'Active':    'bg-green-500/20 text-green-300',
+        'Closing':   'bg-yellow-500/20 text-yellow-300',
+        'Graded':    'bg-blue-500/20 text-blue-300',
+        'Scheduled': 'bg-purple-500/20 text-purple-300',
+        'Upcoming':  'bg-blue-500/20 text-blue-300',
+        'Completed': 'bg-gray-500/20 text-gray-300',
+      };
+      return map[status] || 'bg-gray-500/20 text-gray-300';
     }
 
     function switchTab(tab) {
@@ -716,153 +775,207 @@
       document.querySelectorAll('.tab-section').forEach(sec => {
         sec.classList.toggle('hidden', sec.id !== tab);
       });
-      if (tab === 'attendance') populateAttendance();
-      if (tab === 'assignments') renderAssignments();
-      if (tab === 'overview') renderOverview();
-      if (tab === 'timetable') renderTimetable();
-      if (tab === 'students') renderStudents();
-      if (tab === 'resources') renderResources();
-      if (tab === 'exams') renderExams();
+      const renders = { attendance: populateAttendance, assignments: renderAssignments,
+                        overview: renderOverview, timetable: renderTimetable,
+                        students: renderStudents, resources: renderResources, exams: renderExams };
+      if (renders[tab]) renders[tab]();
     }
 
+    // ============================
+    //  OVERVIEW
+    // ============================
     function renderOverview() {
+      // Today schedule
       const container = document.getElementById('today-schedule');
       container.innerHTML = '';
-      var dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-      var items = (state.timetable || []).filter(function(row) { return row[dayName]; }).map(function(row) {
-        var titleRoom = row[dayName];
-        var match = titleRoom.match(/\(([^)]+)\)/);
-        return {
-          time: (row.time && row.time.split('-')[0]) || '—',
-          duration: '60 min',
-          title: titleRoom.replace(/\s*\([^)]*\)\s*$/, '').trim() || 'Class',
-          location: match ? match[1] : '—',
-          batch: ''
-        };
-      });
-      if (!items.length) items = [{ time: '—', duration: '—', title: 'No classes today', location: '—', batch: '' }];
-      items.forEach(it => {
+      TODAY_SCHEDULE.forEach(it => {
         const el = document.createElement('div');
-        el.className = 'flex items-start gap-4 p-4 rounded-lg glass-hover border-l-4 border-blue-400';
+        el.className = 'flex items-start gap-4 p-4 rounded-lg glass border-l-4 border-blue-400 glass-hover';
         el.innerHTML = `
-          <div class="text-center min-w-[64px]">
-            <p class="text-sm text-gray-400">${it.time}</p>
-            <p class="text-xs text-gray-500">${it.duration}</p>
+          <div class="text-center min-w-[72px]">
+            <p class="text-sm font-semibold text-white">${it.time}</p>
+            <p class="text-xs text-gray-400">${it.duration}</p>
           </div>
           <div class="flex-1">
             <h4 class="font-semibold text-white">${it.title}</h4>
-            <p class="text-sm text-gray-400">Room: ${it.location} | Batch: ${it.batch}</p>
+            <p class="text-sm text-gray-400 mt-1">Room: <span class="text-blue-300">${it.location}</span> &nbsp;|&nbsp; ${it.batch}</p>
           </div>
-          <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+          <button class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm flex-shrink-0">
             <i class="fas fa-video mr-1"></i>Join
           </button>`;
         container.appendChild(el);
       });
 
+      // Notifications
       const notifEl = document.getElementById('notifications');
       notifEl.innerHTML = '';
+      const colorMap = { blue: 'bg-blue-500/20 border-blue-500/30', orange: 'bg-orange-500/20 border-orange-500/30',
+                         purple: 'bg-purple-500/20 border-purple-500/30', red: 'bg-red-500/20 border-red-500/30',
+                         green: 'bg-green-500/20 border-green-500/30' };
       state.notifications.forEach(n => {
         const el = document.createElement('div');
-        el.className = `p-3 rounded-lg ${n.color === 'red' ? 'bg-red-500/20' : 'bg-blue-500/20'}`;
+        el.className = `p-3 rounded-lg border ${colorMap[n.color] || colorMap.blue}`;
         el.innerHTML = `<p class="text-sm font-semibold text-white">${n.title}</p>
-          <p class="text-xs text-gray-300">${n.desc}</p>
-          <p class="text-xs text-gray-400 mt-1">${n.time}</p>`;
+          <p class="text-xs text-gray-300 mt-1">${n.desc}</p>
+          <p class="text-xs text-gray-500 mt-1">${n.time}</p>`;
         notifEl.appendChild(el);
       });
 
+      // Tasks
       const tasksBody = document.getElementById('tasks-list');
       tasksBody.innerHTML = '';
       state.tasks.forEach(t => {
+        const priBadge = t.priority === 'High'
+          ? 'bg-red-500/20 text-red-300'
+          : t.priority === 'Medium'
+            ? 'bg-yellow-500/20 text-yellow-300'
+            : 'bg-gray-500/20 text-gray-300';
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3">${t.task}</td>
-          <td class="px-4 py-3">${t.course}</td>
-          <td class="px-4 py-3">${t.due}</td>
-          <td class="px-4 py-3"><span class="${t.priority === 'High' ? 'bg-red-500/20 text-red-300' : 'bg-yellow-500/20 text-yellow-300'} px-2 py-1 rounded-full text-xs">${t.priority}</span></td>
-          <td class="px-4 py-3"><button class="text-purple-400 hover:underline">View</button></td>`;
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium">${t.task}</td>
+          <td class="px-4 py-3 text-gray-300">${t.course}</td>
+          <td class="px-4 py-3 text-gray-300">${t.due}</td>
+          <td class="px-4 py-3"><span class="${priBadge} px-2 py-1 rounded-full text-xs">${t.priority}</span></td>
+          <td class="px-4 py-3"><button class="text-purple-400 hover:underline text-xs">View</button></td>`;
         tasksBody.appendChild(tr);
       });
     }
 
+    // ============================
+    //  ATTENDANCE
+    // ============================
     function populateAttendance() {
       const courseSelect = document.getElementById('att-course');
       courseSelect.innerHTML = '';
-      (state.courses || []).forEach(c => {
+      state.courses.forEach(c => {
         const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
+        opt.value = c.id; opt.textContent = c.name;
         courseSelect.appendChild(opt);
       });
-      document.getElementById('att-date').value = formatDateForInput();
-      if (state.courses && state.courses.length) renderAttendanceForCourse(state.courses[0].id);
+      document.getElementById('att-date').value = todayStr();
+      renderAttendanceForCourse(state.courses[0].id);
     }
 
     function renderAttendanceForCourse(courseId) {
       const tbody = document.getElementById('attendance-list');
       tbody.innerHTML = '';
-      const students = (state.students || []).length ? state.students : [];
+      const students = state.students.filter(s => s.course === courseId);
+      if (!students.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-gray-400">No students in this course</td></tr>';
+        return;
+      }
       students.forEach(s => {
+        const attClass = attColor(s.att);
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.dataset.studentId = s.id || '';
+        tr.dataset.studentId = s.id;
         tr.innerHTML = `
-          <td class="px-4 py-3">${s.roll}</td>
-          <td class="px-4 py-3">${s.name}</td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="present" checked></td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="absent"></td>
-          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.roll}" value="late"></td>
-        `;
+          <td class="px-4 py-3 text-gray-300">${s.roll}</td>
+          <td class="px-4 py-3 font-medium">${s.name}</td>
+          <td class="px-4 py-3">
+            <span class="${attClass} font-semibold">${s.att}%</span>
+            ${s.att < 75 ? '<span class="ml-2 text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full">Low</span>' : ''}
+          </td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="present" checked></td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="absent"></td>
+          <td class="px-4 py-3 text-center"><input type="radio" name="att-${s.id}" value="late"></td>`;
         tbody.appendChild(tr);
       });
-      document.getElementById('att-course').onchange = (e) => renderAttendanceForCourse(e.target.value);
     }
 
-    function resetAttendance() {
-      populateAttendance();
-      showToast('Attendance reset');
-    }
-
-    async function submitAttendance() {
-      const token = localStorage.getItem('token');
-      const subjectId = document.getElementById('att-course').value;
-      const date = document.getElementById('att-date').value;
-      if (!subjectId || !date) { showToast('Select course and date'); return; }
-      const rows = document.querySelectorAll('#attendance-list tr[data-student-id]');
-      const entries = [];
-      rows.forEach(tr => {
-        const studentId = tr.dataset.studentId;
-        if (!studentId) return;
-        const checked = tr.querySelector('input[type="radio"]:checked');
-        entries.push({ studentId, status: (checked && checked.value) || 'present' });
+    function markAllPresent() {
+      document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr => {
+        const id = tr.dataset.studentId;
+        const radio = tr.querySelector(`input[value="present"]`);
+        if (radio) radio.checked = true;
       });
-      if (!entries.length) { showToast('No students to mark'); return; }
-      try {
-        const resp = await fetch(API_BASE + '/faculty/attendance/bulk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ subjectId, date, entries })
-        });
-        const data = await resp.json();
-        if (!resp.ok) { showToast(data.message || 'Failed'); return; }
-        showToast('Attendance submitted');
-      } catch (e) {
-        showToast('Error: ' + e.message);
-      }
     }
 
+    function markAllAbsent() {
+      document.querySelectorAll('#attendance-list tr[data-student-id]').forEach(tr => {
+        const id = tr.dataset.studentId;
+        const radio = tr.querySelector(`input[value="absent"]`);
+        if (radio) radio.checked = true;
+      });
+    }
+
+    function resetAttendance() { populateAttendance(); showToast('Attendance reset'); }
+
+    function submitAttendance() {
+      const courseId = document.getElementById('att-course').value;
+      const date = document.getElementById('att-date').value;
+      if (!courseId || !date) { showToast('Select course and date', 'error'); return; }
+      const rows = document.querySelectorAll('#attendance-list tr[data-student-id]');
+      let present = 0, absent = 0, late = 0;
+      rows.forEach(tr => {
+        const checked = tr.querySelector('input[type="radio"]:checked');
+        if (checked) {
+          if (checked.value === 'present') present++;
+          else if (checked.value === 'absent') absent++;
+          else late++;
+        }
+      });
+      showToast(`Attendance saved — Present: ${present}, Late: ${late}, Absent: ${absent}`);
+    }
+
+    // ============================
+    //  TIMETABLE
+    // ============================
+    function renderTimetable() {
+      const tbody = document.getElementById('timetable-body');
+      tbody.innerHTML = '';
+      const today = dayKey();
+      const days = ['Mon','Tue','Wed','Thu','Fri'];
+      const subjectColors = {
+        'CS301': 'bg-blue-500/20 text-blue-300',
+        'CS402': 'bg-green-500/20 text-green-300',
+        'CS501': 'bg-purple-500/20 text-purple-300',
+        'CS206': 'bg-orange-500/20 text-orange-300',
+      };
+      state.timetable.forEach(row => {
+        const tr = document.createElement('tr');
+        const todayStyle = `border border-white/10 px-4 py-3`;
+        let html = `<td class="border border-white/10 px-4 py-3 font-semibold text-gray-300 bg-white/5 whitespace-nowrap">${row.time}</td>`;
+        days.forEach(d => {
+          const val = row[d] || '';
+          const isToday = d === today;
+          const code = val.split('\n')[0];
+          const room = val.split('\n')[1] || '';
+          const colorClass = subjectColors[code] || '';
+          html += `<td class="border border-white/10 px-3 py-3 text-center ${isToday ? 'bg-purple-500/10' : ''}">
+            ${val ? `<span class="inline-block ${colorClass} rounded-lg px-2 py-1 text-xs font-semibold">${code}</span><br><span class="text-gray-400 text-xs">${room}</span>` : '<span class="text-gray-600">—</span>'}
+          </td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ============================
+    //  ASSIGNMENTS
+    // ============================
     function renderAssignments() {
       const tbody = document.getElementById('assignments-list');
       tbody.innerHTML = '';
       state.assignments.forEach(a => {
+        const pct = Math.round((a.submissions / a.total) * 100);
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3 font-medium">${a.title}</td>
-          <td class="px-4 py-3">${a.course}</td>
-          <td class="px-4 py-3">${a.due}</td>
-          <td class="px-4 py-3">${a.submissions}</td>
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium">${a.title}</td>
+          <td class="px-4 py-3 text-gray-300">${a.course}</td>
+          <td class="px-4 py-3 text-gray-300">${a.due}</td>
           <td class="px-4 py-3">
-            <button class="text-purple-400 hover:underline mr-3" onclick="openGradeModal('${a.id}','${a.title}')">Grade</button>
-            <button class="text-gray-400 hover:underline" onclick="deleteAssignment('${a.id}')">Delete</button>
+            <div class="flex items-center gap-2">
+              <span class="text-sm">${a.submissions}/${a.total}</span>
+              <div class="progress-bar w-20"><div class="progress-fill bg-purple-400" style="width:${pct}%"></div></div>
+            </div>
+          </td>
+          <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${statusBadge(a.status)}">${a.status}</span></td>
+          <td class="px-4 py-3">
+            <button class="text-purple-400 hover:underline mr-3 text-xs" onclick="openGradeModal('${a.id}','${a.title}')">Grade</button>
+            <button class="text-gray-400 hover:underline text-xs" onclick="deleteAssignment('${a.id}')">Delete</button>
           </td>`;
         tbody.appendChild(tr);
       });
@@ -870,14 +983,12 @@
 
     function openCreateAssignment() {
       document.getElementById('assign-title').value = '';
-      document.getElementById('assign-desc').value = '';
-      document.getElementById('assign-due').value = formatDateForInput();
+      document.getElementById('assign-desc').value  = '';
+      document.getElementById('assign-due').value   = todayStr();
       const courseSelect = document.getElementById('assign-course');
       courseSelect.innerHTML = '';
       state.courses.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
+        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
         courseSelect.appendChild(opt);
       });
       document.getElementById('create-assignment-modal').classList.remove('hidden');
@@ -895,7 +1006,8 @@
       const course = document.getElementById('assign-course').value;
       const due = document.getElementById('assign-due').value;
       const desc = document.getElementById('assign-desc').value;
-      state.assignments.push({ id: 'A' + (state.assignments.length + 1), title, course, due, desc, submissions: 0 });
+      const marks = parseInt(document.getElementById('assign-marks').value) || 20;
+      state.assignments.unshift({ id: 'A' + Date.now(), title, course, due, desc, submissions: 0, total: state.students.filter(s => s.course === course).length || 0, status: 'Active', maxMarks: marks });
       closeCreateAssignment();
       renderAssignments();
       showToast('Assignment created: ' + title);
@@ -908,49 +1020,70 @@
     }
 
     function exportAssignmentsCSV() {
+      const rows = [['Title','Course','Due Date','Submissions','Status']];
+      state.assignments.forEach(a => rows.push([a.title, a.course, a.due, `${a.submissions}/${a.total}`, a.status]));
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'assignments.csv';
+      a.click();
       showToast('Assignments exported');
     }
 
+    // ============================
+    //  EXAMS
+    // ============================
     function renderExams() {
       const tbody = document.getElementById('exams-list');
       tbody.innerHTML = '';
       state.exams.forEach(e => {
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3">${e.title}</td>
-          <td class="px-4 py-3">${e.course}</td>
-          <td class="px-4 py-3">${e.date}</td>
-          <td class="px-4 py-3">${e.duration}</td>
-          <td class="px-4 py-3"><button class="text-purple-400 hover:underline">View</button></td>`;
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium">${e.title}</td>
+          <td class="px-4 py-3 text-gray-300">${e.course}</td>
+          <td class="px-4 py-3 text-gray-300">${e.date}</td>
+          <td class="px-4 py-3 text-gray-300">${e.duration}</td>
+          <td class="px-4 py-3 text-gray-300">${e.room}</td>
+          <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${statusBadge(e.status)}">${e.status}</span></td>
+          <td class="px-4 py-3"><button class="text-purple-400 hover:underline text-xs">View</button></td>`;
         tbody.appendChild(tr);
       });
     }
 
     function createExam() {
-      state.exams.push({ id: 'E' + (state.exams.length + 1), title: 'New Exam', course: state.courses[0].id, date: formatDateForInput(), duration: '2 hrs' });
+      const course = state.courses[0];
+      state.exams.unshift({ id: 'E' + Date.now(), title: 'New Exam', course: course.id, date: todayStr(), duration: '2 hrs', room: 'TBD', status: 'Upcoming' });
       renderExams();
-      showToast('Exam created');
+      showToast('Exam created — update details as needed');
     }
 
-    function renderStudents() {
+    // ============================
+    //  STUDENTS
+    // ============================
+    function renderStudents(list) {
+      const students = list || state.students;
       const tbody = document.getElementById('students-list');
       tbody.innerHTML = '';
-      state.students.forEach(s => {
+      students.forEach(s => {
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3">${s.roll}</td>
-          <td class="px-4 py-3">${s.name}</td>
-          <td class="px-4 py-3">${s.course}</td>
-          <td class="px-4 py-3">${s.email}</td>
-          <td class="px-4 py-3">${s.phone}</td>`;
+        tr.innerHTML = `
+          <td class="px-4 py-3 text-gray-300">${s.roll}</td>
+          <td class="px-4 py-3 font-medium">${s.name}</td>
+          <td class="px-4 py-3 text-gray-300">${s.course}</td>
+          <td class="px-4 py-3 text-gray-300">${s.email}</td>
+          <td class="px-4 py-3 text-gray-300">${s.phone}</td>
+          <td class="px-4 py-3">
+            <span class="${attColor(s.att)} font-semibold">${s.att}%</span>
+            ${s.att < 75 ? '<span class="ml-1 text-xs bg-red-500/20 text-red-300 px-1.5 rounded-full">⚠</span>' : ''}
+          </td>`;
         tbody.appendChild(tr);
       });
       const filter = document.getElementById('student-filter-course');
       filter.innerHTML = '<option value="">All Courses</option>';
       state.courses.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
+        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
         filter.appendChild(opt);
       });
     }
@@ -958,49 +1091,51 @@
     function filterStudents() {
       const q = document.getElementById('student-search').value.toLowerCase().trim();
       const course = document.getElementById('student-filter-course').value;
-      const tbody = document.getElementById('students-list');
+      const filtered = state.students.filter(s => {
+        const matchQ = !q || s.name.toLowerCase().includes(q) || s.roll.toLowerCase().includes(q);
+        const matchC = !course || s.course === course;
+        return matchQ && matchC;
+      });
+      renderStudents(filtered);
+    }
+
+    // ============================
+    //  RESOURCES
+    // ============================
+    function renderResources() {
+      const tbody = document.getElementById('resources-list');
       tbody.innerHTML = '';
-      state.students.filter(s => {
-        const matchesQ = !q || s.name.toLowerCase().includes(q) || s.roll.toLowerCase().includes(q);
-        const matchesCourse = !course || s.course === course;
-        return matchesQ && matchesCourse;
-      }).forEach(s => {
+      const typeIcons = { 'Lecture Notes': 'fa-file-alt', 'Presentation': 'fa-file-powerpoint', 'Reference': 'fa-book', 'Assignment': 'fa-tasks', 'Video Link': 'fa-video', 'Other': 'fa-file' };
+      state.resources.forEach(r => {
+        const icon = typeIcons[r.type] || 'fa-file';
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3">${s.roll}</td>
-          <td class="px-4 py-3">${s.name}</td>
-          <td class="px-4 py-3">${s.course}</td>
-          <td class="px-4 py-3">${s.email}</td>
-          <td class="px-4 py-3">${s.phone}</td>`;
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium"><i class="fas ${icon} text-purple-400 mr-2"></i>${r.title}</td>
+          <td class="px-4 py-3 text-gray-300">${r.course}</td>
+          <td class="px-4 py-3 text-gray-300">${r.type}</td>
+          <td class="px-4 py-3 text-gray-400">${r.size}</td>
+          <td class="px-4 py-3 text-gray-300">${r.uploaded}</td>
+          <td class="px-4 py-3 text-gray-300">${r.downloads}</td>
+          <td class="px-4 py-3">
+            <button class="text-purple-400 hover:underline text-xs mr-3" onclick="showToast('Download started: ${r.title}')">Download</button>
+            <button class="text-gray-400 hover:underline text-xs" onclick="deleteResource('${r.id}')">Delete</button>
+          </td>`;
         tbody.appendChild(tr);
       });
     }
 
-    function renderResources() {
-      const tbody = document.getElementById('resources-list');
-      tbody.innerHTML = '';
-      state.resources.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-3">${r.title}</td>
-          <td class="px-4 py-3">${r.course}</td>
-          <td class="px-4 py-3">${r.type}</td>
-          <td class="px-4 py-3">${r.uploaded}</td>
-          <td class="px-4 py-3">
-            <button class="text-purple-400 hover:underline mr-3">Download</button>
-            <button class="text-gray-400 hover:underline">Delete</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
+    function deleteResource(id) {
+      state.resources = state.resources.filter(r => r.id !== id);
+      renderResources();
+      showToast('Resource deleted');
     }
 
     function openUploadMaterial() {
       const courseSelect = document.getElementById('material-course');
       courseSelect.innerHTML = '';
       state.courses.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
+        const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name;
         courseSelect.appendChild(opt);
       });
       document.getElementById('upload-material-modal').classList.remove('hidden');
@@ -1016,25 +1151,40 @@
       e.preventDefault();
       const title = document.getElementById('material-title').value.trim();
       const course = document.getElementById('material-course').value;
-      const type = document.getElementById('material-type').value;
-      state.resources.push({ id: 'R' + (state.resources.length + 1), title, course, type, uploaded: new Date().toLocaleDateString() });
+      const type   = document.getElementById('material-type').value;
+      state.resources.unshift({ id: 'R' + Date.now(), title, course, type, size: '—', uploaded: new Date().toLocaleDateString('en-IN'), downloads: 0 });
       closeUploadMaterial();
       renderResources();
-      showToast('Material uploaded');
+      showToast('Material uploaded: ' + title);
     }
 
+    // ============================
+    //  GRADING
+    // ============================
     function openGradeModal(assignmentId, assignmentTitle) {
       document.getElementById('grade-modal-title').textContent = assignmentTitle ? `Grade — ${assignmentTitle}` : 'Grade Submissions';
       const tbody = document.getElementById('grade-list');
       tbody.innerHTML = '';
-      state.students.forEach(s => {
+      const sampleGrades = [null, 17, 14, null, 19, 12, null, 18, 15, null];
+      state.students.slice(0, 10).forEach((s, i) => {
+        const existing = sampleGrades[i];
+        const submitted = existing !== null || Math.random() > 0.3;
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5';
-        tr.innerHTML = `<td class="px-4 py-2">${s.roll}</td>
+        tr.innerHTML = `
+          <td class="px-4 py-2 text-gray-300">${s.roll}</td>
           <td class="px-4 py-2">${s.name}</td>
-          <td class="px-4 py-2">Submitted</td>
-          <td class="px-4 py-2"><input type="number" class="w-20 glass rounded px-2 py-1 text-white" min="0" max="100" placeholder="--"></td>
-          <td class="px-4 py-2"><button class="text-purple-400 hover:underline">Save</button></td>`;
+          <td class="px-4 py-2">
+            ${submitted ? '<span class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full">Submitted</span>'
+                        : '<span class="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full">Not Submitted</span>'}
+          </td>
+          <td class="px-4 py-2">
+            <input type="number" class="w-20 glass rounded px-2 py-1 text-white text-sm" min="0" max="20"
+              value="${existing !== null ? existing : ''}" placeholder="—" ${submitted ? '' : 'disabled'}>
+          </td>
+          <td class="px-4 py-2">
+            <button onclick="showToast('Grade saved for ${s.name}')" class="text-purple-400 hover:underline text-xs">Save</button>
+          </td>`;
         tbody.appendChild(tr);
       });
       document.getElementById('grade-modal').classList.remove('hidden');
@@ -1046,42 +1196,16 @@
       document.getElementById('grade-modal').classList.remove('flex');
     }
 
-    function renderTimetable() {
-      const tbody = document.getElementById('timetable-body');
-      tbody.innerHTML = '';
-      state.timetable.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="border border-white/10 px-4 py-3 font-semibold">${row.time}</td>
-          <td class="border border-white/10 px-4 py-3">${row.Mon || ''}</td>
-          <td class="border border-white/10 px-4 py-3">${row.Tue || ''}</td>
-          <td class="border border-white/10 px-4 py-3">${row.Wed || ''}</td>
-          <td class="border border-white/10 px-4 py-3">${row.Thu || ''}</td>
-          <td class="border border-white/10 px-4 py-3">${row.Fri || ''}</td>`;
-        tbody.appendChild(tr);
-      });
+    function saveAllGrades() {
+      showToast('All grades saved successfully');
+      closeGradeModal();
     }
 
-    function init() {
-      document.getElementById('profileName').textContent = state.profile.name;
-      document.getElementById('stat-students').textContent = state.students.length;
-      document.getElementById('stat-classes').textContent = state.timetable.length;
-      document.getElementById('stat-tasks').textContent = state.tasks.length;
-      document.getElementById('notif-count').textContent = state.notifications.length;
-      renderOverview();
-      populateAttendance();
-      renderAssignments();
-      renderTimetable();
-      renderStudents();
-      renderResources();
-      renderExams();
-    }
-
-    function openMarkAttendance() { switchTab('attendance'); }
-
-    // AI Assistant Functions
+    // ============================
+    //  AI ASSISTANT
+    // ============================
     function toggleAIPanel() {
-      const panel = document.getElementById('aiPanel');
-      panel.classList.toggle('translate-x-full');
+      document.getElementById('aiPanel').classList.toggle('translate-x-full');
     }
 
     function escapeHtml(text) {
@@ -1105,44 +1229,44 @@
             <p class="text-white text-sm">${escapeHtml(message)}</p>
           </div>
           <p class="text-gray-500 text-xs mt-1 mr-1 text-right">Just now</p>
-        </div>
-      `;
+        </div>`;
       chatMessages.appendChild(userMsg);
-
       input.value = '';
-      input.focus();
 
       const typingIndicator = document.createElement('div');
-      typingIndicator.className = 'chat-message';
       typingIndicator.id = 'typingIndicator';
+      typingIndicator.className = 'chat-message';
       typingIndicator.innerHTML = `
         <div class="flex items-start gap-3">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-            <span class="text-white text-sm">🤖</span>
+            <span class="text-sm">🤖</span>
           </div>
           <div class="flex-1">
             <div class="glass rounded-2xl rounded-tl-none p-4">
               <div class="flex space-x-2">
                 <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay:0.2s"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay:0.4s"></div>
               </div>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
       chatMessages.appendChild(typingIndicator);
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       try {
-        const API_BASE = 'http://localhost:5000/api';
-        const resp = await fetch(`${API_BASE}/ai/chat`, {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: message })
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            system: `You are an AI assistant embedded inside a college faculty ERP portal for IEC University. The faculty member is Dr. B. Sharan, a Professor in the CSE Department. Help with questions about attendance, assignments, exams, students, timetable, grading, and academic administration. Be concise and helpful. Current data: 156 students across 4 courses (CS301 Data Structures, CS402 Algorithms, CS501 Machine Learning, CS206 OOP). Attendance rate is 92%. 8 pending tasks. 6 active assignments.`,
+            messages: [{ role: 'user', content: message }]
+          })
         });
-        const data = await resp.json();
-        const reply = data.reply || 'No reply.';
+        const data = await response.json();
+        const reply = data.content?.[0]?.text || 'I could not process that. Please try again.';
 
         typingIndicator.remove();
         const aiMsg = document.createElement('div');
@@ -1150,7 +1274,7 @@
         aiMsg.innerHTML = `
           <div class="flex items-start gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-              <span class="text-white text-sm">🤖</span>
+              <span class="text-sm">🤖</span>
             </div>
             <div class="flex-1">
               <div class="glass rounded-2xl rounded-tl-none p-4">
@@ -1158,8 +1282,7 @@
               </div>
               <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
             </div>
-          </div>
-        `;
+          </div>`;
         chatMessages.appendChild(aiMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } catch (e) {
@@ -1169,16 +1292,14 @@
         errorMsg.innerHTML = `
           <div class="flex items-start gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-              <span class="text-white text-sm">⚠️</span>
+              <span class="text-sm">⚠️</span>
             </div>
             <div class="flex-1">
               <div class="glass rounded-2xl rounded-tl-none p-4">
-                <p class="text-red-300 text-sm">Error: ${escapeHtml(e.message)}</p>
+                <p class="text-red-300 text-sm">Unable to reach AI service. Please try again.</p>
               </div>
-              <p class="text-gray-500 text-xs mt-1 ml-1">Just now</p>
             </div>
-          </div>
-        `;
+          </div>`;
         chatMessages.appendChild(errorMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
@@ -1189,53 +1310,36 @@
       sendMessage();
     }
 
+    // ============================
+    //  HELPERS
+    // ============================
+    function openMarkAttendance() { switchTab('attendance'); }
+
+    // ============================
+    //  EVENTS
+    // ============================
     document.getElementById('btnAI').addEventListener('click', toggleAIPanel);
     document.getElementById('btnCloseAI').addEventListener('click', toggleAIPanel);
     document.getElementById('aiSend').addEventListener('click', sendMessage);
-    document.getElementById('aiInput').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') sendMessage();
-    });
+    document.getElementById('aiInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
-    // Boot: fetch authenticated user profile and then initialize UI
-    (async function boot() {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert('Please login first');
-          return window.location.href = 'login.html';
-        }
-        console.log('👤 Fetching profile for faculty dashboard');
-        const resp = await fetch('http://localhost:5000/api/auth/me', {
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
-        });
-        if (!resp.ok) {
-          console.warn('Profile fetch failed, status:', resp.status);
-          // proceed with local state
-          init();
-          return;
-        }
-        const result = await resp.json();
-        const u = result.data || result;
-        // ensure role is faculty
-        if (u.role !== 'faculty') {
-          alert('Access denied. This dashboard is for faculty only.');
-          return window.location.href = 'login.html';
-        }
-        // update state.profile
-        state.profile.name = u.name || state.profile.name;
-        state.profile.dept = (u.department || state.profile.dept) + (u.department ? ' Dept.' : '');
-        // update UI immediate elements
-        document.getElementById('profileName').textContent = state.profile.name;
-        document.getElementById('profileImg').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(state.profile.name)}&background=8b5cf6&color=fff`;
-        // load courses, students, timetable, notices from API then init
-        await loadState(token);
-        init();
-      } catch (err) {
-        console.error('Error booting faculty dashboard', err);
-        init();
-      }
+    // ============================
+    //  INIT
+    // ============================
+    (function init() {
+      document.getElementById('profileName').textContent = state.profile.name;
+      document.getElementById('stat-students').textContent = state.students.length;
+      document.getElementById('stat-classes').textContent = state.timetable.length * 5; // slots across week
+      document.getElementById('stat-tasks').textContent = state.tasks.length;
+      document.getElementById('notif-count').textContent = state.notifications.length;
+      renderOverview();
+      populateAttendance();
+      renderAssignments();
+      renderTimetable();
+      renderStudents();
+      renderResources();
+      renderExams();
     })();
   </script>
 </body>
-
 </html>
