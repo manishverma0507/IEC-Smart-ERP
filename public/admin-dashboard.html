@@ -1,868 +1,2042 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MY IEC Smart ERP - Admin Dashboard</title>
+  <title>MY IEC Smart ERP — Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * {
-      font-family: 'Inter', sans-serif;
+    :root {
+      --bg-primary: #080c14;
+      --bg-secondary: #0d1526;
+      --bg-card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --border-bright: rgba(139,92,246,0.4);
+      --purple: #8b5cf6;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --green: #10b981;
+      --orange: #f97316;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
     }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 14px; }
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
       overflow-x: hidden;
     }
+    h1,h2,h3,.font-display { font-family: 'Syne', sans-serif; }
 
-    /* Glass morphism */
+    /* BACKGROUND MESH */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(139,92,246,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(59,130,246,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,182,212,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* LAYOUT */
+    .sidebar {
+      position: fixed; left: 0; top: 0; height: 100vh; width: 260px;
+      background: rgba(13,21,38,0.95);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border);
+      z-index: 100; display: flex; flex-direction: column;
+      overflow-y: auto; overflow-x: hidden;
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+    .main { margin-left: 260px; position: relative; z-index: 1; min-height: 100vh; }
+
+    /* GLASS */
     .glass {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--bg-card);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
     }
+    .glass-sm { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; }
 
-    .glass-hover {
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* SIDEBAR NAV */
+    .nav-section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+      color: var(--text-muted); text-transform: uppercase;
+      padding: 0 16px; margin: 16px 0 6px;
     }
-
-    .glass-hover:hover {
-      background: rgba(255, 255, 255, 0.08);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
-      border-color: rgba(139, 92, 246, 0.3);
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px; border-radius: 10px;
+      color: var(--text-secondary); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      text-decoration: none; margin: 1px 8px;
     }
-
-    /* Gradient text */
-    .gradient-text {
-      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #ec4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(59,130,246,0.15));
+      color: #fff; border: 1px solid rgba(139,92,246,0.3);
     }
-
-    /* Animations */
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 60%; background: linear-gradient(180deg, var(--purple), var(--blue));
+      border-radius: 2px;
     }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .nav-item .icon { width: 18px; height: 18px; opacity: 0.8; flex-shrink: 0; }
+    .nav-item.active .icon { opacity: 1; }
+    .nav-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      background: var(--red); color: #fff; border-radius: 10px; padding: 1px 6px;
     }
+    .nav-badge.blue { background: var(--blue); }
+    .nav-badge.green { background: var(--green); }
 
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0px);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    .slide-in {
-      animation: slideIn 0.6s ease-out forwards;
-    }
-
-    .fade-in {
-      animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    .pulse {
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .float {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    /* Sidebar active state */
-    .sidebar-item {
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .sidebar-item::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 0;
-      background: linear-gradient(180deg, #8b5cf6, #3b82f6);
-      border-radius: 0 4px 4px 0;
-      transition: height 0.3s ease;
-    }
-
-    .sidebar-item.active::before,
-    .sidebar-item:hover::before {
-      height: 70%;
-    }
-
-    .sidebar-item.active {
-      background: rgba(139, 92, 246, 0.15);
-      border-left: 3px solid #8b5cf6;
-    }
-
-    /* AI Chat messages */
-    .chat-message {
-      animation: fadeIn 0.5s ease-out;
-    }
-
-    /* Stat card gradient border */
+    /* STAT CARDS */
     .stat-card {
-      position: relative;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+      transition: all 0.3s cubic-bezier(.4,0,.2,1); cursor: default;
+    }
+    .stat-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent); opacity: 0; transition: opacity 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.14); }
+    .stat-card:hover::after { opacity: 1; }
+    .stat-card .bg-icon {
+      position: absolute; right: -10px; bottom: -10px;
+      font-size: 72px; opacity: 0.04;
     }
 
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 2px;
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    /* ICON PILL */
+    .icon-pill {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 18px;
     }
 
-    .stat-card:hover::before {
-      opacity: 1;
+    /* TABLE */
+    .erp-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .erp-table thead th {
+      background: rgba(255,255,255,0.03); color: var(--text-muted);
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 10px 14px; border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .erp-table tbody tr { transition: background 0.15s; }
+    .erp-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+    .erp-table tbody td {
+      padding: 11px 14px; font-size: 13px; color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .erp-table tbody tr:last-child td { border-bottom: none; }
+
+    /* BADGE */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: #34d399; }
+    .badge-red { background: rgba(239,68,68,0.15); color: #f87171; }
+    .badge-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+    .badge-gray { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+
+    /* BTN */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; border: none; outline: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #fff; box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,92,246,0.45); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.06); color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+    .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 8px; }
+
+    /* INPUT */
+    .erp-input {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text-primary); border-radius: 10px; padding: 9px 14px; font-size: 13px;
+      outline: none; font-family: inherit; transition: border-color 0.2s;
+      width: 100%;
+    }
+    .erp-input:focus { border-color: var(--purple); background: rgba(139,92,246,0.06); }
+    .erp-input::placeholder { color: var(--text-muted); }
+    select.erp-input { cursor: pointer; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.04); padding: 4px; border-radius: 12px; }
+    .tab {
+      padding: 7px 16px; border-radius: 9px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; color: var(--text-muted); border: none; background: none;
+    }
+    .tab.active { background: rgba(139,92,246,0.2); color: #fff; border: 1px solid rgba(139,92,246,0.35); }
+
+    /* PROGRESS BAR */
+    .progress-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+
+    /* AVATAR */
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
     }
 
-    /* Chart container */
-    .chart-container {
-      position: relative;
-      height: 300px;
+    /* NOTIFICATION DOT */
+    .notif-dot {
+      width: 8px; height: 8px; background: var(--red); border-radius: 50%;
+      position: absolute; top: 6px; right: 6px;
+      animation: pulse 2s infinite;
     }
-
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.5);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(139, 92, 246, 0.7);
-    }
-
-    /* Mobile menu */
-    .mobile-menu {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-    }
-
-    .mobile-menu.active {
-      transform: translateX(0);
-    }
-
-    /* Loading skeleton */
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
     @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-
-      100% {
-        background-position: 1000px 0;
-      }
+      0% { background-position: -600px 0; }
+      100% { background-position: 600px 0; }
     }
+    .fade-up { animation: fadeUp 0.5s ease forwards; }
+    .float-anim { animation: float 3s ease-in-out infinite; }
 
-    .skeleton {
-      background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
-      background-size: 1000px 100%;
-      animation: shimmer 2s infinite;
-    }
-
-    /* Custom Utilities */
+    /* DROPDOWN */
+    .dropdown { position: relative; }
     .dropdown-menu {
-      display: none;
-      position: absolute;
-      background: rgba(30, 41, 59, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      min-width: 200px;
-      z-index: 1000;
+      position: absolute; top: calc(100% + 8px); right: 0; min-width: 220px;
+      background: rgba(13,21,38,0.98); backdrop-filter: blur(24px);
+      border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5); z-index: 500;
+      opacity: 0; transform: translateY(-8px) scale(0.97);
+      pointer-events: none; transition: all 0.2s;
+    }
+    .dropdown-menu.open { opacity: 1; transform: none; pointer-events: all; }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+      color: var(--text-secondary); font-size: 13px; cursor: pointer;
+      transition: all 0.15s; border-radius: 8px; margin: 3px 6px;
+    }
+    .dropdown-item:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+    .dropdown-item.danger { color: #f87171; }
+    .dropdown-item.danger:hover { background: rgba(239,68,68,0.1); }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+    /* MODAL */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: rgba(13,21,38,0.97); border: 1px solid var(--border);
+      border-radius: 20px; width: 90%; max-width: 540px;
+      max-height: 90vh; overflow-y: auto; animation: fadeUp 0.3s ease;
+    }
+    .modal::-webkit-scrollbar { width: 4px; }
+    .modal::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+
+    /* TOASTS */
+    #toast-container {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(13,21,38,0.98); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; min-width: 280px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4); animation: fadeUp 0.3s ease;
     }
 
-    .dropdown-menu.show {
-      display: block;
+    /* SIDEBAR AI PANEL */
+    .ai-panel {
+      position: fixed; right: 0; top: 0; height: 100vh; width: 360px;
+      background: rgba(13,21,38,0.98); backdrop-filter: blur(24px);
+      border-left: 1px solid var(--border); z-index: 200;
+      display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .ai-panel.open { transform: translateX(0); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+    .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+    .chat-bubble.user { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-bubble.ai { background: rgba(255,255,255,0.07); color: var(--text-secondary); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+    /* MOBILE */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
     }
 
-    .notification-dot {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      width: 10px;
-      height: 10px;
-      background: #ef4444;
-      border-radius: 50%;
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 6px; }
+
+    /* CHART TOOLTIP */
+    .chartjs-tooltip { background: rgba(13,21,38,0.95) !important; }
+
+    /* DONUT CENTER */
+    .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+
+    /* ONLINE DOT */
+    .online-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 2s infinite; }
+
+    /* SECTION TRANSITION */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* HOVER CARD */
+    .hover-card { transition: all 0.25s cubic-bezier(.4,0,.2,1); }
+    .hover-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.12); }
+
+    /* SEARCH INPUT */
+    .search-wrap { position: relative; }
+    .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
+    .search-wrap input { padding-left: 34px; }
+
+    /* GRADIENT TEXT */
+    .grad-text {
+      background: linear-gradient(135deg, #60a5fa, #a78bfa, #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
+    /* MINI CHART */
+    .sparkline { display: flex; align-items: flex-end; gap: 3px; height: 32px; }
+    .sparkline span { flex: 1; background: rgba(139,92,246,0.4); border-radius: 2px 2px 0 0; min-width: 4px; transition: background 0.2s; }
+    .sparkline span:hover { background: rgba(139,92,246,0.8); }
 
-    .modal-overlay.active {
-      display: flex;
-    }
+    /* CALENDAR */
+    .cal-day { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+    .cal-day:hover { background: rgba(139,92,246,0.2); }
+    .cal-day.today { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #fff; font-weight: 700; }
+    .cal-day.has-event { position: relative; }
+    .cal-day.has-event::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); }
 
-    .modal-content {
-      background: rgba(30, 41, 59, 0.95);
-      border-radius: 20px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    /* ATTENDANCE RING */
+    .ring-wrap { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+    .ring-wrap canvas { position: absolute; inset: 0; }
+
+    /* PRIORITY BARS */
+    .priority-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .priority-item:last-child { border-bottom: none; }
+
+    /* FEE COLLECTION */
+    .fee-bar-wrap { display: flex; align-items: center; gap: 10px; }
+    .fee-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
+    .fee-bar-fill { height: 100%; border-radius: 10px; }
   </style>
 </head>
+<body>
 
-<body class="min-h-screen">
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
 
-  <!-- Sidebar -->
-  <aside id="sidebar"
-    class="mobile-menu lg:translate-x-0 fixed left-0 top-0 h-full w-72 glass z-50 p-6 overflow-y-auto">
-    <!-- Logo -->
-    <div class="slide-in mb-8 flex items-center gap-3">
-      <div
-        class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
-        <span class="text-white font-bold text-xl">IEC</span>
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar" id="sidebar">
+  <!-- Logo -->
+  <div style="padding: 20px 16px 14px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#3b82f6);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;">IEC</div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;">MY IEC</div>
+        <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.05em;">Smart ERP v2.0</div>
+      </div>
+      <div style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--green);" class="online-dot"></div>
+    </div>
+  </div>
+
+  <!-- Admin Profile Card -->
+  <div style="margin:0 10px 10px;padding:12px 14px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:12px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;">A</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sidebarName">Admin User</div>
+        <div style="font-size:11px;color:var(--purple);">Super Administrator</div>
+      </div>
+      <div class="online-dot"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav style="flex:1;padding-bottom:16px;">
+
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" onclick="showSection('dashboard',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </a>
+
+    <div class="nav-section-label">Academics</div>
+    <a class="nav-item" onclick="showSection('students',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+      Students
+      <span class="nav-badge blue" id="navStudentCount">—</span>
+    </a>
+    <a class="nav-item" onclick="showSection('faculty',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      Faculty
+    </a>
+    <a class="nav-item" onclick="showSection('courses',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      Courses & Subjects
+    </a>
+    <a class="nav-item" onclick="showSection('attendance',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      Attendance
+      <span class="nav-badge" id="navDefaulterBadge">—</span>
+    </a>
+    <a class="nav-item" onclick="showSection('timetable',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Timetable
+    </a>
+    <a class="nav-item" onclick="showSection('exams',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Exams & Results
+    </a>
+
+    <div class="nav-section-label">Finance</div>
+    <a class="nav-item" onclick="showSection('fees',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Fee Management
+      <span class="nav-badge" id="navFeeOverdueBadge">—</span>
+    </a>
+    <a class="nav-item" onclick="showSection('payroll',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      Payroll
+    </a>
+
+    <div class="nav-section-label">Administration</div>
+    <a class="nav-item" onclick="showSection('admissions',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+      Admissions
+      <span class="nav-badge green">New</span>
+    </a>
+    <a class="nav-item" onclick="showSection('library',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+      Library
+    </a>
+    <a class="nav-item" onclick="showSection('hostel',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Hostel
+    </a>
+    <a class="nav-item" onclick="showSection('transport',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      Transport
+    </a>
+    <a class="nav-item" onclick="showSection('notices',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+      Notices & Events
+    </a>
+    <a class="nav-item" onclick="showSection('analytics',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Analytics & Reports
+    </a>
+    <a class="nav-item" onclick="showSection('settings',this)">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <!-- System Status -->
+  <div style="margin:0 10px 10px;padding:12px 14px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:12px;">
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">System Status</div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;color:var(--text-muted);">Database</span>
+        <span style="font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;"></span>Online</span>
       </div>
       <div>
-        <h1 class="text-white font-bold text-lg">MY IEC</h1>
-        <p class="text-gray-400 text-xs">Smart ERP</p>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--text-muted);">Server Load</span><span style="font-size:11px;color:var(--yellow);">42%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--yellow);"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--text-muted);">Storage</span><span style="font-size:11px;color:var(--blue);">78%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--blue);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Button -->
+  <div style="margin:0 10px 16px;" onclick="toggleAI()">
+    <div style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(59,130,246,0.1));border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.5)'" onmouseout="this.style.borderColor='rgba(139,92,246,0.25)'">
+      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#3b82f6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:18px;" class="float-anim">🤖</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#fff;">AI Assistant</div>
+        <div style="font-size:11px;color:var(--text-muted);">Powered by Smart ERP</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+
+  <!-- TOP BAR -->
+  <header style="background:rgba(13,21,38,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none;background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:6px;" id="menuBtn">
+        <i class="fas fa-bars" style="font-size:18px;"></i>
+      </button>
+      <div id="pageBreadcrumb" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);">
+        <span>MY IEC</span>
+        <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+        <span style="color:var(--text-primary);font-weight:500;" id="breadcrumbPage">Dashboard</span>
       </div>
     </div>
 
-    <!-- Admin Profile -->
-    <div class="glass-hover rounded-xl p-4 mb-6 fade-in" style="animation-delay: 0.1s;">
-      <div class="flex items-center gap-3">
-        <div
-          class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
-          <span class="text-white font-bold text-lg">A</span>
-        </div>
-        <div class="flex-1">
-          <h3 id="navName" class="text-white font-semibold text-sm">Admin User</h3>
-          <p class="text-gray-400 text-xs">Administrator</p>
-        </div>
-        <div class="w-2 h-2 bg-green-400 rounded-full pulse"></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <!-- Global Search -->
+      <div class="search-wrap" style="width:220px;">
+        <i class="fas fa-search"></i>
+        <input class="erp-input" placeholder="Search students, faculty..." style="font-size:12px;padding-top:7px;padding-bottom:7px;">
       </div>
-    </div>
 
-    <!-- Navigation -->
-    <nav class="space-y-2">
-      <a href="#"
-        class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.2s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-        <span class="font-medium">Dashboard</span>
-      </a>
-
-      <a href="admin-register.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.3s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-        </svg>
-        <span class="font-medium">Register User</span>
-      </a>
-
-      <a href="admin-users.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.35s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-        <span class="font-medium">Manage Users</span>
-      </a>
-
-      <a href="admin-users.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.4s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-        <span class="font-medium">Faculty</span>
-      </a>
-
-      <a href="admin-settings.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.45s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-        <span class="font-medium">Courses</span>
-      </a>
-
-      <a href="#"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.5s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <span class="font-medium">Attendance</span>
-      </a>
-
-      <a href="admin-fees.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.55s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span class="font-medium">Finance</span>
-      </a>
-
-      <a href="admin-analytics.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.6s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-        <span class="font-medium">Reports</span>
-      </a>
-
-      <a href="admin-settings.html"
-        class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 fade-in"
-        style="animation-delay: 0.65s;">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span class="font-medium">Settings</span>
-      </a>
-    </nav>
-
-    <!-- System Status -->
-    <div class="mt-8 p-4 glass rounded-xl fade-in" style="animation-delay: 1s;">
-      <h4 class="text-white text-sm font-semibold mb-2">System Status</h4>
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="text-gray-400 text-xs">Database</span>
-          <div class="flex items-center">
-            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-            <span class="text-green-400 text-xs">Online</span>
+      <!-- Notifications -->
+      <div class="dropdown">
+        <button onclick="toggleDropdown('notifDropdown')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);position:relative;transition:all 0.2s;">
+          <i class="fas fa-bell" style="font-size:15px;"></i>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="dropdown-menu" id="notifDropdown" style="min-width:320px;">
+          <div style="padding:14px 16px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);">
+            <span style="font-weight:700;font-size:14px;">Notifications</span>
+            <button onclick="showToast('All notifications marked as read','green')" class="btn btn-ghost btn-sm">Mark all read</button>
+          </div>
+          <div style="max-height:340px;overflow-y:auto;">
+            <div id="notifList"></div>
+          </div>
+          <div style="padding:10px 16px;border-top:1px solid var(--border);">
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;">View All Notifications</button>
           </div>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="text-gray-400 text-xs">Server Load</span>
-          <span class="text-yellow-400 text-xs">42%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-gray-400 text-xs">Storage</span>
-          <span class="text-blue-400 text-xs">78%</span>
+      </div>
+
+      <!-- Profile -->
+      <div class="dropdown">
+        <button onclick="toggleDropdown('profileDropdown')" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:5px 10px 5px 6px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all 0.2s;">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;">A</div>
+          <span style="font-size:13px;font-weight:500;color:var(--text-primary);" id="headerName">Admin</span>
+          <i class="fas fa-chevron-down" style="font-size:10px;color:var(--text-muted);"></i>
+        </button>
+        <div class="dropdown-menu" id="profileDropdown">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;font-size:13px;" id="profileName">Admin User</div>
+            <div style="font-size:11px;color:var(--text-muted);">admin@myiec.edu.in</div>
+          </div>
+          <div class="dropdown-item"><i class="fas fa-user" style="width:16px;color:var(--text-muted);"></i> My Profile</div>
+          <div class="dropdown-item" onclick="showSection('settings',null)"><i class="fas fa-cog" style="width:16px;color:var(--text-muted);"></i> Settings</div>
+          <div class="dropdown-item"><i class="fas fa-shield-alt" style="width:16px;color:var(--text-muted);"></i> Security</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" onclick="openLogoutModal()"><i class="fas fa-sign-out-alt" style="width:16px;"></i> Logout</div>
         </div>
       </div>
     </div>
+  </header>
 
-    <!-- AI Assistant Button -->
-    <button onclick="toggleAI()"
-      class="w-full mt-6 glass-hover rounded-xl p-4 text-white font-semibold flex items-center gap-3 fade-in"
-      style="animation-delay: 1.1s;">
-      <div
-        class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 flex items-center justify-center float">
-        <span class="text-lg">🤖</span>
-      </div>
-      <div class="flex-1 text-left">
-        <div class="text-sm">AI Assistant</div>
-        <div class="text-xs text-gray-400">Ask me anything</div>
-      </div>
-    </button>
-  </aside>
+  <div style="padding:24px 28px;">
 
-  <!-- Main Content -->
-  <main class="lg:ml-72 p-4 lg:p-8">
-    <!-- Header -->
-    <header class="glass rounded-2xl p-6 mb-8 fade-in">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h2 class="text-3xl font-bold text-white mb-2">Welcome back, Admin! 👋</h2>
-          <p class="text-gray-400">Here's what's happening with your institution today.</p>
+  <!-- ========== DASHBOARD SECTION ========== -->
+  <div class="section active" id="sec-dashboard">
+    <!-- Welcome -->
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;">Welcome back, Admin <span style="font-size:20px;">👋</span></h2>
+      <p style="color:var(--text-muted);font-size:13px;" id="dashDate">Loading...</p>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;" id="kpiGrid">
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#3b82f6,#06b6d4);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+          <div class="icon-pill" style="background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,182,212,0.15));border:1px solid rgba(59,130,246,0.25);">
+            <i class="fas fa-user-graduate" style="color:#60a5fa;font-size:17px;"></i>
+          </div>
+          <span class="badge badge-blue">+12%</span>
         </div>
-        <div class="flex items-center gap-4">
-          <button onclick="toggleSidebar()" class="lg:hidden glass-hover p-3 rounded-xl text-white">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
-          <!-- Search Bar -->
-          <div class="relative hidden md:block">
-            <input type="text" placeholder="Search..."
-              class="glass rounded-xl pl-10 pr-4 py-3 w-64 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-
-          <!-- Notifications -->
-          <div class="relative">
-            <button onclick="toggleNotifications()" class="glass-hover p-3 rounded-xl text-white relative">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <span class="notification-dot pulse"></span>
-            </button>
-
-            <!-- Notifications Dropdown -->
-            <div id="notificationsDropdown" class="dropdown-menu right-0 mt-2 w-80">
-              <div class="p-4">
-                <div class="flex items-center justify-between mb-4">
-                  <h4 class="text-white font-semibold">Notifications</h4>
-                  <button class="text-xs text-purple-400 hover:text-purple-300">Mark all as read</button>
-                </div>
-                <div class="space-y-3 max-h-96 overflow-y-auto">
-                  <div class="p-3 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer">
-                    <div class="flex items-start gap-3">
-                      <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-user-plus text-blue-400 text-xs"></i>
-                      </div>
-                      <div>
-                        <p class="text-white text-sm">New student enrolled in Computer Science</p>
-                        <p class="text-gray-400 text-xs mt-1">2 minutes ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Profile Dropdown -->
-          <div class="relative">
-            <button onclick="toggleProfileDropdown()" class="glass-hover flex items-center gap-3 p-2 rounded-xl">
-              <div
-                class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                <span class="text-white text-sm">A</span>
-              </div>
-              <div class="hidden md:block text-left">
-                <p id="navNameHeader" class="text-white text-sm font-medium">Admin User</p>
-                <p class="text-gray-400 text-xs">Administrator</p>
-              </div>
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            <!-- Profile Dropdown Menu -->
-            <div id="profileDropdown" class="dropdown-menu right-0 mt-2">
-              <div class="py-2">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10">
-                  <i class="fas fa-user text-gray-400 w-5"></i>
-                  <span>My Profile</span>
-                </a>
-                <a href="admin-settings.html" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-white/10">
-                  <i class="fas fa-cog text-gray-400 w-5"></i>
-                  <span>Settings</span>
-                </a>
-                <div class="border-t border-white/10 my-2"></div>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-white/10" id="btnLogout">
-                  <i class="fas fa-sign-out-alt w-5"></i>
-                  <span>Logout</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.1s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </div>
-        </div>
-        <h3 id="statStudents" class="text-2xl font-bold text-white mb-1">—</h3>
-        <p class="text-gray-400 text-sm">Total Students</p>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:3px;" id="kpiStudents">—</div>
+        <div style="font-size:12px;color:var(--text-muted);">Total Students</div>
+        <div class="sparkline" style="margin-top:10px;" id="sparkStudents"></div>
+        <div class="bg-icon"><i class="fas fa-user-graduate"></i></div>
       </div>
 
-      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.2s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#8b5cf6,#ec4899);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+          <div class="icon-pill" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.15));border:1px solid rgba(139,92,246,0.25);">
+            <i class="fas fa-chalkboard-teacher" style="color:#a78bfa;font-size:17px;"></i>
           </div>
+          <span class="badge badge-purple">Active</span>
         </div>
-        <h3 id="statFaculty" class="text-2xl font-bold text-white mb-1">—</h3>
-        <p class="text-gray-400 text-sm">Faculty Members</p>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:3px;" id="kpiFaculty">—</div>
+        <div style="font-size:12px;color:var(--text-muted);">Faculty Members</div>
+        <div class="sparkline" style="margin-top:10px;" id="sparkFaculty"></div>
+        <div class="bg-icon"><i class="fas fa-chalkboard-teacher"></i></div>
       </div>
 
-      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.3s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 01118 0z" />
-            </svg>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#f97316,#f59e0b);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+          <div class="icon-pill" style="background:linear-gradient(135deg,rgba(249,115,22,0.2),rgba(245,158,11,0.15));border:1px solid rgba(249,115,22,0.25);">
+            <i class="fas fa-exclamation-triangle" style="color:#fb923c;font-size:17px;"></i>
           </div>
+          <span class="badge badge-yellow" id="kpiDefaultersBadge">—</span>
         </div>
-        <h3 id="statDefaulters" class="text-2xl font-bold text-white mb-1">—</h3>
-        <p class="text-gray-400 text-sm">Att. Defaulters</p>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:3px;" id="kpiDefaulters">—</div>
+        <div style="font-size:12px;color:var(--text-muted);">Att. Defaulters</div>
+        <div style="font-size:11px;color:var(--orange);margin-top:6px;">Below 75% threshold</div>
+        <div class="bg-icon"><i class="fas fa-exclamation-triangle"></i></div>
       </div>
 
-      <div class="stat-card glass-hover rounded-2xl p-6 fade-in" style="animation-delay: 0.4s;">
-        <div class="flex items-center justify-between mb-4">
-          <div
-            class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#ef4444,#ec4899);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+          <div class="icon-pill" style="background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(236,72,153,0.15));border:1px solid rgba(239,68,68,0.25);">
+            <i class="fas fa-rupee-sign" style="color:#f87171;font-size:17px;"></i>
           </div>
+          <span class="badge badge-red" id="kpiFeeOverdueBadge">Overdue</span>
         </div>
-        <h3 id="statFeeOverdue" class="text-2xl font-bold text-white mb-1">—</h3>
-        <p class="text-gray-400 text-sm">Fee Overdue</p>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:3px;" id="kpiFeeOverdue">—</div>
+        <div style="font-size:12px;color:var(--text-muted);">Fee Overdue</div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px;">Pending collection</div>
+        <div class="bg-icon"><i class="fas fa-rupee-sign"></i></div>
       </div>
     </div>
 
-    <!-- Charts and Tables Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-      <!-- Attendance Chart -->
-      <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.5s;">
-        <h3 class="text-xl font-bold text-white mb-6">Attendance Overview</h3>
-        <div class="chart-container">
-          <canvas id="attendanceChart"></canvas>
-        </div>
+    <!-- Second row KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#10b981,#06b6d4);">
+        <div class="icon-pill" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.25);margin-bottom:12px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:17px;"></i></div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;">87.4%</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Avg Attendance</div>
+        <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" style="width:87%;background:linear-gradient(90deg,var(--green),var(--cyan));"></div></div>
       </div>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#06b6d4,#3b82f6);">
+        <div class="icon-pill" style="background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.25);margin-bottom:12px;"><i class="fas fa-book" style="color:#22d3ee;font-size:17px;"></i></div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;">24</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Active Courses</div>
+        <div style="font-size:11px;color:var(--cyan);margin-top:8px;">Across 6 departments</div>
+      </div>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#8b5cf6,#3b82f6);">
+        <div class="icon-pill" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);margin-bottom:12px;"><i class="fas fa-money-bill-wave" style="color:#a78bfa;font-size:17px;"></i></div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;">₹14.2L</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Fee Collected (Month)</div>
+        <div style="font-size:11px;color:var(--purple);margin-top:8px;">68% of target</div>
+      </div>
+      <div class="stat-card hover-card" style="--accent:linear-gradient(90deg,#f59e0b,#f97316);">
+        <div class="icon-pill" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.25);margin-bottom:12px;"><i class="fas fa-clipboard-list" style="color:#fbbf24;font-size:17px;"></i></div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;">3</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Upcoming Exams</div>
+        <div style="font-size:11px;color:var(--yellow);margin-top:8px;">In next 7 days</div>
+      </div>
+    </div>
 
-      <!-- Recent Activities -->
-      <div class="glass rounded-2xl p-6 fade-in" style="animation-delay: 0.6s;">
-        <h3 class="text-xl font-bold text-white mb-6">Recent Activities</h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-            <div
-              class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center flex-shrink-0">
-              <span class="text-white text-sm">👤</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-white font-medium text-sm">New student enrolled</p>
-              <p class="text-gray-400 text-xs mt-1">Recently joined the system</p>
-            </div>
+    <!-- Charts Row -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;">
+      <!-- Attendance Line Chart -->
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;">Attendance Trend</div>
+            <div style="font-size:12px;color:var(--text-muted);">Last 7 days overview</div>
+          </div>
+          <div class="tabs">
+            <button class="tab active">Week</button>
+            <button class="tab">Month</button>
+            <button class="tab">Year</button>
           </div>
         </div>
+        <div style="height:220px;position:relative;"><canvas id="attendanceChart"></canvas></div>
+      </div>
+
+      <!-- Donut - Department Distribution -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;">Dept. Distribution</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Students by branch</div>
+        <div style="position:relative;height:160px;display:flex;align-items:center;justify-content:center;">
+          <canvas id="deptChart"></canvas>
+          <div class="donut-center">
+            <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;" id="deptTotal">—</div>
+            <div style="font-size:10px;color:var(--text-muted);">Total</div>
+          </div>
+        </div>
+        <div id="deptLegend" style="margin-top:12px;display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <!-- Fee Collection Bar -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Fee Collection</div>
+        <div style="display:flex;flex-direction:column;gap:12px;" id="feeCollectionList"></div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;">Recent Activity</div>
+          <button class="btn btn-ghost btn-sm">View All</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;" id="activityList"></div>
+      </div>
+
+      <!-- Upcoming Events / Mini Calendar -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;">Upcoming Events</div>
+        <div id="eventsList" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="glass rounded-2xl p-6 mb-8 fade-in" style="animation-delay: 0.7s;">
-      <h3 class="text-xl font-bold text-white mb-6">Quick Actions</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="admin-users.html" class="glass-hover rounded-xl p-6 text-center group">
-          <div
-            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i class="fas fa-user-plus text-white"></i>
-          </div>
-          <p class="text-white text-sm font-medium">Add Student</p>
-        </a>
-        <a href="admin-users.html" class="glass-hover rounded-xl p-6 text-center group">
-          <div
-            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i class="fas fa-chalkboard-teacher text-white"></i>
-          </div>
-          <p class="text-white text-sm font-medium">Add Faculty</p>
-        </a>
-        <a href="admin-fees.html" class="glass-hover rounded-xl p-6 text-center group">
-          <div
-            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i class="fas fa-rupee-sign text-white"></i>
-          </div>
-          <p class="text-white text-sm font-medium">Finance</p>
-        </a>
-        <a href="admin-settings.html" class="glass-hover rounded-xl p-6 text-center group">
-          <div
-            class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i class="fas fa-cog text-white"></i>
-          </div>
-          <p class="text-white text-sm font-medium">Settings</p>
-        </a>
+    <div class="glass" style="padding:20px;margin-top:20px;">
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;" id="quickActions"></div>
+    </div>
+
+    <!-- Alerts & Priority Tasks -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <!-- Alerts -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i class="fas fa-exclamation-circle" style="color:var(--orange);"></i>
+          Alerts
+        </div>
+        <div id="alertsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i class="fas fa-tasks" style="color:var(--blue);"></i>
+          Pending Tasks
+        </div>
+        <div id="tasksList" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- AI Assistant Panel -->
-  <div id="aiPanel"
-    class="fixed right-0 top-0 h-full w-full lg:w-96 glass z-50 transform translate-x-full transition-transform duration-300">
-    <div class="flex flex-col h-full">
-      <div class="p-6 border-b border-white/10">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 flex items-center justify-center float">
-              <span class="text-2xl">🤖</span>
-            </div>
-            <div>
-              <h3 class="text-white font-bold text-lg">AI Assistant</h3>
-              <p class="text-gray-400 text-xs">Powered by Smart ERP</p>
-            </div>
-          </div>
-          <button onclick="toggleAI()" class="text-gray-400 hover:text-white transition-colors">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
+  <!-- ========== STUDENTS SECTION ========== -->
+  <div class="section" id="sec-students">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Student Management</h2>
+        <p style="color:var(--text-muted);font-size:13px;">Manage all enrolled students</p>
       </div>
-
-      <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
-        <!-- Messages here -->
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost"><i class="fas fa-file-export"></i> Export</button>
+        <button class="btn btn-primary" onclick="openModal('addStudentModal')"><i class="fas fa-plus"></i> Add Student</button>
       </div>
-
-      <div class="p-6 border-t border-white/10">
-        <div class="flex gap-3">
-          <input id="aiInput" type="text" placeholder="Ask me anything..."
-            class="flex-1 glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <button id="aiSend"
-            class="glass-hover rounded-xl px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold">
-            <i class="fas fa-paper-plane"></i>
-          </button>
+    </div>
+    <!-- Filters -->
+    <div class="glass" style="padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="search-wrap" style="flex:1;min-width:200px;"><i class="fas fa-search"></i><input class="erp-input" placeholder="Search by name, roll, email..."></div>
+      <select class="erp-input" style="width:160px;"><option>All Branches</option><option>CS</option><option>IT</option><option>ECE</option><option>ME</option><option>CE</option></select>
+      <select class="erp-input" style="width:130px;"><option>All Years</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select>
+      <select class="erp-input" style="width:140px;"><option>All Status</option><option>Active</option><option>Detained</option><option>Alumni</option></select>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <table class="erp-table" id="studentsTable">
+        <thead><tr>
+          <th><input type="checkbox" style="accent-color:var(--purple);"></th>
+          <th>Student</th><th>Roll No.</th><th>Branch</th><th>Year/Sem</th><th>Attendance</th><th>Fee Status</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="studentsTableBody"></tbody>
+      </table>
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);">
+        <span style="font-size:12px;color:var(--text-muted);">Showing 1-10 of <span id="studentTotal">—</span> students</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm"><i class="fas fa-chevron-left"></i></button>
+          <button class="btn btn-primary btn-sm">1</button>
+          <button class="btn btn-ghost btn-sm">2</button>
+          <button class="btn btn-ghost btn-sm">3</button>
+          <button class="btn btn-ghost btn-sm"><i class="fas fa-chevron-right"></i></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Logout Modal -->
-  <div id="modalOverlay" class="modal-overlay">
-    <div id="logoutModal" class="modal-content p-6 text-center">
-      <h3 class="text-xl font-bold text-white mb-4">Confirm Logout</h3>
-      <p class="text-gray-400 mb-6">Are you sure you want to logout?</p>
-      <div class="flex gap-3">
-        <button onclick="hideModal()" class="flex-1 px-6 py-3 rounded-xl text-white hover:bg-white/10">Cancel</button>
-        <button onclick="performLogout()"
-          class="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold">Logout</button>
+  <!-- ========== FACULTY SECTION ========== -->
+  <div class="section" id="sec-faculty">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Faculty Management</h2>
+        <p style="color:var(--text-muted);font-size:13px;">Manage teaching and non-teaching staff</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('addStudentModal')"><i class="fas fa-plus"></i> Add Faculty</button>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <table class="erp-table">
+        <thead><tr>
+          <th>Faculty</th><th>Department</th><th>Designation</th><th>Subject</th><th>Experience</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="facultyTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== COURSES SECTION ========== -->
+  <div class="section" id="sec-courses">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Courses & Subjects</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Manage curriculum and course structure</p></div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Course</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;" id="coursesGrid"></div>
+  </div>
+
+  <!-- ========== ATTENDANCE SECTION ========== -->
+  <div class="section" id="sec-attendance">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Attendance Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Track & manage student attendance</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost"><i class="fas fa-download"></i> Export Report</button>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> Mark Attendance</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--green),var(--cyan));">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Average Attendance</div>
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--green);">87.4%</div>
+        <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill" style="width:87%;background:var(--green);"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--red),var(--orange));">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Defaulters (Below 75%)</div>
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--red);" id="attDefaulterCount">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Requires immediate attention</div>
+      </div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--blue),var(--purple));">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Today's Attendance</div>
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--blue);">91.2%</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">As of <span id="attDate">—</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">Attendance Defaulters List</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <select class="erp-input" style="width:160px;"><option>All Branches</option><option>CS</option><option>IT</option></select>
+        <select class="erp-input" style="width:130px;"><option>All Years</option></select>
+        <button class="btn btn-danger btn-sm"><i class="fas fa-envelope"></i> Send Notices</button>
+      </div>
+      <table class="erp-table">
+        <thead><tr><th>Student</th><th>Branch</th><th>Semester</th><th>Attendance %</th><th>Classes Attended</th><th>Action</th></tr></thead>
+        <tbody id="defaultersTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== TIMETABLE SECTION ========== -->
+  <div class="section" id="sec-timetable">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Timetable Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Manage class schedules and room allocation</p></div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Create Timetable</button>
+    </div>
+    <div class="glass" style="padding:20px;">
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <select class="erp-input" style="width:180px;"><option>CS - 3rd Semester</option><option>IT - 3rd Semester</option></select>
+        <select class="erp-input" style="width:180px;"><option>May 2026</option></select>
+      </div>
+      <div id="timetableGrid" style="overflow-x:auto;"></div>
+    </div>
+  </div>
+
+  <!-- ========== EXAMS SECTION ========== -->
+  <div class="section" id="sec-exams">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Exams & Results</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Manage examination schedules and results</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost"><i class="fas fa-upload"></i> Upload Results</button>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> Schedule Exam</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Upcoming Exams</div>
+        <div id="examsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+      <div class="glass" style="padding:20px;">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Result Statistics</div>
+        <div style="height:200px;"><canvas id="resultChart"></canvas></div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="js/api.js"></script>
-  <script>
-    // State
-    let notificationsVisible = false;
-    // Init
-    document.addEventListener('DOMContentLoaded', async function () {
-      if (!MyIEC.isLoggedIn()) { window.location.href = 'login.html'; return; }
-      const user = MyIEC.getUser();
-      if (user.role !== 'admin') { window.location.href = MyIEC.getRoleDashboard(user.role); return; }
+  <!-- ========== FEES SECTION ========== -->
+  <div class="section" id="sec-fees">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Fee Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Track, collect and manage student fees</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost"><i class="fas fa-file-invoice"></i> Generate Report</button>
+        <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Payment</button>
+      </div>
+    </div>
+    <!-- Fee KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--green),var(--cyan));text-align:center;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Total Collected</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--green);">₹42.6L</div>
+        <div style="font-size:11px;color:var(--text-muted);">This semester</div>
+      </div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--red),var(--orange));text-align:center;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Pending</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--red);">₹8.4L</div>
+        <div style="font-size:11px;color:var(--text-muted);">Overdue</div>
+      </div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--blue),var(--purple));text-align:center;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Collection Rate</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--blue);">83.5%</div>
+        <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:83%;background:var(--blue);"></div></div>
+      </div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--yellow),var(--orange));text-align:center;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Defaulters</div>
+        <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--yellow);" id="feeDefaulterCount">—</div>
+        <div style="font-size:11px;color:var(--text-muted);">Students</div>
+      </div>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;">Fee Records</div>
+        <div style="display:flex;gap:10px;">
+          <select class="erp-input" style="width:140px;font-size:12px;padding:6px 12px;"><option>All Status</option><option>Paid</option><option>Pending</option><option>Overdue</option></select>
+        </div>
+      </div>
+      <table class="erp-table">
+        <thead><tr><th>Student</th><th>Branch</th><th>Semester Fee</th><th>Paid</th><th>Balance</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="feesTableBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-      setupEventListeners();
+  <!-- ========== PAYROLL SECTION ========== -->
+  <div class="section" id="sec-payroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Payroll Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Process and manage staff salary</p></div>
+      <button class="btn btn-primary"><i class="fas fa-calculator"></i> Process Payroll</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--purple),var(--blue));"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Total Salary Disbursed</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">₹12.8L</div><div style="font-size:11px;color:var(--text-muted);">April 2026</div></div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--green),var(--cyan));"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Staff on Payroll</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">48</div><div style="font-size:11px;color:var(--text-muted);">Teaching + Non-teaching</div></div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--orange),var(--yellow));"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Next Payroll Date</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">May 31</div><div style="font-size:11px;color:var(--text-muted);">26 days remaining</div></div>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <table class="erp-table">
+        <thead><tr><th>Staff</th><th>Department</th><th>Designation</th><th>Basic Salary</th><th>Allowances</th><th>Deductions</th><th>Net Salary</th><th>Status</th></tr></thead>
+        <tbody id="payrollTableBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-      // Load profile + analytics stats
-      try {
-        const profile = await MyIEC.api('/auth/me');
-        document.getElementById('navName').textContent = profile.data.name || profile.data.email;
-        document.getElementById('navNameHeader').textContent = profile.data.name || profile.data.email;
+  <!-- ========== ADMISSIONS SECTION ========== -->
+  <div class="section" id="sec-admissions">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Admission Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Manage new student applications & enrollment</p></div>
+      <button class="btn btn-primary"><i class="fas fa-user-plus"></i> New Application</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--blue),var(--cyan));"><div style="font-size:12px;color:var(--text-muted);">Total Applications</div><div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--blue);">247</div></div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--yellow),var(--orange));"><div style="font-size:12px;color:var(--text-muted);">Under Review</div><div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--yellow);">58</div></div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--green),var(--cyan));"><div style="font-size:12px;color:var(--text-muted);">Approved</div><div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--green);">162</div></div>
+      <div class="stat-card" style="--accent:linear-gradient(90deg,var(--red),var(--pink));"><div style="font-size:12px;color:var(--text-muted);">Rejected</div><div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);">27</div></div>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <table class="erp-table">
+        <thead><tr><th>Applicant</th><th>Applied For</th><th>Date</th><th>Category</th><th>Score</th><th>Documents</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="admissionsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-        const analytics = await MyIEC.api('/analytics/dashboard');
-        const d = analytics.data;
-        document.getElementById('statStudents').textContent = d.studentsCount || 0;
-        document.getElementById('statFaculty').textContent = d.facultyCount || 0;
-        document.getElementById('statDefaulters').textContent = d.attendanceDefaultersCount || 0;
-        document.getElementById('statFeeOverdue').textContent = d.feeOverdueCount || 0;
-      } catch (e) {
-        console.error('Data load error:', e.message);
+  <!-- ========== LIBRARY SECTION ========== -->
+  <div class="section" id="sec-library">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Library Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Books, issues, returns and fines</p></div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Book</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Total Books</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">4,280</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Issued</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--blue);">312</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Overdue Returns</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--red);">28</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Fine Pending</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--orange);">₹2,840</div></div>
+    </div>
+    <div class="glass" style="padding:20px;">
+      <div class="search-wrap" style="max-width:400px;margin-bottom:16px;"><i class="fas fa-search"></i><input class="erp-input" placeholder="Search books by title, author, ISBN..."></div>
+      <table class="erp-table">
+        <thead><tr><th>Book Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Available</th><th>Issued To</th><th>Due Date</th><th>Actions</th></tr></thead>
+        <tbody id="libraryTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== HOSTEL SECTION ========== -->
+  <div class="section" id="sec-hostel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Hostel Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Room allotment, fees and complaints</p></div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Allot Room</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Total Rooms</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">180</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Occupied</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--blue);">142</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Vacant</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--green);">38</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Complaints</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--yellow);">7</div></div>
+    </div>
+  </div>
+
+  <!-- ========== TRANSPORT SECTION ========== -->
+  <div class="section" id="sec-transport">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Transport Management</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Bus routes, drivers and student allocation</p></div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Route</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Total Buses</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;">12</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Active Routes</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--blue);">9</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Students Using</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--purple);">284</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text-muted);">Fee Pending</div><div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--red);">₹34,500</div></div>
+    </div>
+  </div>
+
+  <!-- ========== NOTICES SECTION ========== -->
+  <div class="section" id="sec-notices">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div><h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Notices & Events</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Publish announcements and manage events</p></div>
+      <button class="btn btn-primary" onclick="openModal('addNoticeModal')"><i class="fas fa-plus"></i> Post Notice</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="noticesGrid"></div>
+  </div>
+
+  <!-- ========== ANALYTICS SECTION ========== -->
+  <div class="section" id="sec-analytics">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Analytics & Reports</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Comprehensive insights and data analysis</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+      <div class="glass" style="padding:20px;"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Monthly Fee Collection</div><div style="height:220px;"><canvas id="feeChart"></canvas></div></div>
+      <div class="glass" style="padding:20px;"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">Branch-wise Attendance</div><div style="height:220px;"><canvas id="branchAttChart"></canvas></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <button class="glass btn" style="flex-direction:column;padding:20px;gap:8px;text-align:center;justify-content:center;border-radius:16px;height:100px;">
+        <i class="fas fa-file-pdf" style="font-size:22px;color:var(--red);"></i>
+        <span style="font-size:13px;color:var(--text-secondary);">Attendance Report</span>
+      </button>
+      <button class="glass btn" style="flex-direction:column;padding:20px;gap:8px;text-align:center;justify-content:center;border-radius:16px;height:100px;">
+        <i class="fas fa-file-excel" style="font-size:22px;color:var(--green);"></i>
+        <span style="font-size:13px;color:var(--text-secondary);">Fee Report</span>
+      </button>
+      <button class="glass btn" style="flex-direction:column;padding:20px;gap:8px;text-align:center;justify-content:center;border-radius:16px;height:100px;">
+        <i class="fas fa-file-alt" style="font-size:22px;color:var(--blue);"></i>
+        <span style="font-size:13px;color:var(--text-secondary);">Result Sheet</span>
+      </button>
+      <button class="glass btn" style="flex-direction:column;padding:20px;gap:8px;text-align:center;justify-content:center;border-radius:16px;height:100px;">
+        <i class="fas fa-chart-bar" style="font-size:22px;color:var(--purple);"></i>
+        <span style="font-size:13px;color:var(--text-secondary);">Full Analytics</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== SETTINGS SECTION ========== -->
+  <div class="section" id="sec-settings">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;">Settings</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Configure your ERP system</p>
+    </div>
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:20px;">
+      <div class="glass" style="padding:12px;height:fit-content;">
+        <div id="settingsTabs" style="display:flex;flex-direction:column;gap:4px;">
+          <button class="nav-item active" onclick="showSettingsTab('general',this)"><i class="fas fa-sliders-h icon"></i> General</button>
+          <button class="nav-item" onclick="showSettingsTab('academic',this)"><i class="fas fa-graduation-cap icon"></i> Academic</button>
+          <button class="nav-item" onclick="showSettingsTab('fees-cfg',this)"><i class="fas fa-rupee-sign icon"></i> Fee Config</button>
+          <button class="nav-item" onclick="showSettingsTab('users',this)"><i class="fas fa-users icon"></i> User Roles</button>
+          <button class="nav-item" onclick="showSettingsTab('notifications-cfg',this)"><i class="fas fa-bell icon"></i> Notifications</button>
+          <button class="nav-item" onclick="showSettingsTab('backup',this)"><i class="fas fa-database icon"></i> Backup</button>
+        </div>
+      </div>
+      <div class="glass" style="padding:24px;" id="settingsContent">
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;">General Settings</div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;font-weight:600;">Institution Name</label><input class="erp-input" value="MY IEC Smart ERP"></div>
+          <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;font-weight:600;">Academic Year</label><select class="erp-input"><option>2025-2026</option><option>2026-2027</option></select></div>
+          <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;font-weight:600;">Current Semester</label><select class="erp-input"><option>Even Semester (Jan - Jun)</option><option>Odd Semester (Jul - Dec)</option></select></div>
+          <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;font-weight:600;">Attendance Threshold (%)</label><input class="erp-input" value="75" type="number"></div>
+          <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px;font-weight:600;">Contact Email</label><input class="erp-input" value="admin@myiec.edu.in" type="email"></div>
+          <button class="btn btn-primary" style="width:fit-content;" onclick="showToast('Settings saved successfully!','green')"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /padding wrapper -->
+</main>
+
+<!-- ========== AI PANEL ========== -->
+<div class="ai-panel" id="aiPanel">
+  <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#3b82f6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:18px;" class="float-anim">🤖</div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;">AI Assistant</div>
+        <div style="font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;"></span>Online</div>
+      </div>
+    </div>
+    <button onclick="toggleAI()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-bubble ai">👋 Hi Admin! I'm your Smart ERP AI assistant. I can help you with student queries, fee analysis, attendance reports, and more. What do you need?</div>
+  </div>
+  <div style="padding:14px 16px;border-top:1px solid var(--border);">
+    <!-- Quick Prompts -->
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;" id="quickPrompts"></div>
+    <div style="display:flex;gap:8px;">
+      <input id="aiInput" class="erp-input" placeholder="Ask me anything..." style="flex:1;">
+      <button onclick="sendAiMessage()" style="background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;border-radius:10px;width:42px;height:42px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MODALS ========== -->
+<!-- Add Student Modal -->
+<div class="modal-bg" id="addStudentModal">
+  <div class="modal" style="max-width:600px;">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;">Add New Student</div>
+      <button onclick="closeModal('addStudentModal')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">First Name</label><input class="erp-input" placeholder="Enter first name"></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Last Name</label><input class="erp-input" placeholder="Enter last name"></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Email</label><input class="erp-input" type="email" placeholder="student@example.com"></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Phone</label><input class="erp-input" placeholder="+91 XXXXX XXXXX"></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Branch</label><select class="erp-input"><option>Select Branch</option><option>Computer Science</option><option>Information Technology</option><option>ECE</option><option>Mechanical</option><option>Civil</option></select></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Year</label><select class="erp-input"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Roll Number</label><input class="erp-input" placeholder="Auto-generated"></div>
+        <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Admission Date</label><input class="erp-input" type="date"></div>
+      </div>
+      <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Address</label><textarea class="erp-input" rows="2" placeholder="Full address..." style="resize:none;"></textarea></div>
+    </div>
+    <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal('addStudentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('addStudentModal');showToast('Student added successfully!','green')"><i class="fas fa-plus"></i> Add Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Notice Modal -->
+<div class="modal-bg" id="addNoticeModal">
+  <div class="modal" style="max-width:500px;">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;">Post New Notice</div>
+      <button onclick="closeModal('addNoticeModal')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:14px;">
+      <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Title</label><input class="erp-input" placeholder="Notice title..."></div>
+      <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Category</label><select class="erp-input"><option>General</option><option>Academic</option><option>Exam</option><option>Event</option><option>Fee</option></select></div>
+      <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Target Audience</label><select class="erp-input"><option>All</option><option>Students Only</option><option>Faculty Only</option><option>Specific Branch</option></select></div>
+      <div><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:5px;font-weight:600;">Content</label><textarea class="erp-input" rows="4" placeholder="Notice content..." style="resize:none;"></textarea></div>
+    </div>
+    <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModal('addNoticeModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('addNoticeModal');showToast('Notice published!','green')"><i class="fas fa-paper-plane"></i> Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Logout Modal -->
+<div class="modal-bg" id="logoutModal">
+  <div class="modal" style="max-width:380px;padding:32px;text-align:center;">
+    <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><i class="fas fa-sign-out-alt" style="font-size:22px;color:var(--red);"></i></div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">Confirm Logout</div>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px;">Are you sure you want to logout from MY IEC Smart ERP?</p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="closeModal('logoutModal')">Cancel</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center;" onclick="performLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+// DATA (Mock / placeholders)
+// ============================
+const MOCK = {
+  studentsCount: 847,
+  facultyCount: 52,
+  defaultersCount: 34,
+  feeOverdueCount: 68,
+  students: [
+    { name:'Rahul Sharma', roll:'CS21001', branch:'CS', year:'3rd Yr / 6th Sem', att:92, feeStatus:'Paid', status:'Active' },
+    { name:'Priya Verma', roll:'IT21042', branch:'IT', year:'3rd Yr / 6th Sem', att:71, feeStatus:'Pending', status:'Active' },
+    { name:'Amit Kumar', roll:'ECE20018', branch:'ECE', year:'4th Yr / 8th Sem', att:88, feeStatus:'Paid', status:'Active' },
+    { name:'Sneha Gupta', roll:'ME22005', branch:'ME', year:'2nd Yr / 4th Sem', att:67, feeStatus:'Overdue', status:'Detained' },
+    { name:'Vikram Singh', roll:'CE22031', branch:'CE', year:'2nd Yr / 4th Sem', att:95, feeStatus:'Paid', status:'Active' },
+    { name:'Neha Joshi', roll:'CS21018', branch:'CS', year:'3rd Yr / 6th Sem', att:74, feeStatus:'Pending', status:'Active' },
+    { name:'Rohan Mishra', roll:'IT22009', branch:'IT', year:'2nd Yr / 3rd Sem', att:82, feeStatus:'Paid', status:'Active' },
+    { name:'Kavya Reddy', roll:'CS23001', branch:'CS', year:'1st Yr / 2nd Sem', att:96, feeStatus:'Paid', status:'Active' },
+  ],
+  faculty: [
+    { name:'Dr. Anil Sharma', dept:'Computer Science', designation:'HOD', subject:'DBMS', exp:'14 yrs', status:'Active' },
+    { name:'Prof. Meena Tiwari', dept:'Information Technology', designation:'Assistant Prof.', subject:'Web Dev', exp:'8 yrs', status:'Active' },
+    { name:'Dr. Ravi Patel', dept:'ECE', designation:'Associate Prof.', subject:'Signals', exp:'12 yrs', status:'Active' },
+    { name:'Ms. Sunita Rao', dept:'Mathematics', designation:'Lecturer', subject:'Calculus', exp:'5 yrs', status:'Active' },
+    { name:'Prof. Yash Bajaj', dept:'Mechanical', designation:'Assistant Prof.', subject:'Thermodynamics', exp:'9 yrs', status:'On Leave' },
+  ],
+  fees: [
+    { name:'Rahul Sharma', branch:'CS', total:85000, paid:85000, due:'May 30', status:'Paid' },
+    { name:'Priya Verma', branch:'IT', total:85000, paid:42000, due:'Apr 30', status:'Pending' },
+    { name:'Sneha Gupta', branch:'ME', total:75000, paid:0, due:'Mar 31', status:'Overdue' },
+    { name:'Vikram Singh', branch:'CE', total:80000, paid:80000, due:'May 30', status:'Paid' },
+    { name:'Neha Joshi', branch:'CS', total:85000, paid:60000, due:'May 15', status:'Pending' },
+  ],
+  payroll: [
+    { name:'Dr. Anil Sharma', dept:'CS', designation:'HOD', basic:85000, allow:12000, ded:9800, status:'Processed' },
+    { name:'Prof. Meena Tiwari', dept:'IT', designation:'Asst. Prof.', basic:55000, allow:8000, ded:6300, status:'Processed' },
+    { name:'Dr. Ravi Patel', dept:'ECE', designation:'Assoc. Prof.', basic:72000, allow:10000, ded:8200, status:'Pending' },
+    { name:'Ms. Sunita Rao', dept:'Math', designation:'Lecturer', basic:42000, allow:6000, ded:4800, status:'Processed' },
+  ],
+  admissions: [
+    { name:'Aditya Khanna', course:'B.Tech CS', date:'May 2, 2026', category:'General', score:'94.2%', docs:'Complete', status:'Approved' },
+    { name:'Pooja Mehta', course:'B.Tech IT', date:'May 3, 2026', category:'OBC', score:'88.7%', docs:'Complete', status:'Under Review' },
+    { name:'Suresh Yadav', course:'B.Tech ME', date:'May 4, 2026', category:'SC', score:'76.4%', docs:'Incomplete', status:'Under Review' },
+    { name:'Trisha Nair', course:'B.Tech ECE', date:'May 1, 2026', category:'General', score:'91.5%', docs:'Complete', status:'Approved' },
+    { name:'Karan Oberoi', course:'B.Tech CE', date:'Apr 28, 2026', category:'General', score:'62.1%', docs:'Complete', status:'Rejected' },
+  ],
+  library: [
+    { title:'Data Structures & Algorithms', author:'Cormen', isbn:'978-02-621-3', cat:'CS', avail:3, issuedTo:'Rahul S.', due:'May 20' },
+    { title:'Engineering Mathematics', author:'B.S. Grewal', isbn:'978-81-203-4', cat:'Math', avail:8, issuedTo:'—', due:'—' },
+    { title:'Operating Systems', author:'Tanenbaum', isbn:'978-01-321-5', cat:'CS', avail:0, issuedTo:'Priya V.', due:'May 12' },
+    { title:'VLSI Design', author:'Kang & Leblebici', isbn:'978-00-715-6', cat:'ECE', avail:2, issuedTo:'Vikram S.', due:'Jun 5' },
+  ],
+  courses: [
+    { name:'B.Tech Computer Science', code:'BCS', students:214, subjects:8, hod:'Dr. Anil Sharma', status:'Active' },
+    { name:'B.Tech Information Tech.', code:'BIT', students:178, subjects:8, hod:'Prof. Meena Tiwari', status:'Active' },
+    { name:'B.Tech ECE', code:'BECE', students:142, subjects:7, hod:'Dr. Ravi Patel', status:'Active' },
+    { name:'B.Tech Mechanical', code:'BME', students:126, subjects:7, hod:'Prof. Yash Bajaj', status:'Active' },
+    { name:'B.Tech Civil Engg.', code:'BCE', students:98, subjects:6, hod:'Dr. Sanjay Gupta', status:'Active' },
+    { name:'MCA', code:'MCA', students:89, subjects:6, hod:'Dr. Priya Sharma', status:'Active' },
+  ],
+  exams: [
+    { name:'End Semester Exam', branch:'All Branches', date:'May 20, 2026', time:'9:00 AM', hall:'All Halls', status:'Scheduled' },
+    { name:'Internal Assessment 3', branch:'CS / IT', date:'May 12, 2026', time:'10:00 AM', hall:'Block A', status:'Upcoming' },
+    { name:'Practical Exam - CS', branch:'CS', date:'May 18, 2026', time:'2:00 PM', hall:'Lab 1-3', status:'Upcoming' },
+  ],
+  notices: [
+    { title:'End Semester Examination Schedule 2026', cat:'Exam', date:'May 3, 2026', priority:'High', for:'All Students' },
+    { title:'Annual Sports Day - Registration Open', cat:'Event', date:'May 1, 2026', priority:'Normal', for:'All' },
+    { title:'Fee Submission Last Date Reminder', cat:'Fee', date:'Apr 29, 2026', priority:'High', for:'Students with Dues' },
+    { title:'Workshop on AI & ML - Registration', cat:'Academic', date:'Apr 25, 2026', priority:'Normal', for:'CS / IT Students' },
+  ],
+  activities: [
+    { icon:'👤', color:'#3b82f6', msg:'New student Kavya Reddy enrolled in CS', time:'2 min ago' },
+    { icon:'💰', color:'#10b981', msg:'Fee payment received ₹42,000 - Rahul Sharma', time:'18 min ago' },
+    { icon:'📋', color:'#f97316', msg:'Attendance marked for CS 6th Sem', time:'45 min ago' },
+    { icon:'📢', color:'#8b5cf6', msg:'Exam schedule notice published', time:'2 hrs ago' },
+    { icon:'👨‍🏫', color:'#06b6d4', msg:'Prof. Meena Tiwari leave approved', time:'3 hrs ago' },
+  ],
+  events: [
+    { title:'End Sem Exams Start', date:'May 20', color:'var(--red)', icon:'📋' },
+    { title:'Sports Day', date:'May 24', color:'var(--blue)', icon:'🏃' },
+    { title:'Faculty Meeting', date:'May 8', color:'var(--purple)', icon:'👥' },
+    { title:'Fee Due Date', date:'May 30', color:'var(--orange)', icon:'💰' },
+  ],
+  alerts: [
+    { type:'warning', msg:'34 students below 75% attendance — action required' },
+    { type:'error', msg:'68 students with overdue fee — send reminders' },
+    { type:'info', msg:'End semester exams scheduled for May 20, 2026' },
+    { type:'warning', msg:'Library overdue returns: 28 books pending' },
+  ],
+  tasks: [
+    { done:false, task:'Approve 58 pending admission applications' },
+    { done:false, task:'Send fee reminder notices to defaulters' },
+    { done:true, task:'Generate April attendance report' },
+    { done:false, task:'Process May payroll for teaching staff' },
+    { done:true, task:'Upload end semester exam timetable' },
+    { done:false, task:'Renew library book subscriptions' },
+  ],
+  quickActions: [
+    { icon:'fas fa-user-plus', label:'Add Student', color:'#3b82f6', bg:'rgba(59,130,246,0.15)', sec:'students' },
+    { icon:'fas fa-chalkboard-teacher', label:'Add Faculty', color:'#8b5cf6', bg:'rgba(139,92,246,0.15)', sec:'faculty' },
+    { icon:'fas fa-rupee-sign', label:'Collect Fee', color:'#10b981', bg:'rgba(16,185,129,0.15)', sec:'fees' },
+    { icon:'fas fa-clipboard-check', label:'Mark Attendance', color:'#f97316', bg:'rgba(249,115,22,0.15)', sec:'attendance' },
+    { icon:'fas fa-paper-plane', label:'Post Notice', color:'#ec4899', bg:'rgba(236,72,153,0.15)', sec:'notices' },
+    { icon:'fas fa-chart-bar', label:'Reports', color:'#06b6d4', bg:'rgba(6,182,212,0.15)', sec:'analytics' },
+  ],
+  feeCollection: [
+    { label:'Computer Science', pct:88, color:'#3b82f6' },
+    { label:'Information Tech.', pct:76, color:'#8b5cf6' },
+    { label:'ECE', pct:92, color:'#10b981' },
+    { label:'Mechanical', pct:61, color:'#f97316' },
+    { label:'Civil Engg.', pct:84, color:'#06b6d4' },
+  ],
+  depts: [
+    { label:'CS', value:214, color:'#3b82f6' },
+    { label:'IT', value:178, color:'#8b5cf6' },
+    { label:'ECE', value:142, color:'#10b981' },
+    { label:'ME', value:126, color:'#f97316' },
+    { label:'CE', value:98, color:'#06b6d4' },
+    { label:'MCA', value:89, color:'#ec4899' },
+  ],
+  defaulters: [
+    { name:'Sneha Gupta', branch:'ME', sem:'4th', pct:67, att:'93/140' },
+    { name:'Priya Verma', branch:'IT', sem:'6th', pct:71, att:'122/172' },
+    { name:'Neha Joshi', branch:'CS', sem:'6th', pct:74, att:'127/172' },
+    { name:'Rahul Dubey', branch:'ECE', sem:'4th', pct:68, att:'95/140' },
+    { name:'Kiran Patel', branch:'ME', sem:'2nd', pct:61, att:'73/120' },
+  ],
+};
+
+// ============================
+// INIT
+// ============================
+document.addEventListener('DOMContentLoaded', () => {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-IN', opts);
+  document.getElementById('attDate').textContent = now.toLocaleDateString('en-IN');
+
+  loadKPIs();
+  renderStudentsTable();
+  renderFacultyTable();
+  renderFeesTable();
+  renderPayrollTable();
+  renderAdmissionsTable();
+  renderLibraryTable();
+  renderCoursesGrid();
+  renderExams();
+  renderNotices();
+  renderDefaultersTable();
+  renderActivity();
+  renderEvents();
+  renderAlerts();
+  renderTasks();
+  renderQuickActions();
+  renderFeeCollection();
+  renderNotifications();
+  renderAiQuickPrompts();
+
+  setTimeout(() => {
+    initAttendanceChart();
+    initDeptChart();
+    initResultChart();
+    initAnalyticsCharts();
+  }, 200);
+
+  // Mobile menu
+  if (window.innerWidth < 1024) {
+    document.getElementById('menuBtn').style.display = 'flex';
+  }
+  // Close dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    }
+    if (!e.target.closest('#sidebar') && !e.target.closest('#menuBtn') && window.innerWidth < 1024) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+    if (!e.target.closest('#aiPanel') && !e.target.closest('[onclick*="toggleAI"]')) {
+      // don't auto-close
+    }
+  });
+});
+
+// ============================
+// KPIs
+// ============================
+function loadKPIs() {
+  animateCount('kpiStudents', MOCK.studentsCount);
+  animateCount('kpiFaculty', MOCK.facultyCount);
+  animateCount('kpiDefaulters', MOCK.defaultersCount);
+  animateCount('kpiFeeOverdue', MOCK.feeOverdueCount);
+  animateCount('attDefaulterCount', MOCK.defaultersCount);
+  animateCount('feeDefaulterCount', MOCK.feeOverdueCount);
+  document.getElementById('kpiDefaultersBadge').textContent = MOCK.defaultersCount + ' students';
+  document.getElementById('kpiFeeOverdueBadge').textContent = MOCK.feeOverdueCount + ' students';
+  document.getElementById('navStudentCount').textContent = MOCK.studentsCount;
+  document.getElementById('navDefaulterBadge').textContent = MOCK.defaultersCount;
+  document.getElementById('navFeeOverdueBadge').textContent = MOCK.feeOverdueCount;
+  document.getElementById('studentTotal').textContent = MOCK.studentsCount;
+  document.getElementById('deptTotal').textContent = MOCK.studentsCount;
+  renderSparkline('sparkStudents', [780,800,812,820,835,840,847], '#3b82f6');
+  renderSparkline('sparkFaculty', [48,49,50,51,52,52,52], '#8b5cf6');
+}
+
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let current = 0;
+  const step = Math.ceil(target / 50);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current.toLocaleString('en-IN');
+    if (current >= target) clearInterval(timer);
+  }, 30);
+}
+
+function renderSparkline(id, data, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const max = Math.max(...data);
+  el.innerHTML = data.map(v => `<span style="height:${Math.round((v/max)*100)}%;background:${color}40;min-width:4px;" title="${v}"></span>`).join('');
+}
+
+// ============================
+// TABLES
+// ============================
+function renderStudentsTable() {
+  const tbody = document.getElementById('studentsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.students.map(s => {
+    const attColor = s.att >= 75 ? 'badge-green' : 'badge-red';
+    const feeClass = s.feeStatus === 'Paid' ? 'badge-green' : s.feeStatus === 'Overdue' ? 'badge-red' : 'badge-yellow';
+    const statusClass = s.status === 'Active' ? 'badge-blue' : 'badge-red';
+    const initials = s.name.split(' ').map(w=>w[0]).join('');
+    const colors = ['#3b82f6','#8b5cf6','#10b981','#f97316','#ec4899','#06b6d4'];
+    const bg = colors[Math.floor(Math.random()*colors.length)];
+    return `<tr>
+      <td><input type="checkbox" style="accent-color:var(--purple);"></td>
+      <td><div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" style="background:${bg}20;border:1px solid ${bg}40;color:${bg};">${initials}</div>
+        <div><div style="font-weight:600;color:var(--text-primary);font-size:13px;">${s.name}</div></div>
+      </div></td>
+      <td style="font-family:monospace;font-size:12px;">${s.roll}</td>
+      <td><span class="badge badge-gray">${s.branch}</span></td>
+      <td style="font-size:12px;">${s.year}</td>
+      <td><span class="badge ${attColor}">${s.att}%</span></td>
+      <td><span class="badge ${feeClass}">${s.feeStatus}</span></td>
+      <td><span class="badge ${statusClass}">${s.status}</span></td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" title="View"><i class="fas fa-eye"></i></button>
+        <button class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFacultyTable() {
+  const tbody = document.getElementById('facultyTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.faculty.map(f => {
+    const sc = f.status === 'Active' ? 'badge-green' : 'badge-yellow';
+    const initials = f.name.replace('Dr. ','').replace('Prof. ','').replace('Ms. ','').split(' ').map(w=>w[0]).join('').slice(0,2);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:var(--purple);">${initials}</div>
+        <div><div style="font-weight:600;color:var(--text-primary);font-size:13px;">${f.name}</div></div>
+      </div></td>
+      <td>${f.dept}</td>
+      <td><span class="badge badge-blue">${f.designation}</span></td>
+      <td style="font-size:12px;">${f.subject}</td>
+      <td style="font-size:12px;">${f.exp}</td>
+      <td><span class="badge ${sc}">${f.status}</span></td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i></button>
+        <button class="btn btn-ghost btn-sm"><i class="fas fa-edit"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFeesTable() {
+  const tbody = document.getElementById('feesTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.fees.map(f => {
+    const bal = f.total - f.paid;
+    const sc = f.status === 'Paid' ? 'badge-green' : f.status === 'Overdue' ? 'badge-red' : 'badge-yellow';
+    return `<tr>
+      <td style="font-weight:600;color:var(--text-primary);">${f.name}</td>
+      <td><span class="badge badge-gray">${f.branch}</span></td>
+      <td>₹${f.total.toLocaleString('en-IN')}</td>
+      <td style="color:var(--green);">₹${f.paid.toLocaleString('en-IN')}</td>
+      <td style="color:${bal > 0 ? 'var(--red)' : 'var(--green)'};">₹${bal.toLocaleString('en-IN')}</td>
+      <td style="font-size:12px;">${f.due}</td>
+      <td><span class="badge ${sc}">${f.status}</span></td>
+      <td><button class="btn btn-primary btn-sm"><i class="fas fa-rupee-sign"></i> Collect</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPayrollTable() {
+  const tbody = document.getElementById('payrollTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.payroll.map(p => {
+    const net = p.basic + p.allow - p.ded;
+    const sc = p.status === 'Processed' ? 'badge-green' : 'badge-yellow';
+    return `<tr>
+      <td style="font-weight:600;color:var(--text-primary);">${p.name}</td>
+      <td>${p.dept}</td>
+      <td style="font-size:12px;">${p.designation}</td>
+      <td>₹${p.basic.toLocaleString('en-IN')}</td>
+      <td style="color:var(--green);">+₹${p.allow.toLocaleString('en-IN')}</td>
+      <td style="color:var(--red);">-₹${p.ded.toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:var(--text-primary);">₹${net.toLocaleString('en-IN')}</td>
+      <td><span class="badge ${sc}">${p.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAdmissionsTable() {
+  const tbody = document.getElementById('admissionsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.admissions.map(a => {
+    const sc = a.status === 'Approved' ? 'badge-green' : a.status === 'Rejected' ? 'badge-red' : 'badge-yellow';
+    const dc = a.docs === 'Complete' ? 'badge-green' : 'badge-yellow';
+    return `<tr>
+      <td style="font-weight:600;color:var(--text-primary);">${a.name}</td>
+      <td>${a.course}</td>
+      <td style="font-size:12px;">${a.date}</td>
+      <td><span class="badge badge-gray">${a.category}</span></td>
+      <td style="font-weight:600;color:var(--cyan);">${a.score}</td>
+      <td><span class="badge ${dc}">${a.docs}</span></td>
+      <td><span class="badge ${sc}">${a.status}</span></td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i></button>
+        ${a.status === 'Under Review' ? '<button class="btn btn-primary btn-sm">Review</button>' : ''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderLibraryTable() {
+  const tbody = document.getElementById('libraryTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.library.map(b => {
+    const ac = b.avail > 0 ? 'badge-green' : 'badge-red';
+    return `<tr>
+      <td style="font-weight:600;color:var(--text-primary);font-size:13px;">${b.title}</td>
+      <td style="font-size:12px;">${b.author}</td>
+      <td style="font-family:monospace;font-size:11px;">${b.isbn}</td>
+      <td><span class="badge badge-blue">${b.cat}</span></td>
+      <td><span class="badge ${ac}">${b.avail} Available</span></td>
+      <td style="font-size:12px;">${b.issuedTo}</td>
+      <td style="font-size:12px;">${b.due}</td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm"><i class="fas fa-share"></i> Issue</button>
+        <button class="btn btn-ghost btn-sm"><i class="fas fa-undo"></i> Return</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderDefaultersTable() {
+  const tbody = document.getElementById('defaultersTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = MOCK.defaulters.map(d => `<tr>
+    <td style="font-weight:600;color:var(--text-primary);">${d.name}</td>
+    <td><span class="badge badge-gray">${d.branch}</span></td>
+    <td>${d.sem} Sem</td>
+    <td><span class="badge badge-red">${d.pct}%</span></td>
+    <td style="font-size:12px;">${d.att}</td>
+    <td><button class="btn btn-ghost btn-sm"><i class="fas fa-envelope"></i> Notice</button></td>
+  </tr>`).join('');
+}
+
+// ============================
+// COURSES
+// ============================
+function renderCoursesGrid() {
+  const grid = document.getElementById('coursesGrid');
+  if (!grid) return;
+  grid.innerHTML = MOCK.courses.map(c => `
+    <div class="glass hover-card" style="padding:20px;cursor:default;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div class="icon-pill" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.25);">
+          <i class="fas fa-graduation-cap" style="color:var(--blue);"></i>
+        </div>
+        <span class="badge badge-green">${c.status}</span>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;">${c.name}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Code: ${c.code} · HOD: ${c.hod}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">${c.students}</div>
+          <div style="font-size:11px;color:var(--text-muted);">Students</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">${c.subjects}</div>
+          <div style="font-size:11px;color:var(--text-muted);">Subjects</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px;">
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;">View</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;">Edit</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================
+// EXAMS
+// ============================
+function renderExams() {
+  const el = document.getElementById('examsList');
+  if (!el) return;
+  el.innerHTML = MOCK.exams.map(e => {
+    const sc = e.status === 'Scheduled' ? 'badge-blue' : 'badge-yellow';
+    return `<div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-weight:600;font-size:13px;">${e.name}</div>
+        <span class="badge ${sc}">${e.status}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:12px;color:var(--text-muted);"><i class="fas fa-users" style="width:14px;"></i> ${e.branch}</div>
+        <div style="font-size:12px;color:var(--text-muted);"><i class="fas fa-calendar" style="width:14px;"></i> ${e.date} · ${e.time}</div>
+        <div style="font-size:12px;color:var(--text-muted);"><i class="fas fa-map-marker-alt" style="width:14px;"></i> ${e.hall}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================
+// NOTICES
+// ============================
+function renderNotices() {
+  const grid = document.getElementById('noticesGrid');
+  if (!grid) return;
+  const catColors = { Exam:'var(--red)', Event:'var(--blue)', Fee:'var(--orange)', Academic:'var(--purple)', General:'var(--green)' };
+  grid.innerHTML = MOCK.notices.map(n => `
+    <div class="glass hover-card" style="padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span class="badge" style="background:${catColors[n.cat]}20;color:${catColors[n.cat]};">${n.cat}</span>
+        <span class="badge ${n.priority === 'High' ? 'badge-red' : 'badge-gray'}">${n.priority}</span>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;">${n.title}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;"><i class="fas fa-calendar" style="margin-right:4px;"></i>${n.date} · <i class="fas fa-users" style="margin:0 4px;"></i>${n.for}</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm">View</button>
+        <button class="btn btn-ghost btn-sm">Edit</button>
+        <button class="btn btn-danger btn-sm">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================
+// ACTIVITY / EVENTS / ALERTS
+// ============================
+function renderActivity() {
+  const el = document.getElementById('activityList');
+  if (!el) return;
+  el.innerHTML = MOCK.activities.map(a => `
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="width:34px;height:34px;border-radius:50%;background:${a.color}20;border:1px solid ${a.color}40;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">${a.icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;color:var(--text-primary);line-height:1.4;">${a.msg}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${a.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderEvents() {
+  const el = document.getElementById('eventsList');
+  if (!el) return;
+  el.innerHTML = MOCK.events.map(e => `
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border-radius:10px;padding:10px 12px;">
+      <div style="width:36px;height:36px;border-radius:8px;background:${e.color}20;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${e.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--text-primary);">${e.title}</div>
+        <div style="font-size:11px;color:var(--text-muted);">${e.date}</div>
+      </div>
+      <span style="width:8px;height:8px;border-radius:50%;background:${e.color};flex-shrink:0;"></span>
+    </div>
+  `).join('');
+}
+
+function renderAlerts() {
+  const el = document.getElementById('alertsList');
+  if (!el) return;
+  const configs = {
+    warning: { color:'var(--orange)', bg:'rgba(249,115,22,0.1)', icon:'fas fa-exclamation-triangle' },
+    error: { color:'var(--red)', bg:'rgba(239,68,68,0.1)', icon:'fas fa-times-circle' },
+    info: { color:'var(--blue)', bg:'rgba(59,130,246,0.1)', icon:'fas fa-info-circle' },
+  };
+  el.innerHTML = MOCK.alerts.map(a => {
+    const c = configs[a.type];
+    return `<div style="background:${c.bg};border:1px solid ${c.color}30;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px;">
+      <i class="${c.icon}" style="color:${c.color};margin-top:1px;flex-shrink:0;"></i>
+      <span style="font-size:12px;color:var(--text-secondary);">${a.msg}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderTasks() {
+  const el = document.getElementById('tasksList');
+  if (!el) return;
+  el.innerHTML = MOCK.tasks.map((t,i) => `
+    <div class="priority-item" style="cursor:pointer;" onclick="toggleTask(${i},this)">
+      <div style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.done ? 'var(--green)' : 'var(--border-bright)'};background:${t.done ? 'rgba(16,185,129,0.2)' : 'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        ${t.done ? '<i class="fas fa-check" style="font-size:10px;color:var(--green);"></i>' : ''}
+      </div>
+      <span style="font-size:12px;color:${t.done ? 'var(--text-muted)' : 'var(--text-secondary)'};text-decoration:${t.done ? 'line-through' : 'none'};flex:1;">${t.task}</span>
+    </div>
+  `).join('');
+}
+
+function toggleTask(i, el) {
+  MOCK.tasks[i].done = !MOCK.tasks[i].done;
+  renderTasks();
+}
+
+function renderQuickActions() {
+  const el = document.getElementById('quickActions');
+  if (!el) return;
+  el.innerHTML = MOCK.quickActions.map(a => `
+    <button onclick="showSection('${a.sec}',null)" style="background:${a.bg};border:1px solid ${a.color}30;border-radius:12px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
+      <div style="width:42px;height:42px;border-radius:10px;background:${a.color}25;display:flex;align-items:center;justify-content:center;">
+        <i class="${a.icon}" style="color:${a.color};font-size:16px;"></i>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-align:center;">${a.label}</span>
+    </button>
+  `).join('');
+}
+
+function renderFeeCollection() {
+  const el = document.getElementById('feeCollectionList');
+  if (!el) return;
+  el.innerHTML = MOCK.feeCollection.map(f => `
+    <div>
+      <div class="fee-bar-wrap" style="margin-bottom:4px;">
+        <span style="font-size:11px;color:var(--text-muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.label}</span>
+        <span style="font-size:11px;font-weight:700;color:${f.color};">${f.pct}%</span>
+      </div>
+      <div class="fee-bar"><div class="fee-bar-fill" style="width:${f.pct}%;background:${f.color};"></div></div>
+    </div>
+  `).join('');
+}
+
+// ============================
+// NOTIFICATIONS
+// ============================
+function renderNotifications() {
+  const el = document.getElementById('notifList');
+  if (!el) return;
+  const notifs = [
+    { icon:'fas fa-user-plus', color:'var(--blue)', msg:'New student Kavya Reddy enrolled', time:'2 min ago', unread:true },
+    { icon:'fas fa-rupee-sign', color:'var(--green)', msg:'Fee collected ₹42,000 from Rahul Sharma', time:'18 min ago', unread:true },
+    { icon:'fas fa-exclamation-triangle', color:'var(--orange)', msg:'34 students below 75% attendance', time:'1 hr ago', unread:true },
+    { icon:'fas fa-book', color:'var(--purple)', msg:'28 overdue library returns pending', time:'3 hrs ago', unread:false },
+  ];
+  el.innerHTML = notifs.map(n => `
+    <div style="padding:12px 16px;display:flex;gap:10px;align-items:flex-start;background:${n.unread ? 'rgba(139,92,246,0.05)' : 'transparent'};cursor:pointer;"
+      onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='${n.unread ? 'rgba(139,92,246,0.05)' : 'transparent'}'">
+      <div style="width:34px;height:34px;border-radius:50%;background:${n.color}20;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="${n.icon}" style="font-size:13px;color:${n.color};"></i>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:12px;color:var(--text-primary);line-height:1.4;">${n.msg}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${n.time}</div>
+      </div>
+      ${n.unread ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px;"></span>' : ''}
+    </div>
+  `).join('');
+}
+
+// ============================
+// CHARTS
+// ============================
+function chartDefaults() {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Space Grotesk' } } } },
+  };
+}
+
+function initAttendanceChart() {
+  const ctx = document.getElementById('attendanceChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'],
+      datasets: [
+        { label: 'CS', data: [89,91,87,93,88,90,92], borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.08)', fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:'#3b82f6', borderWidth:2 },
+        { label: 'IT', data: [84,87,82,88,85,83,87], borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.06)', fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:'#8b5cf6', borderWidth:2 },
+        { label: 'Overall', data: [87,88,85,91,87,87,89], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.06)', fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:'#10b981', borderWidth:2 },
+      ]
+    },
+    options: {
+      ...chartDefaults(),
+      scales: {
+        y: { min:70, max:100, ticks: { color:'#94a3b8', callback: v=>v+'%' }, grid: { color:'rgba(255,255,255,0.04)' } },
+        x: { ticks: { color:'#94a3b8' }, grid: { color:'rgba(255,255,255,0.04)' } }
       }
+    }
+  });
+}
 
-      await initCharts();
-      await loadActivityLogs();
+function initDeptChart() {
+  const ctx = document.getElementById('deptChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: MOCK.depts.map(d=>d.label),
+      datasets: [{ data: MOCK.depts.map(d=>d.value), backgroundColor: MOCK.depts.map(d=>d.color), borderColor: 'transparent', borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      ...chartDefaults(),
+      cutout: '72%',
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Legend
+  const legend = document.getElementById('deptLegend');
+  if (legend) {
+    legend.innerHTML = MOCK.depts.map(d => `
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0;"></span>
+          <span style="font-size:11px;color:var(--text-muted);">${d.label}</span>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">${d.value}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function initResultChart() {
+  const ctx = document.getElementById('resultChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['A+', 'A', 'B+', 'B', 'C', 'D', 'F'],
+      datasets: [{ label: 'Students', data: [42, 98, 134, 187, 112, 48, 22], backgroundColor: ['#10b981','#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#f97316','#ef4444'], borderRadius: 6 }]
+    },
+    options: { ...chartDefaults(), plugins: { legend: { display: false } }, scales: { y: { ticks: { color:'#94a3b8' }, grid: { color:'rgba(255,255,255,0.04)' } }, x: { ticks: { color:'#94a3b8' }, grid: { display: false } } } }
+  });
+}
+
+function initAnalyticsCharts() {
+  const feeCtx = document.getElementById('feeChart');
+  if (feeCtx) {
+    new Chart(feeCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets: [
+          { label: 'Collected', data: [9.2,11.4,8.8,14.2,7.6,0], backgroundColor: '#10b981', borderRadius: 6 },
+          { label: 'Target', data: [12,12,12,12,12,12], type: 'line', borderColor:'#8b5cf6', backgroundColor:'transparent', pointRadius:0, borderDash:[4,4], borderWidth:2 }
+        ]
+      },
+      options: { ...chartDefaults(), scales: { y: { ticks: { color:'#94a3b8', callback: v=>'₹'+v+'L' }, grid: { color:'rgba(255,255,255,0.04)' } }, x: { ticks: { color:'#94a3b8' }, grid: { display:false } } } }
     });
+  }
+  const branchCtx = document.getElementById('branchAttChart');
+  if (branchCtx) {
+    new Chart(branchCtx, {
+      type: 'radar',
+      data: {
+        labels: ['CS','IT','ECE','ME','CE','MCA'],
+        datasets: [{ label: 'Attendance %', data: [89,85,91,82,87,88], borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.12)', pointBackgroundColor:'#8b5cf6', borderWidth:2 }]
+      },
+      options: { ...chartDefaults(), scales: { r: { min:70, max:100, ticks: { color:'#94a3b8', backdropColor:'transparent' }, grid: { color:'rgba(255,255,255,0.06)' }, angleLines: { color:'rgba(255,255,255,0.06)' }, pointLabels: { color:'#94a3b8', font: { family:'Space Grotesk' } } } } }
+    });
+  }
+}
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-    function toggleAI() { document.getElementById('aiPanel').classList.toggle('translate-x-full'); }
-    function toggleNotifications() { document.getElementById('notificationsDropdown').classList.toggle('show'); }
-    function toggleProfileDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
-    function hideModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-    function showModal(id) { document.getElementById('modalOverlay').classList.add('active'); }
-    function performLogout() { MyIEC.logout(); }
-
-    async function initCharts() {
-      const ctx = document.getElementById('attendanceChart');
-      if (!ctx) return;
-
-      let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Fri-1', 'Fri-2'];
-      let data = [85, 88, 83, 90, 87, 84, 89];   // safe fallback
-
-      try {
-        const res = await MyIEC.api('/analytics/trend');
-        if (res.success && res.data) {
-          labels = res.data.labels;
-          data = res.data.percentages;
-        }
-      } catch (e) {
-        console.warn('Trend API failed, using fallback:', e.message);
+// Timetable
+function renderTimetable() {
+  const el = document.getElementById('timetableGrid');
+  if (!el) return;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const slots = ['9:00-10:00','10:00-11:00','11:00-12:00','12:00-1:00','2:00-3:00','3:00-4:00','4:00-5:00'];
+  const subjects = ['DBMS','OS','CN','—','Web Dev','DS','TOC'];
+  const colors = ['#3b82f6','#8b5cf6','#10b981','','#f97316','#06b6d4','#ec4899'];
+  let html = `<table style="border-collapse:separate;border-spacing:6px;min-width:800px;width:100%;">
+    <thead><tr><th style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:6px;color:var(--text-muted);font-size:11px;text-align:left;">Time</th>`;
+  days.forEach(d => { html += `<th style="background:rgba(255,255,255,0.04);padding:8px 12px;border-radius:6px;color:var(--text-muted);font-size:11px;text-align:left;">${d}</th>`; });
+  html += `</tr></thead><tbody>`;
+  slots.forEach((slot, si) => {
+    html += `<tr><td style="padding:6px 10px;color:var(--text-muted);font-size:11px;white-space:nowrap;">${slot}</td>`;
+    days.forEach((d, di) => {
+      const sub = subjects[(si + di) % subjects.length];
+      const c = colors[(si + di) % colors.length];
+      if (sub === '—') {
+        html += `<td style="background:rgba(255,255,255,0.02);border-radius:8px;padding:10px;text-align:center;color:var(--text-muted);font-size:11px;">Lunch / Free</td>`;
+      } else {
+        html += `<td style="background:${c}15;border:1px solid ${c}30;border-radius:8px;padding:8px 10px;">
+          <div style="font-size:12px;font-weight:600;color:${c};">${sub}</div>
+          <div style="font-size:10px;color:var(--text-muted);">Room 3${si+1}${di+1}</div>
+        </td>`;
       }
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Attendance %',
-            data,
-            borderColor: '#8b5cf6',
-            backgroundColor: 'rgba(139,92,246,0.1)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#8b5cf6',
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#9ca3af' } } },
-          scales: {
-            y: { min: 50, max: 100, ticks: { color: '#9ca3af', callback: (v) => v + '%' } },
-            x: { ticks: { color: '#9ca3af' } }
-          }
-        }
-      });
-    }
+// ============================
+// NAVIGATION
+// ============================
+function showSection(id, navEl) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('sec-' + id);
+  if (target) {
+    target.classList.add('active');
+    target.querySelectorAll('[class*="fade-up"]').forEach((el, i) => {
+      el.style.animationDelay = (i * 0.05) + 's';
+    });
+  }
 
-    async function loadActivityLogs() {
-      const container = document.querySelector('#tab-recent-activities, .space-y-4');
-      if (!container) return;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
 
-      try {
-        const res = await MyIEC.api('/analytics/activity?limit=5');
-        if (!res.success || !res.data.length) return;
+  const names = { dashboard:'Dashboard', students:'Students', faculty:'Faculty', courses:'Courses & Subjects', attendance:'Attendance', timetable:'Timetable', exams:'Exams & Results', fees:'Fee Management', payroll:'Payroll', admissions:'Admissions', library:'Library', hostel:'Hostel', transport:'Transport', notices:'Notices & Events', analytics:'Analytics & Reports', settings:'Settings' };
+  document.getElementById('breadcrumbPage').textContent = names[id] || id;
 
-        const colorMap = { user_registered: 'from-blue-500 to-cyan-400', api_call: 'from-purple-500 to-pink-400' };
-        const iconMap = { user_registered: '👤', api_call: '🔗' };
+  if (id === 'timetable') setTimeout(renderTimetable, 100);
+  if (id === 'analytics') setTimeout(initAnalyticsCharts, 100);
+  if (window.innerWidth < 1024) document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0, 0);
+}
 
-        container.innerHTML = res.data.map(log => `
-          <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br ${colorMap[log.type] || 'from-gray-500 to-gray-400'} flex items-center justify-center flex-shrink-0">
-              <span class="text-white text-sm">${iconMap[log.type] || '📋'}</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-white font-medium text-sm">${log.message}</p>
-              <p class="text-gray-400 text-xs mt-1">${new Date(log.timestamp).toLocaleString('en-IN')}</p>
-            </div>
-          </div>
-        `).join('');
-      } catch (e) {
-        console.warn('Activity logs failed:', e.message);
-      }
-    }
+function showSettingsTab(tab, el) {
+  document.querySelectorAll('#settingsTabs .nav-item').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Settings tab: ' + tab, 'info');
+}
 
-    async function sendMessage() {
-      const input = document.getElementById('aiInput');
-      const msg = input.value.trim();
-      if (!msg) return;
+// ============================
+// AI CHAT
+// ============================
+const AI_RESPONSES = {
+  'attendance': 'Current overall attendance is 87.4%. There are 34 students below the 75% threshold. CS branch leads at 89%, while ME has the lowest at 82%. I recommend sending automated notices to defaulters.',
+  'fee': 'Fee collection this semester: ₹42.6L collected (83.5%), ₹8.4L pending. 68 students have overdue payments. ECE branch has the highest collection rate at 92%.',
+  'students': `There are ${MOCK.studentsCount} students enrolled across 6 branches. CS has the most students (214), followed by IT (178). 12% increase from last semester.`,
+  'faculty': `${MOCK.facultyCount} faculty members are active. 1 is on leave (Prof. Yash Bajaj - ME). Average experience is 9.6 years.`,
+  'exams': '3 upcoming exams scheduled. End Semester Exams start May 20, 2026. Internal Assessment 3 for CS/IT is on May 12.',
+  'report': 'I can generate the following reports: Attendance Report, Fee Collection Report, Exam Results, Payroll Summary. Which one do you need?',
+  'default': 'I can help you with student data, attendance analysis, fee tracking, exam scheduling, and generating reports. Try asking about attendance, fees, students, or exams!'
+};
 
-      const chat = document.getElementById('chatMessages');
-      const userDiv = document.createElement('div');
-      userDiv.className = 'chat-message flex justify-end';
-      userDiv.innerHTML = `<div class="bg-purple-600 rounded-xl p-3 text-white text-sm">${msg}</div>`;
-      chat.appendChild(userDiv);
-      input.value = '';
+function renderAiQuickPrompts() {
+  const el = document.getElementById('quickPrompts');
+  if (!el) return;
+  const prompts = ['Attendance summary', 'Fee status', 'Defaulters list', 'Upcoming exams'];
+  el.innerHTML = prompts.map(p => `<button onclick="askAI('${p}')" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--purple);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all 0.15s;"
+    onmouseover="this.style.background='rgba(139,92,246,0.2)'" onmouseout="this.style.background='rgba(139,92,246,0.1)'">${p}</button>`).join('');
+}
 
-      try {
-        const res = await MyIEC.api('/ai/chat', { method: 'POST', body: { message: msg } });
-        const aiDiv = document.createElement('div');
-        aiDiv.className = 'chat-message';
-        aiDiv.innerHTML = `<div class="glass rounded-xl p-3 text-white text-sm">${res.data.reply}</div>`;
-        chat.appendChild(aiDiv);
-      } catch (e) {
-        console.error('AI Error:', e.message);
-      }
-      chat.scrollTop = chat.scrollHeight;
-    }
+function askAI(prompt) {
+  document.getElementById('aiInput').value = prompt;
+  sendAiMessage();
+}
 
-    function setupEventListeners() {
-      document.getElementById('aiSend').onclick = sendMessage;
-      document.getElementById('aiInput').onkeypress = (e) => e.key === 'Enter' && sendMessage();
-      document.getElementById('btnLogout').onclick = (e) => { e.preventDefault(); showModal('logout'); };
-    }
-  </script>
+function sendAiMessage() {
+  const input = document.getElementById('aiInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const chat = document.getElementById('chatMessages');
+
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.textContent = msg;
+  chat.appendChild(userBubble);
+  input.value = '';
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-bubble ai';
+  typing.innerHTML = '<span style="opacity:0.6;">Thinking...</span>';
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
+
+  setTimeout(() => {
+    let reply = AI_RESPONSES.default;
+    const lmsg = msg.toLowerCase();
+    if (lmsg.includes('attend')) reply = AI_RESPONSES.attendance;
+    else if (lmsg.includes('fee') || lmsg.includes('payment')) reply = AI_RESPONSES.fee;
+    else if (lmsg.includes('student')) reply = AI_RESPONSES.students;
+    else if (lmsg.includes('faculty') || lmsg.includes('staff')) reply = AI_RESPONSES.faculty;
+    else if (lmsg.includes('exam') || lmsg.includes('result')) reply = AI_RESPONSES.exams;
+    else if (lmsg.includes('report')) reply = AI_RESPONSES.report;
+    typing.innerHTML = reply;
+    chat.scrollTop = chat.scrollHeight;
+  }, 900);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const aiInput = document.getElementById('aiInput');
+  if (aiInput) aiInput.addEventListener('keypress', (e) => { if(e.key==='Enter') sendAiMessage(); });
+});
+
+// ============================
+// MODALS / DROPDOWNS
+// ============================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openLogoutModal() { openModal('logoutModal'); closeAllDropdowns(); }
+function performLogout() { showToast('Logging out...','info'); setTimeout(() => { closeModal('logoutModal'); }, 800); }
+
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  closeAllDropdowns();
+  if (!wasOpen) el.classList.add('open');
+}
+function closeAllDropdowns() {
+  document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+}
+
+function toggleAI() { document.getElementById('aiPanel').classList.toggle('open'); }
+
+// Click outside modals
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('.modal-bg.open').forEach(modal => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+});
+
+// ============================
+// TOAST
+// ============================
+function showToast(msg, type='info') {
+  const colors = { green: '#10b981', red: '#ef4444', info: '#3b82f6', warning: '#f97316' };
+  const icons = { green: 'fas fa-check-circle', red: 'fas fa-times-circle', info: 'fas fa-info-circle', warning: 'fas fa-exclamation-triangle' };
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.borderLeft = `3px solid ${colors[type]}`;
+  toast.innerHTML = `<i class="${icons[type]}" style="color:${colors[type]};font-size:16px;"></i><span style="font-size:13px;color:var(--text-primary);">${msg}</span>`;
+  document.getElementById('toast-container').appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateY(-10px)'; toast.style.transition='all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Mobile responsive
+window.addEventListener('resize', () => {
+  document.getElementById('menuBtn').style.display = window.innerWidth < 1024 ? 'flex' : 'none';
+});
+</script>
 </body>
-
 </html>
